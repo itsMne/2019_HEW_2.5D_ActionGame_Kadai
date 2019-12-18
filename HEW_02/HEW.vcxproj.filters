@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="FbxModelPixel.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+    <FxCompile Include="FbxModelVertex.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+    <FxCompile Include="Pixel.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+    <FxCompile Include="Pixel2D.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+    <FxCompile Include="Vertex.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+    <FxCompile Include="Vertex2D.hlsl">
+      <Filter>H\エンジンH</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>CPP</Filter>
+    </ClCompile>
+    <ClCompile Include="FbxModel.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="debugproc.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="DXWindow3D.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Field3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Light3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Polygon2D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Player3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube3D.cpp" />
+    <ClCompile Include="UniversalStructures.cpp">
+      <Filter>CPP</Filter>
+    </ClCompile>
+    <ClCompile Include="C_XInput.cpp">
+      <Filter>CPP\エンジンCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard2D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh3D.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere3D.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall3D.cpp" />
+    <ClCompile Include="C_Ui.cpp" />
+    <ClCompile Include="C_Item.cpp" />
+    <ClCompile Include="DebugAim.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>H</Filter>
+    </ClInclude>
+    <ClInclude Include="debugproc.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="DXWindow3D.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="FbxModel.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Field3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Light3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Model3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Polygon2D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube3D.h" />
+    <ClInclude Include="C_XInput.h">
+      <Filter>H\エンジンH</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard2D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Player3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh3D.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere3D.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall3D.h" />
+    <ClInclude Include="UniversalStructures.h">
+      <Filter>H</Filter>
+    </ClInclude>
+    <ClInclude Include="C_Ui.h" />
+    <ClInclude Include="C_Item.h" />
+    <ClInclude Include="DebugAim.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CPP">
+      <UniqueIdentifier>{0729e2e5-c4b6-4683-b86f-2019af505d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="H">
+      <UniqueIdentifier>{225d2f4f-921c-4d02-8d05-12adcb2730b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPP\エンジンCPP">
+      <UniqueIdentifier>{d7fb8a24-996f-4543-b7b3-d5ed64e11342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="H\エンジンH">
+      <UniqueIdentifier>{58a6db44-20af-4000-bb76-c3d09e1e4a00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPP\ゲームCPP">
+      <UniqueIdentifier>{ce861c27-91bf-463a-a303-9803bd81aa10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="H\ゲームH">
+      <UniqueIdentifier>{be42f3fe-ffc6-42dc-a7c5-b027710f837b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="H\ゲームH\シーン">
+      <UniqueIdentifier>{ed420db0-8e9e-4157-b3f2-e121e893beb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPP\ゲームCPP\シーン">
+      <UniqueIdentifier>{b17a2d9d-defd-4624-b1a1-e71de47b72ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

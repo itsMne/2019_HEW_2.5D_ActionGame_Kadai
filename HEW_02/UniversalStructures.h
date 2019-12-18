@@ -1,0 +1,77 @@
+#pragma once
+#include <windows.h>
+#include <tchar.h>
+#include <mmsystem.h>
+#include <d3d11.h>
+#include <DirectXMath.h>
+
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
+#define HITBOX_Z_POS -10
+#define USE_HITBOX	false
+#define USE_CONSOLE true
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(x) {if(x){(x)->Release();x=nullptr;}}
+#endif
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(x) {if(x){delete(x);x=nullptr;}}
+#endif
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(x) {if(x){delete[](x);x=nullptr;}}
+#endif
+
+#define SCREEN_WIDTH	(1280)				// ウインドウの幅
+#define SCREEN_HEIGHT	(720)				// ウインドウの高さ
+#define SCREEN_CENTER_X	(SCREEN_WIDTH/2)	// ウインドウの中心Ｘ座標
+#define SCREEN_CENTER_Y	(SCREEN_HEIGHT/2)	// ウインドウの中心Ｙ座標
+#define NUM_VERTEX 4
+
+#define CULLMODE_NONE	0					// カリングしない
+#define CULLMODE_CW		1					// 前面カリング
+#define CULLMODE_CCW	2					// 背面カリング
+using namespace DirectX;
+//*****************************************************************************
+// 構造体定義
+//*****************************************************************************
+// 頂点フォーマット( 頂点座標[2D] / 反射光 / テクスチャ座標 )
+typedef struct {
+	XMFLOAT3 vtx;		// 頂点座標
+	XMFLOAT4 diffuse;	// 拡散反射光
+	XMFLOAT2 tex;		// テクスチャ座標
+} VERTEX_2D;
+
+// 頂点フォーマット( 頂点座標[3D] / 法線ベクトル / 反射光 / テクスチャ座標 )
+typedef struct {
+	XMFLOAT3 vtx;		// 頂点座標
+	XMFLOAT3 nor;		// 法線ベクトル
+	XMFLOAT4 diffuse;	// 拡散反射光
+	XMFLOAT2 tex;		// テクスチャ座標
+} VERTEX_3D;
+
+typedef struct 
+{
+	float x, y;//拠点
+	float w;//長さ 
+	float h;//高さ
+}Hitbox2D;
+enum GENERAL_DIRECTION
+{
+	LEFT_DIR=-1,
+	RIGHT_DIR=1
+};
+typedef struct Hitbox3D
+{
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float SizeX = 0, SizeY = 0, SizeZ = 0;
+};
+typedef struct UV
+{
+	float U, V;
+};
+
+bool IsInCollision3D(Hitbox3D a, Hitbox3D b);
+bool IsInCollision2D(Hitbox2D hbA, Hitbox2D hbB);
