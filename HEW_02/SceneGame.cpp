@@ -1,6 +1,8 @@
 #include "SceneGame.h"
-SceneGame* CurrentGame = nullptr;
+#include "Spike3D.h"
 
+SceneGame* CurrentGame = nullptr;
+Spike3D* HelloSpike = nullptr;
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
@@ -31,22 +33,26 @@ void SceneGame::Init()
 	Items = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	
-	Walls->Load("Walls_Level", GO_WALL);
+	
 
 
 	
 	SceneCamera->Init();
 	SceneLight->Init();
+	Walls->Load("Walls_Level", GO_WALL);
 	Fields->Load("Fields_Level", GO_FLOOR);
+	Items->Load("Items_Level", GO_ITEM);
 	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
 	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
 	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
 	//Walls->AddWall({ 105,55,0 }, { 2,80,1 });
 	//Walls->AddWall({ 40,325,0 }, { 2,50,1 });
-	Items->Load("Items_Level", GO_ITEM);
+	
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
+
+	HelloSpike = new Spike3D();
 
 	// Hp
 	pHP_UI_BACK = new C_Ui("data/texture/HP000.png", UI_HP00);
@@ -99,6 +105,7 @@ int SceneGame::Update()
 	
 	Items->Update();
 
+	HelloSpike->Update();
 	// Hp更新
 	pHP_UI_BACK->Update();
 	pHP_UI_FRONT->Update();
@@ -137,7 +144,7 @@ void SceneGame::Draw()
 	Walls->Draw();
 	Fields->Draw();
 	
-	
+	HelloSpike->Draw();
 
 	// 背面カリング (通常は表面のみ描画)
 	

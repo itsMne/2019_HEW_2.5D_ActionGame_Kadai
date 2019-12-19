@@ -141,7 +141,7 @@ HRESULT Field3D::Init(const char* TexturePath)
 
 	hitbox = { 0,0,0, Scale.x,3,Scale.z };
 	pVisualHitbox = nullptr;
-#if USE_HITBOX
+#if SHOW_HITBOX
 		pVisualHitbox = new Cube3D("data/texture/hbox.tga");
 		pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 		pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
@@ -193,7 +193,7 @@ void Field3D::Update(void)
 		}
 	}
 	
-#if USE_HITBOX
+#if SHOW_HITBOX
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 	pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
 #endif
@@ -204,7 +204,7 @@ void Field3D::Update(void)
 //=============================================================================
 void Field3D::Draw(void)
 {
-#if USE_HITBOX
+#if SHOW_HITBOX
 	SetCullMode(CULLMODE_NONE);
 	pVisualHitbox->Draw();
 	SetCullMode(CULLMODE_CCW);

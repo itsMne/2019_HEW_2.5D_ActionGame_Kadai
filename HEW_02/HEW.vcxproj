@@ -184,6 +184,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sphere3D.cpp" />
+    <ClCompile Include="Spike3D.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UniversalStructures.cpp" />
     <ClCompile Include="Wall3D.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sphere3D.h" />
+    <ClInclude Include="Spike3D.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UniversalStructures.h" />
     <ClInclude Include="Wall3D.h" />

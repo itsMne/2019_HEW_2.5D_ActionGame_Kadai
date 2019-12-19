@@ -9,11 +9,13 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_DEBUGAIM=0,
 	DA_FIELD,
 	DA_WALL,
+	DA_SPIKE,
 	DA_ITEM_SUSHI,
 	DA_ITEM_UDON,
 	DA_ITEM_ODEN,
 	DA_ITEM_DANGO,
 	DA_ITEM_TAI,
+
 	DA_MAX
 };
 
@@ -35,7 +37,9 @@ void DebugAim::Init()
 	pDA_Wall = nullptr;
 	pCurrentGame = nullptr;
 	pDA_Item = nullptr;
+	pDA_Spike = nullptr;
 	nObjectType = DA_DEBUGAIM;
+	nSpikeX = nSpikeY = 1;
 	InitModel("data/model/DebugAim.fbx");
 }
 
@@ -109,6 +113,7 @@ void DebugAim::Update()
 		if (!pDA_Field) {
 			pDA_Field = new Field3D("data/texture/field000.jpg");
 			Scale = { 50,50,50 };
+			pDA_Field->SetPosition({ Position.x,Position.y + 12,Position.z });
 		}
 		else {
 			pDA_Field->SetPosition({ Position.x,Position.y+12,Position.z });
@@ -133,6 +138,7 @@ void DebugAim::Update()
 		if (!pDA_Wall) {
 			pDA_Wall = new Wall3D();
 			Scale = { 1,1,1 };
+			pDA_Wall->SetPosition({ Position.x,Position.y + 16, Position.z });
 		}
 		else {
 			pDA_Wall->SetPosition({ Position.x,Position.y+16, Position.z });
@@ -158,6 +164,7 @@ void DebugAim::Update()
 		if (!pDA_Item) {
 			pDA_Item = new C_Item(nitemType);
 			Scale = { 1,1,1 };
+			pDA_Item->SetPosition(Position);
 		}
 		else {
 			pDA_Item->SetPosition(Position);
@@ -179,6 +186,18 @@ void DebugAim::Update()
 			}
 		}
 		break;
+	case DA_SPIKE:
+		if (!pDA_Spike)
+		{
+			pDA_Spike = new Spike3D();
+			Scale = { 1,1,1 };
+			nSpikeX = nSpikeY = 1;
+		}
+		else {
+			pDA_Spike->Update();
+			pDA_Spike->SetPosition(Position);
+		}
+		break;
 	default:
 		break;
 	}
@@ -189,6 +208,7 @@ void DebugAim::SwitchObjectTypeControl()
 	SAFE_DELETE(pDA_Field);
 	SAFE_DELETE(pDA_Wall);
 	SAFE_DELETE(pDA_Item);
+	SAFE_DELETE(pDA_Spike);
 
 	Scale = { 1,1,1 };
 }
@@ -269,6 +289,10 @@ void DebugAim::Draw()
 	case DA_ITEM_SUSHI: case DA_ITEM_UDON:case DA_ITEM_ODEN:case DA_ITEM_TAI:case DA_ITEM_DANGO:
 		if (pDA_Item)
 			pDA_Item->Draw();
+		break;
+	case DA_SPIKE:
+		if (pDA_Spike)
+			pDA_Spike->Draw();
 		break;
 	default:
 		break;

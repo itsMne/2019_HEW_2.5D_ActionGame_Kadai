@@ -34,6 +34,7 @@ private:
 	bool bIsPlane;
 public:
 	Cube3D();
+	Cube3D(const char* TexturePath);
 	~Cube3D();
 	HRESULT Init(const char* TexturePath);
 	void End(void);

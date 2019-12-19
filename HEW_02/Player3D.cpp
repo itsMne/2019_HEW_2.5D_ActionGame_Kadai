@@ -137,7 +137,7 @@ void Player3D::Init()
 	pDebugAim->SetPosition(Position);
 	nHP /= 2;//DEL
 	
-#if USE_HITBOX
+#if SHOW_HITBOX
 	for (int i = 0; i < MAX_HB; i++)
 	{
 		pVisualHitbox[i] = new Cube3D("data/texture/hbox.tga");
@@ -525,7 +525,7 @@ void Player3D::HitboxControl()
 	pPlayerModels[MODEL_GEISHA]->SetPositionX(-2.0f * nDirection);
 	pPlayerModels[MODEL_SAMURAI]->SetPositionX(-2.0f * nDirection);
 
-#if USE_HITBOX
+#if SHOW_HITBOX
 	for (int i = 0; i < MAX_HB; i++)
 	{
 		if (pVisualHitbox[i]) {

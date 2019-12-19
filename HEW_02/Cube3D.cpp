@@ -58,6 +58,14 @@ Cube3D::Cube3D()
 	bIsPlane = false;
 }
 
+Cube3D::Cube3D(const char * TexturePath)
+{
+	pSceneLight = nullptr;
+	nTextureSubDivisions = 1;
+	bIsPlane = false;
+	Init(TexturePath);
+}
+
 
 Cube3D::~Cube3D()
 {

@@ -6,12 +6,14 @@
 
 GameObject3D::GameObject3D()
 {
+	pModel = nullptr;
 	Init();
 }
 
 
 GameObject3D::~GameObject3D()
 {
+	Uninit();
 }
 
 void GameObject3D::Init()
@@ -22,7 +24,7 @@ void GameObject3D::Init()
 	hitbox = { 0,0,0,0,0,0 };
 	pModel = nullptr;
 	bMoveable = false;
-#if USE_HITBOX
+#if SHOW_HITBOX
 	pVisualHitbox = new Cube3D("data/texture/hbox.tga");
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 	pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
@@ -33,7 +35,7 @@ void GameObject3D::Update()
 {
 	if (pModel)
 		pModel->UpdateModel();
-#if USE_HITBOX
+#if SHOW_HITBOX
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 	pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
 #endif
@@ -42,7 +44,7 @@ void GameObject3D::Update()
 void GameObject3D::Draw()
 {
 	bool bPreviousLight = GetMainLight()->IsLightEnabled();
-#if USE_HITBOX
+#if SHOW_HITBOX
 	GetMainLight()->SetLightEnable(false);
 	SetCullMode(CULLMODE_NONE);
 	pVisualHitbox->Draw();
@@ -60,8 +62,7 @@ void GameObject3D::Draw()
 
 void GameObject3D::Uninit()
 {
-	if (pModel)
-		delete(pModel);
+	SAFE_DELETE(pModel);
 }
 
 XMFLOAT3 GameObject3D::GetPosition()

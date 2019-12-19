@@ -3,6 +3,7 @@
 #include "Field3D.h"
 #include "Wall3D.h"
 #include "C_Item.h"
+#include "Spike3D.h"
 class DebugAim :
 	public GameObject3D
 {
@@ -11,6 +12,8 @@ private:
 	Field3D* pDA_Field;
 	Wall3D* pDA_Wall;
 	C_Item* pDA_Item;
+	Spike3D* pDA_Spike;
+	int nSpikeX, nSpikeY;
 	void* pCurrentGame;
 public:
 	DebugAim();

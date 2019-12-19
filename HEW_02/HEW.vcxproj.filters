@@ -105,6 +105,7 @@
     <ClCompile Include="Mesh3D.cpp">
       <Filter>CPP\エンジンCPP</Filter>
     </ClCompile>
+    <ClCompile Include="Spike3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -191,6 +192,7 @@
     <ClInclude Include="Camera3D.h">
       <Filter>H\エンジンH</Filter>
     </ClInclude>
+    <ClInclude Include="Spike3D.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">
