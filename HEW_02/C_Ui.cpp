@@ -96,7 +96,7 @@ void C_Ui::Update()
 		pPlayer = GetMainPlayer();
 		nHP = pPlayer->GetPlayerHp();
 		nMaxHP = pPlayer->GetPlayerMaxHp();
-		printf("hp: %d, max: %d\n", nHP, nMaxHP);
+		//printf("hp: %d, max: %d\n", nHP, nMaxHP);
 		if (nMaxHP == 0)
 		{
 			break;

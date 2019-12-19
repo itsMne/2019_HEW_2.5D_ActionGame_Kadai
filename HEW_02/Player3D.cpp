@@ -132,7 +132,7 @@ void Player3D::Init()
 	LockMovementLeft = 1;
 	nCurrentAnimation = 0;
 	bUsingDebugAim = false;
-
+	pMainCamera = GetMainCamera();
 	pDebugAim = new DebugAim();
 	pDebugAim->SetPosition(Position);
 	nHP /= 2;//DEL

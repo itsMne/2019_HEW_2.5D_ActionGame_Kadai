@@ -9,7 +9,9 @@ HRESULT InitScene()
 		return S_OK;
 	switch (nSceneType)
 	{
-
+	case SCENE_TITLE:
+		//Scene = new SceneTitle();
+		break;
 	case SCENE_GAME:
 		Scene = new SceneGame();
 		break;
