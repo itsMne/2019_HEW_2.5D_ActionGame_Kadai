@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "Sphere3D.h"
+#include "C_Ui.h"
 class SceneGame :
 	public SceneBase
 {
@@ -14,7 +15,16 @@ private:
 	Go_List* Walls;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
+	
+	//UIÇÃïœêî
+	C_Ui* HelloHp00;
+	C_Ui* HelloHp01;
+	C_Ui* HelloMp;
+	C_Item* HelloItem;
+	C_Ui* HelloNumber;
+	C_Ui* HelloScore;
 public:
+	
 	SceneGame();
 	~SceneGame();
 	void Init();
@@ -23,5 +33,6 @@ public:
 	void Draw();
 	Go_List* GetFields();
 	Go_List* GetWalls();
+	int GetScore();
 };
 SceneGame* GetCurrentGame();

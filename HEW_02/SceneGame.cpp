@@ -1,17 +1,13 @@
 #include "SceneGame.h"
 #include "Wall3D.h"
 #include "C_Item.h"
-#include "C_Ui.h"
 SceneGame* CurrentGame = nullptr;
 
-C_Ui* HelloHp00 = nullptr;
-C_Ui* HelloHp01 = nullptr;
-C_Ui* HelloMp = nullptr;
-C_Item* HelloItem = nullptr;
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
 	CurrentGame = this;
+	nScore = 0;
 }
 
 
@@ -57,7 +53,9 @@ void SceneGame::Init()
 	HelloMp = new C_Ui("data/texture/MP000.png", UI_MP);
 	HelloItem = new C_Item(TYPE_ODEN);
 	HelloItem->SetPosition({ 10,0,0 });
-
+	HelloNumber = new C_Ui("data/texture/number.png", UI_NUMBER);
+	// Score
+	HelloScore = new C_Ui("data/texture/frame_score.png", UI_SCORE);
 
 }
 
@@ -114,6 +112,12 @@ int SceneGame::Update()
 
 	// Mp更新
 	HelloMp->Update();
+
+	// Score更新
+	HelloScore->Update();
+
+	// Number更新
+	HelloNumber->Update();
 	return nSceneType;
 }
 
@@ -152,6 +156,12 @@ void SceneGame::Draw()
 
 	// Mp描画
 	HelloMp->Draw();
+
+	// Number描画
+	HelloNumber->Draw();
+
+	// Score描画
+	HelloScore->Draw();
 	// デバッグ文字列表示
 	DrawDebugProc();
 }
@@ -164,6 +174,11 @@ Go_List * SceneGame::GetFields()
 Go_List * SceneGame::GetWalls()
 {
 	return Walls;
+}
+
+int SceneGame::GetScore()
+{
+	return nScore;
 }
 
 SceneGame * GetCurrentGame()
