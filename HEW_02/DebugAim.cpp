@@ -9,7 +9,11 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_DEBUGAIM=0,
 	DA_FIELD,
 	DA_WALL,
-	//DA_ITEM,
+	DA_ITEM_SUSHI,
+	DA_ITEM_UDON,
+	DA_ITEM_ODEN,
+	DA_ITEM_DANGO,
+	DA_ITEM_TAI,
 	DA_MAX
 };
 
@@ -87,7 +91,7 @@ void DebugAim::Update()
 		}
 	}
 	Player3D* pPlayer = nullptr;
-
+	int nitemType;
 	switch (nObjectType)
 	{
 	case DA_DEBUGAIM:
@@ -149,6 +153,29 @@ void DebugAim::Update()
 			}
 		}
 		break;
+	case DA_ITEM_SUSHI: case DA_ITEM_UDON:case DA_ITEM_ODEN:case DA_ITEM_TAI:case DA_ITEM_DANGO:
+		nitemType = nObjectType - DA_ITEM_SUSHI;
+		if (!pDA_Item) {
+			pDA_Item = new C_Item(nitemType);
+			Scale = { 1,1,1 };
+		}
+		else {
+			pDA_Item->SetPosition(Position);
+			pDA_Item->Update();
+			pDA_Item->SetUse(true);
+
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				p_sCurrentGame->GetItems()->AddItem(Position, nitemType);
+				printf("Items->AddItem({ %ff ,%ff ,%ff}, %d);\n", Position.x, Position.y, Position.z, nitemType);
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetItems()->DeleteLastPosObject();
+			}
+		}
+
+		break;
 	default:
 		break;
 	}
@@ -158,6 +185,7 @@ void DebugAim::SwitchObjectTypeControl()
 {
 	SAFE_DELETE(pDA_Field);
 	SAFE_DELETE(pDA_Wall);
+	SAFE_DELETE(pDA_Item);
 
 	Scale = { 1,1,1 };
 }
@@ -234,6 +262,10 @@ void DebugAim::Draw()
 		if(pDA_Wall)
 			pDA_Wall->Draw();
 		SetCullMode(CULLMODE_CCW);
+		break;
+	case DA_ITEM_SUSHI: case DA_ITEM_UDON:case DA_ITEM_ODEN:case DA_ITEM_TAI:case DA_ITEM_DANGO:
+		if (pDA_Item)
+			pDA_Item->Draw();
 		break;
 	default:
 		break;

@@ -30,6 +30,7 @@ void SceneGame::Init()
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();
+	Items = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	
 	Walls->Load("Walls_Level", GO_WALL);
@@ -51,8 +52,8 @@ void SceneGame::Init()
 	HelloHp01 = new C_Ui("data/texture/HP001.png", UI_HP01);
 	// Mp
 	HelloMp = new C_Ui("data/texture/MP000.png", UI_MP);
-	HelloItem = new C_Item(TYPE_ODEN);
-	HelloItem->SetPosition({ 10,0,0 });
+
+	Items->AddItem({ 10,0,0 }, TYPE_ODEN);
 	HelloNumber = new C_Ui("data/texture/number.png", UI_NUMBER);
 	// Score
 	HelloScore = new C_Ui("data/texture/frame_score.png", UI_SCORE);
@@ -104,7 +105,7 @@ int SceneGame::Update()
 
 	Walls->Update();
 	
-	HelloItem->Update();
+	Items->Update();
 
 	// HpXV
 	HelloHp00->Update();
@@ -133,7 +134,7 @@ void SceneGame::Draw()
 
 	// ƒ‚ƒfƒ‹•`‰æ
 	SetCullMode(CULLMODE_NONE);
-	HelloItem->Draw();
+	Items->Draw();
 	pPlayer->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
@@ -174,6 +175,11 @@ Go_List * SceneGame::GetFields()
 Go_List * SceneGame::GetWalls()
 {
 	return Walls;
+}
+
+Go_List * SceneGame::GetItems()
+{
+	return Items;
 }
 
 int SceneGame::GetScore()

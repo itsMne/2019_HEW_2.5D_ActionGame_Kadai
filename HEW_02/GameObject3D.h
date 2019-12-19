@@ -43,6 +43,7 @@ public:
 	void SetScale(XMFLOAT3);
 	void InitModel(const char* szPath);
 	Hitbox3D GetHitBox();
+	void SetHitbox(Hitbox3D hb);
 	int GetType();
 
 	//自動で動いているオブジェクトなら
@@ -78,6 +79,7 @@ public:
 	int GetNumberOfObjects();
 	GameObject3D* AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char* TexturePath);
 	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale);
+	GameObject3D* AddItem(XMFLOAT3 newPosition, int nType);
 	
 	void DeleteLastPosObject();
 	void Update();
@@ -85,5 +87,6 @@ public:
 	void End();
 	void SaveFields(const char* szFilename);
 	void SaveWalls(const char* szFilename);
+	//void SaveItem(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

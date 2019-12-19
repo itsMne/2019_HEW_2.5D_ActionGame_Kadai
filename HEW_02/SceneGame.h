@@ -13,6 +13,7 @@ private:
 	Player3D* pPlayer;
 	Go_List* Fields;
 	Go_List* Walls;
+	Go_List* Items;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 	
@@ -20,7 +21,7 @@ private:
 	C_Ui* HelloHp00;
 	C_Ui* HelloHp01;
 	C_Ui* HelloMp;
-	C_Item* HelloItem;
+	//C_Item* HelloItem;
 	C_Ui* HelloNumber;
 	C_Ui* HelloScore;
 public:
@@ -33,6 +34,7 @@ public:
 	void Draw();
 	Go_List* GetFields();
 	Go_List* GetWalls();
+	Go_List* GetItems();
 	int GetScore();
 };
 SceneGame* GetCurrentGame();

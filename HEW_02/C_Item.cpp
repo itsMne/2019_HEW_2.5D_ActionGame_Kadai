@@ -101,3 +101,8 @@ void C_Item::Draw()
 void C_Item::Uninit()
 {
 }
+
+void C_Item::SetUse(bool use)
+{
+	bUse = use;
+}

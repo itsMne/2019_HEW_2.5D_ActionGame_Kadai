@@ -24,5 +24,6 @@ public:
 	void Update();
 	void Draw();
 	void Uninit();
+	void SetUse(bool);
 };
 

@@ -1,6 +1,7 @@
 #include "GameObject3D.h"
 #include "Field3D.h"
 #include "Wall3D.h"
+#include "C_Item.h"
 #include "String.h"
 
 GameObject3D::GameObject3D()
@@ -124,6 +125,11 @@ Hitbox3D GameObject3D::GetHitBox()
 	return { hitbox.x + Position.x, hitbox.y + Position.y,hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };
 }
 
+void GameObject3D::SetHitbox(Hitbox3D hb)
+{
+	hitbox = hb;
+}
+
 int GameObject3D::GetType()
 {
 	return nType;
@@ -213,6 +219,34 @@ GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale)
 		Wall3D* ThisWall = (Wall3D*)(HeadNode->Object);
 		ThisWall->SetScale(newScale);
 		ThisWall->SetPosition(newPosition);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+
+}
+
+GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new C_Item(nType);
+		C_Item* thisItem = (C_Item*)(pWorkList->Object);
+		thisItem->SetPosition(newPosition);
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new C_Item(nType);
+		C_Item* thisItem = (C_Item*)(HeadNode->Object);
+		thisItem->SetPosition(newPosition);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
