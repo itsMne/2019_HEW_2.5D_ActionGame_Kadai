@@ -233,6 +233,11 @@ void Model3D::SetPositionZ(float newPos)
 	Position.z = newPos;
 }
 
+void Model3D::SetRotation(XMFLOAT3 rot)
+{
+	Rotation = rot;
+}
+
 void Model3D::RotateAroundY(float y)
 {
 	Rotation.y += y;

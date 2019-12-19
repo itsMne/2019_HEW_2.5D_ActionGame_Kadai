@@ -331,7 +331,6 @@ void Player3D::Update()
 			{
 				nDirection = LEFT_DIR;
 				Rotation = XMFLOAT3(0.0f, -180.0f, 0.0f);
-				printf("a");
 				nState = PLAYER_IDLE;
 				return;
 			}

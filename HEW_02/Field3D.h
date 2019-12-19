@@ -32,14 +32,14 @@ private:
 	Light3D*					pSceneLight;
 	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
-	
+	char szTexturePath[256];
 public:
-	Field3D();
+	Field3D(const char* TexturePath);
 	~Field3D();
 	HRESULT Init(const char* TexturePath);
 	void UninitField(void);
-	void UpdateField(void);
-	void DrawField(void);
+	void Update(void);
+	void Draw(void);
 	void SetFieldLight(Light3D* SceneLight);
 	HRESULT MakeVertexField(ID3D11Device* pDevice);
 	void SetPosition(XMFLOAT3 newPos);
@@ -47,5 +47,6 @@ public:
 	void SetScaleWithHitbox(float newScale);
 	void SetScaleWithHitbox(XMFLOAT3 newScale);
 	void SetRotation(XMFLOAT3 newRot);
+	char* GetTexturePath();
 };
 

@@ -45,6 +45,7 @@ public:
 	void SetPositionX(float newPos);
 	void SetPositionY(float newPos);
 	void SetPositionZ(float newPos);
+	void SetRotation(XMFLOAT3 rot);
 	void RotateAroundY(float);
 	int GetEndFrameOfCurrentAnimation();
 	int GetCurrentFrame();

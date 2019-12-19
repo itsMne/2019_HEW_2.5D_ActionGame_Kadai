@@ -10,6 +10,7 @@
 #include "Camera3D.h"
 #include "UniversalStructures.h"
 #include "Player3D.h"
+#include "string.h"
 #define OFFSET 1
 //*****************************************************************************
 // マクロ定義
@@ -45,22 +46,24 @@ struct SHADER_GLOBAL2 {
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-static HRESULT MakeVertexField(ID3D11Device* pDevice);
+//static HRESULT MakeVertexField(ID3D11Device* pDevice);
 
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
 
 
-Field3D::Field3D() : GameObject3D()
+Field3D::Field3D(const char* TexturePath) : GameObject3D()
 {
 	pSceneLight = nullptr;
 	nType = GO_FLOOR;
+	Init(TexturePath);
 }
 
 
 Field3D::~Field3D()
 {
+	UninitField();
 }
 
 
@@ -85,7 +88,7 @@ HRESULT Field3D::Init(const char* TexturePath)
 	if (FAILED(hr)) {
 		return hr;
 	}
-
+	strcpy(szTexturePath, TexturePath);
 	// 定数バッファ生成
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -174,7 +177,7 @@ void Field3D::UninitField(void)
 //=============================================================================
 // 更新処理
 //=============================================================================
-void Field3D::UpdateField(void)
+void Field3D::Update(void)
 {
 	Player3D* pPlayer = GetMainPlayer();
 	if (pPlayer)
@@ -199,7 +202,7 @@ void Field3D::UpdateField(void)
 //=============================================================================
 // 描画処理
 //=============================================================================
-void Field3D::DrawField(void)
+void Field3D::Draw(void)
 {
 #if USE_HITBOX
 	SetCullMode(CULLMODE_NONE);
@@ -363,4 +366,9 @@ void Field3D::SetScaleWithHitbox(XMFLOAT3 newScale)
 void Field3D::SetRotation(XMFLOAT3 newRot)
 {
 	Rotation = newRot;
+}
+
+char * Field3D::GetTexturePath()
+{
+	return szTexturePath;
 }

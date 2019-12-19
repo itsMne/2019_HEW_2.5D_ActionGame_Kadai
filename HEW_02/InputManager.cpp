@@ -23,7 +23,7 @@ void UpdateInputManager()
 	bXinputConnected = Player1->IsConnected();
 
 	bInputs[INPUT_LEFT] = GetKeyPress(VK_A) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
-	bInputs[INPUT_DOWN] = GetKeyPress(VK_S) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+	bInputs[INPUT_DOWN] = (GetKeyPress(VK_S) && !GetKeyPress(VK_LCONTROL)) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
 	bInputs[INPUT_RIGHT] = GetKeyPress(VK_D) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
 	bInputs[INPUT_DEBUGAIM] = GetKeyTrigger(VK_1) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) && !bHoldingXinput[INPUT_DEBUGAIM]);
 	//bInputs[INPUT_NINJACRAWL_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
@@ -33,7 +33,7 @@ void UpdateInputManager()
 	bInputs[TRANSFORM_SAMURAI] = GetKeyPress(VK_TAB) || (bXinputConnected && Player1->GetState().Gamepad.bLeftTrigger > 0);
 	bInputs[INPUT_ATTACK] = GetKeyTrigger(VK_I) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_Y && !bHoldingXinput[INPUT_ATTACK]);
 	bInputs[INPUT_DEBUGAIM_SPEEDDOWN] = GetKeyPress(VK_TAB) || (bXinputConnected && Player1->GetState().Gamepad.bLeftTrigger > 0);
-	bInputs[INPUT_DEBUGAIM_SPEEDUP] = GetKeyPress(VK_LSHIFT) || (bXinputConnected && Player1->GetState().Gamepad.bRightTrigger > 0);
+	bInputs[INPUT_DEBUGAIM_SPEEDUP] = GetKeyPress(VK_LCONTROL) || (bXinputConnected && Player1->GetState().Gamepad.bRightTrigger > 0);
 	bInputs[INPUT_DEBUGAIM_ACCEPT] = GetKeyTrigger(VK_E) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A && !bHoldingXinput[INPUT_DEBUGAIM_ACCEPT]);
 	bInputs[INPUT_SCALE_DOWN_X] = GetKeyPress(VK_J);
 	bInputs[INPUT_SCALE_UP_X] = GetKeyPress(VK_L);
@@ -41,6 +41,9 @@ void UpdateInputManager()
 	bInputs[INPUT_SCALE_UP_Z] = GetKeyPress(VK_I);
 	bInputs[INPUT_SWITCH_DEBUG_TYPE_UP] = GetKeyTrigger(VK_O);
 	bInputs[INPUT_SWITCH_DEBUG_TYPE_DOWN] = GetKeyTrigger(VK_U);
+	bInputs[INPUT_SAVE_LEVEL] = GetKeyPress(VK_LCONTROL) && GetKeyTrigger(VK_S);
+	bInputs[INPUT_DEBUGAIM_DELETE] = GetKeyTrigger(VK_BACK);
+	bInputs[INPUT_SHIFT] = GetKeyPress(VK_LSHIFT);
 	XinputTriggerControl(false);
 }
 

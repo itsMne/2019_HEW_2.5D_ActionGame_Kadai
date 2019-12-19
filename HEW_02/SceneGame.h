@@ -9,8 +9,9 @@ private:
 	ID3D11Device* g_pDevice;
 	Camera3D* SceneCamera;
 	Light3D* SceneLight;
-	Player3D* HelloPlayer;
-	Field3D* HelloField;
+	Player3D* pPlayer;
+	Go_List* Fields;
+	Go_List* Walls;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 public:
@@ -20,5 +21,7 @@ public:
 	void Uninit();
 	int Update();
 	void Draw();
+	Go_List* GetFields();
+	Go_List* GetWalls();
 };
-
+SceneGame* GetCurrentGame();

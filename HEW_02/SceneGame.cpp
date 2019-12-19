@@ -2,27 +2,28 @@
 #include "Wall3D.h"
 #include "C_Item.h"
 #include "C_Ui.h"
+SceneGame* CurrentGame = nullptr;
 
-Wall3D* HelloWallA = nullptr;
-Wall3D* HelloWallB = nullptr;
 C_Ui* HelloHp00 = nullptr;
 C_Ui* HelloHp01 = nullptr;
 C_Ui* HelloMp = nullptr;
-Field3D* HelloField2 = nullptr;
 C_Item* HelloItem = nullptr;
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
+	CurrentGame = this;
 }
 
 
 SceneGame::~SceneGame()
 {
-
+	Uninit();
+	CurrentGame = nullptr;
 }
 
 void SceneGame::Init()
 {
+	g_pDevice = GetDevice();
 	nScore = 0;
 	nSceneType = SCENE_GAME;
 	MainWindow = GetMainWindow();
@@ -30,44 +31,41 @@ void SceneGame::Init()
 		MainWindow->SetWindowColor(231.0f / 255.0f, 182.0f / 255.0f, 128.0f / 255.0f);
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
-	HelloPlayer = new Player3D();
-	HelloField = new Field3D();
-	HelloField2 = new Field3D();
+	pPlayer = new Player3D();
+	Fields = new Go_List();
+	Walls = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
-	HelloWallA = new Wall3D();
-	HelloWallA->SetPosition({ 105,55,0 });
-	HelloWallA->SetScale({ 2,80,1 });
+	
+	Walls->Load("Walls_Level", GO_WALL);
+	//Walls->AddWall({ 105,55,0 }, { 2,80,1 });
+	//Walls->AddWall({ 40,325,0 }, { 2,50,1 });
 
-	HelloWallB = new Wall3D();
-	HelloWallB->SetPosition({ 40,325,0 });
-	HelloWallB->SetScale({ 2,50,1 });
-
-	g_pDevice = GetDevice();
+	
 	SceneCamera->Init();
 	SceneLight->Init();
-	HelloField->Init("data/texture/field000.jpg");
-	HelloField->SetScaleWithHitbox(300);
-	
-	HelloField2->Init("data/texture/field000.jpg");
-	HelloField2->SetScaleWithHitbox(100);
-	HelloField2->SetPosition({ 80,500,0 });
+	Fields->Load("Fields_Level", GO_FLOOR);
+	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
+	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
+
 	InitDebugProc();
-	SceneCamera->SetFocalPoint(HelloPlayer);
+	SceneCamera->SetFocalPoint(pPlayer);
 
 	// Hp
 	HelloHp00 = new C_Ui("data/texture/HP000.png", UI_HP00);
 	HelloHp01 = new C_Ui("data/texture/HP001.png", UI_HP01);
 	// Mp
 	HelloMp = new C_Ui("data/texture/MP000.png", UI_MP);
-	HelloItem = new C_Item();
+	HelloItem = new C_Item(TYPE_ODEN);
 	HelloItem->SetPosition({ 10,0,0 });
+
+
 }
 
 void SceneGame::Uninit()
 {
 	// フィールド終了処理
-	HelloField->UninitField();
-	SAFE_DELETE(HelloPlayer);
+	SAFE_DELETE(Fields);
+	SAFE_DELETE(pPlayer);
 	SAFE_DELETE(SkySphere);
 	// モデル表示終了処理
 	//HelloModel->UninitModel();
@@ -99,16 +97,14 @@ int SceneGame::Update()
 	SceneCamera->Update();
 
 	// モデル更新
-	HelloPlayer->Update();
+	pPlayer->Update();
 
 	// フィールド更新
-	HelloField->UpdateField();
-	HelloField2->UpdateField();
+	Fields->Update();
 
 	SkySphere->Update();
 
-	HelloWallA->Update();
-	HelloWallB->Update();
+	Walls->Update();
 	
 	HelloItem->Update();
 
@@ -134,22 +130,20 @@ void SceneGame::Draw()
 	// モデル描画
 	SetCullMode(CULLMODE_NONE);
 	HelloItem->Draw();
-	HelloPlayer->Draw();
+	pPlayer->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
 
-	// 背面カリング (通常は表面のみ描画)
-	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
 
 	SkySphere->Draw();
 	// フィールド描画
-	HelloWallA->Draw();
-	HelloWallB->Draw();
-	HelloField->DrawField();
-	HelloField2->DrawField();
+	Walls->Draw();
+	Fields->Draw();
 	
 	
-	
+
+	// 背面カリング (通常は表面のみ描画)
+	pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
 	// Zバッファ無効
 	SetZBuffer(false);
 	// Hp描画
@@ -160,4 +154,19 @@ void SceneGame::Draw()
 	HelloMp->Draw();
 	// デバッグ文字列表示
 	DrawDebugProc();
+}
+
+Go_List * SceneGame::GetFields()
+{
+	return Fields;
+}
+
+Go_List * SceneGame::GetWalls()
+{
+	return Walls;
+}
+
+SceneGame * GetCurrentGame()
+{
+	return CurrentGame;
 }

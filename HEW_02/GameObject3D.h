@@ -22,6 +22,11 @@ protected:
 	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
 	bool bUnlit;
+
+	//自動で動いているオブジェクトなら
+	bool bMoveable;
+	XMFLOAT3 x3MoveStartPos;
+	XMFLOAT3 x3MoveEndPos;
 public:
 	GameObject3D();
 	~GameObject3D();
@@ -33,11 +38,52 @@ public:
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
 	XMFLOAT4X4* GetModelWorld();
-
 	void SetPosition(XMFLOAT3);
 	void SetRotation(XMFLOAT3);
 	void SetScale(XMFLOAT3);
 	void InitModel(const char* szPath);
 	Hitbox3D GetHitBox();
+	int GetType();
+
+	//自動で動いているオブジェクトなら
+	bool IsMoveableObject();
+	XMFLOAT3 GetMoveStartPosition();
+	XMFLOAT3 GetMoveEndPosition();
 };
 
+//*****************************************************************************
+// クラス-リスト
+//*****************************************************************************
+typedef struct go_node {//リストの管理の為に、この構造体が要る
+	GameObject3D* Object;
+	go_node *next;
+};
+typedef struct GameObjectContainer {
+	XMFLOAT3 Pos;
+	XMFLOAT3 Scale;
+	char texpath[256];
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
+
+class Go_List
+{
+private:
+	int nObjectCount;
+public:
+	go_node * HeadNode;
+	Go_List();
+	~Go_List();
+	int GetNumberOfObjects();
+	GameObject3D* AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char* TexturePath);
+	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale);
+	
+	void DeleteLastPosObject();
+	void Update();
+	void Draw();
+	void End();
+	void SaveFields(const char* szFilename);
+	void SaveWalls(const char* szFilename);
+	void Load(const char* szFilename, int nType);
+};

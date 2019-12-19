@@ -17,7 +17,7 @@
 #define VIEW_FAR			(1000.0f)
 #define VALUE_MOVE_CAMERA	(2.0f)	
 #define VALUE_ROTATE_CAMERA	(XM_PI*0.01f)	
-
+#define OFFSET_VALUE	{0,20,0}
 Camera3D* MainCamera = nullptr;
 
 Camera3D::Camera3D(): FocalPoint(nullptr)
@@ -42,12 +42,11 @@ HRESULT Camera3D::Init()
 	g_posCameraR = XMFLOAT3(POS_CAMERA_R_X, POS_CAMERA_R_Y, POS_CAMERA_R_Z);
 	g_vecCameraU = XMFLOAT3(0, 1, 0);
 	g_rotCamera = XMFLOAT3(0, 0, 0);
-
 	float fVecX, fVecZ;
 	fVecX = g_posCameraP.x - g_posCameraR.x;
 	fVecZ = g_posCameraP.z - g_posCameraR.z;
 	g_fLengthInterval = sqrtf(fVecX * fVecX + fVecZ * fVecZ);
-	Offset = { 0,20,0 };
+	Offset = OFFSET_VALUE;
 	return S_OK;
 }
 
@@ -61,6 +60,7 @@ void Camera3D::Update()
 		vLookAt = XMFLOAT3(0, 0, 0);//’Ž‹“_
 		vEye.x=vLookAt.x = FocusPoint->GetPosition().x+ Offset.x;
 		vEye.y=vLookAt.y = FocusPoint->GetPosition().y+ Offset.y;
+		vEye.z+=Offset.z;
 		XMMATRIX mtxWorld = XMLoadFloat4x4(FocusPoint->GetModelWorld());
 		XMMATRIX identity = XMMatrixIdentity();
 		//Ž‹“_
@@ -124,6 +124,21 @@ XMFLOAT3 Camera3D::GetForwardCameraVector()
 void Camera3D::SetFocalPoint(void * newFocalPoint)
 {
 	FocalPoint = newFocalPoint;
+}
+
+void Camera3D::ZoomOutZ(float redZ)
+{
+	Offset.z -= redZ;
+	if (Offset.z < -612)
+		Offset.z = -612;
+	if (Offset.z > 63)
+		Offset.z = 63;
+	printf("%f\n", Offset.z);
+}
+
+void Camera3D::ResetZoom()
+{
+	Offset = OFFSET_VALUE;
 }
 
 Camera3D * GetMainCamera()

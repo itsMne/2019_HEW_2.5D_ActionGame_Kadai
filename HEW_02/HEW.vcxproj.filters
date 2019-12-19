@@ -92,9 +92,13 @@
       <Filter>CPP\ゲームCPP\シーン</Filter>
     </ClCompile>
     <ClCompile Include="Wall3D.cpp" />
-    <ClCompile Include="C_Ui.cpp" />
-    <ClCompile Include="C_Item.cpp" />
     <ClCompile Include="DebugAim.cpp" />
+    <ClCompile Include="C_Item.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
+    <ClCompile Include="C_Ui.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

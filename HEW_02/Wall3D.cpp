@@ -19,8 +19,10 @@ void Wall3D::Init()
 {
 	GameObject3D::InitModel(WALL_MODEL_PATH);
 	pModel->SetScale({ 11,11,11 });
+	pModel->SetRotation({ 0,0,0 });
 	Scale = { 1,1,1 };
 	pModel->SetPositionY(-2.5f);
+	Rotation = { 0,0,0 };
 	nType = GO_WALL;
 
 }

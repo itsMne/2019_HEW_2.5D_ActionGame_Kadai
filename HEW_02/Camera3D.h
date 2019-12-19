@@ -31,6 +31,8 @@ public:
 	XMFLOAT4X4& GetProjMatrix();
 	XMFLOAT3 GetForwardCameraVector();
 	void SetFocalPoint(void* newFocalPoint);
+	void ZoomOutZ(float redZ);
+	void ResetZoom();
 };
 
 Camera3D* GetMainCamera();
