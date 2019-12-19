@@ -18,12 +18,12 @@ private:
 	DXWindow3D* MainWindow;
 	
 	//UIÇÃïœêî
-	C_Ui* HelloHp00;
-	C_Ui* HelloHp01;
-	C_Ui* HelloMp;
+	C_Ui* pHP_UI_BACK;
+	C_Ui* pHP_UI_FRONT;
+	C_Ui* pMP_UI;
 	//C_Item* HelloItem;
-	C_Ui* HelloNumber;
-	C_Ui* HelloScore;
+	C_Ui* pSCORE_UI;
+	C_Ui* pSCORE_FRAME_UI;
 public:
 	
 	SceneGame();

@@ -1,6 +1,4 @@
 #include "SceneGame.h"
-#include "Wall3D.h"
-#include "C_Item.h"
 SceneGame* CurrentGame = nullptr;
 
 SceneGame::SceneGame(): SceneBase()
@@ -34,48 +32,41 @@ void SceneGame::Init()
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	
 	Walls->Load("Walls_Level", GO_WALL);
-	//Walls->AddWall({ 105,55,0 }, { 2,80,1 });
-	//Walls->AddWall({ 40,325,0 }, { 2,50,1 });
+
 
 	
 	SceneCamera->Init();
 	SceneLight->Init();
 	Fields->Load("Fields_Level", GO_FLOOR);
+	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
 	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
 	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
+	//Walls->AddWall({ 105,55,0 }, { 2,80,1 });
+	//Walls->AddWall({ 40,325,0 }, { 2,50,1 });
 	Items->Load("Items_Level", GO_ITEM);
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
 
 	// Hp
-	HelloHp00 = new C_Ui("data/texture/HP000.png", UI_HP00);
-	HelloHp01 = new C_Ui("data/texture/HP001.png", UI_HP01);
+	pHP_UI_BACK = new C_Ui("data/texture/HP000.png", UI_HP00);
+	pHP_UI_FRONT = new C_Ui("data/texture/HP001.png", UI_HP01);
 	// Mp
-	HelloMp = new C_Ui("data/texture/MP000.png", UI_MP);
+	pMP_UI = new C_Ui("data/texture/MP000.png", UI_MP);
 	
-	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
-	HelloNumber = new C_Ui("data/texture/number.png", UI_NUMBER);
+	pSCORE_UI = new C_Ui("data/texture/number.png", UI_NUMBER);
 	// Score
-	HelloScore = new C_Ui("data/texture/frame_score.png", UI_SCORE);
+	pSCORE_FRAME_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
 
 }
 
 void SceneGame::Uninit()
 {
-	// フィールド終了処理
-	SAFE_DELETE(Fields);
-	SAFE_DELETE(pPlayer);
-	SAFE_DELETE(SkySphere);
-	// モデル表示終了処理
-	//HelloModel->UninitModel();
-
-	// 光源終了処理
-	SceneLight->End();
-
-	// カメラ終了処理
-	if (SceneCamera)
-		SceneCamera->End();
+	SAFE_DELETE(Fields);//床終了処理
+	SAFE_DELETE(pPlayer);//プレイヤー終了処理
+	SAFE_DELETE(SkySphere);//スカイスフィア終了処理
+	SAFE_DELETE(SceneLight);// 光終了処理
+	SAFE_DELETE(SceneCamera);// カメラ終了処理
 
 	// デバッグ文字列表示終了処理
 	UninitDebugProc();
@@ -109,17 +100,17 @@ int SceneGame::Update()
 	Items->Update();
 
 	// Hp更新
-	HelloHp00->Update();
-	HelloHp01->Update();
+	pHP_UI_BACK->Update();
+	pHP_UI_FRONT->Update();
 
 	// Mp更新
-	HelloMp->Update();
+	pMP_UI->Update();
 
 	// Score更新
-	HelloScore->Update();
+	pSCORE_FRAME_UI->Update();
 
 	// Number更新
-	HelloNumber->Update();
+	pSCORE_UI->Update();
 	return nSceneType;
 }
 
@@ -149,21 +140,21 @@ void SceneGame::Draw()
 	
 
 	// 背面カリング (通常は表面のみ描画)
-	pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
+	
 	// Zバッファ無効
 	SetZBuffer(false);
 	// Hp描画
-	HelloHp00->Draw();
-	HelloHp01->Draw();
+	pHP_UI_BACK->Draw();
+	pHP_UI_FRONT->Draw();
 
 	// Mp描画
-	HelloMp->Draw();
+	pMP_UI->Draw();
 
 	// Number描画
-	HelloNumber->Draw();
+	pSCORE_UI->Draw();
 
 	// Score描画
-	HelloScore->Draw();
+	pSCORE_FRAME_UI->Draw();
 	// デバッグ文字列表示
 	DrawDebugProc();
 }

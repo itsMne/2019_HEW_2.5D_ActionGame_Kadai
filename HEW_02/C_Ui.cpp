@@ -124,6 +124,7 @@ void C_Ui::Update()
 
 void C_Ui::Draw()
 {
+	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(2));
 	switch (nType)
 	{
 	case UI_HP01:

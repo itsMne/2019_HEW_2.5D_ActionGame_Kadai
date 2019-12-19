@@ -10,7 +10,7 @@ public:
 	Light3D();
 	~Light3D();
 	HRESULT Init(void);
-	void End(void);
+	void Uninit(void);
 	void Update(void);
 	CFbxLight& GetLight(void);
 	void SetLightEnable(bool bEnable);

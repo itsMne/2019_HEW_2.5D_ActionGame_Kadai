@@ -34,6 +34,7 @@ Camera3D::Camera3D(bool bisMainCamera) : FocalPoint(nullptr)
 
 Camera3D::~Camera3D()
 {
+	Uninit();
 }
 
 HRESULT Camera3D::Init()
@@ -79,7 +80,7 @@ void Camera3D::Update()
 	//PrintDebugProc("[¶Ò× ²Á:(%f, %f, %f)]\n", g_posCameraP.x, g_posCameraP.y, g_posCameraP.z);
 }
 
-void Camera3D::End()
+void Camera3D::Uninit()
 {
 }
 

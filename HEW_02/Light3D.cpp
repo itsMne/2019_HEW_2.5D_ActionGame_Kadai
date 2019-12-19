@@ -17,6 +17,7 @@ Light3D::Light3D()
 
 Light3D::~Light3D()
 {
+	Uninit();
 }
 
 HRESULT Light3D::Init(void)
@@ -33,7 +34,7 @@ HRESULT Light3D::Init(void)
 	return S_OK;
 }
 
-void Light3D::End(void)
+void Light3D::Uninit(void)
 {
 }
 

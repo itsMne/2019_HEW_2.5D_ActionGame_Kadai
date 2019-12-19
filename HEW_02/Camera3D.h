@@ -23,7 +23,7 @@ public:
 	~Camera3D();
 	HRESULT Init();
 	void Update();
-	void End();
+	void Uninit();
 	void SetCamera();
 	XMFLOAT3& GetCameraPos();
 	XMFLOAT3& GetCameraAngle();
