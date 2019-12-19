@@ -31,8 +31,8 @@ void Spike3D::Update()
 	GameObject3D::Update();
 	hitbox = { 0,13.5f,0,4.8f * (float)SpikesOnX,6.5f* (float)SpikesOnY,5 };
 	if (SpikesOnX > 1 || SpikesOnY > 1) {
-		pSpikeModel->SetPositionX(5);
-		pSpikeModel->SetPositionY(15);
+		pSpikeModel->SetPositionX(-3.75f);
+		pSpikeModel->SetPositionY(2.5f);
 	}
 	if (pSpikeModel)
 		pSpikeModel->UpdateModel();
@@ -60,10 +60,10 @@ void Spike3D::Draw()
 	XMFLOAT3 tempPos = Position;
 	for (float j = -SpikesOnY *0.5f; j < SpikesOnY *0.5f; j++)
 	{
-		Position.y = 13 * j;
+		Position.y = tempPos.y-13 * j;
 		for (float i = -SpikesOnX * 0.5f; i < SpikesOnX *0.5f; i++)
 		{
-			Position.x = 10 * i;
+			Position.x = tempPos.x-10 * i;
 			if (pSpikeModel)
 				pSpikeModel->DrawModel();
 
@@ -75,4 +75,18 @@ void Spike3D::Draw()
 void Spike3D::Uninit()
 {
 	GameObject3D::Uninit();
+}
+
+void Spike3D::RaiseSpikesX(int rise)
+{
+	SpikesOnX += rise;
+	if (SpikesOnX < 1)
+		SpikesOnX = 1;
+}
+
+void Spike3D::RaiseSpikesY(int rise)
+{
+	SpikesOnY += rise;
+	if (SpikesOnY < 1)
+		SpikesOnY = 1;
 }

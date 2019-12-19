@@ -15,5 +15,7 @@ public:
 	void Update();
 	void Draw();
 	void Uninit();
+	void RaiseSpikesX(int rise);
+	void RaiseSpikesY(int rise);
 };
 

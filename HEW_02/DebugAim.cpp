@@ -39,7 +39,6 @@ void DebugAim::Init()
 	pDA_Item = nullptr;
 	pDA_Spike = nullptr;
 	nObjectType = DA_DEBUGAIM;
-	nSpikeX = nSpikeY = 1;
 	InitModel("data/model/DebugAim.fbx");
 }
 
@@ -191,11 +190,22 @@ void DebugAim::Update()
 		{
 			pDA_Spike = new Spike3D();
 			Scale = { 1,1,1 };
-			nSpikeX = nSpikeY = 1;
 		}
 		else {
 			pDA_Spike->Update();
 			pDA_Spike->SetPosition(Position);
+			if (GetInput(INPUT_SCALE_UP_Z)) {
+				pDA_Spike->RaiseSpikesY(1);
+			}
+			if (GetInput(INPUT_SCALE_DOWN_Z)) {
+				pDA_Spike->RaiseSpikesY(-1);
+			}
+			if (GetInput(INPUT_SCALE_UP_X)) {
+				pDA_Spike->RaiseSpikesX(1);
+			}
+			if (GetInput(INPUT_SCALE_DOWN_X)) {
+				pDA_Spike->RaiseSpikesX(-1);
+			}
 		}
 		break;
 	default:

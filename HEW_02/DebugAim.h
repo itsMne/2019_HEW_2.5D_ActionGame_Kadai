@@ -13,7 +13,6 @@ private:
 	Wall3D* pDA_Wall;
 	C_Item* pDA_Item;
 	Spike3D* pDA_Spike;
-	int nSpikeX, nSpikeY;
 	void* pCurrentGame;
 public:
 	DebugAim();
