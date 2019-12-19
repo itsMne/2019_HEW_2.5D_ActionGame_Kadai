@@ -153,7 +153,7 @@ void DebugAim::Update()
 			}
 		}
 		break;
-	case DA_ITEM_SUSHI: case DA_ITEM_UDON:case DA_ITEM_ODEN:case DA_ITEM_TAI:case DA_ITEM_DANGO:
+	case DA_ITEM_SUSHI: case DA_ITEM_UDON: case DA_ITEM_ODEN: case DA_ITEM_TAI: case DA_ITEM_DANGO:
 		nitemType = nObjectType - DA_ITEM_SUSHI;
 		if (!pDA_Item) {
 			pDA_Item = new C_Item(nitemType);
@@ -173,8 +173,11 @@ void DebugAim::Update()
 			{
 				p_sCurrentGame->GetItems()->DeleteLastPosObject();
 			}
+			if (GetInput(INPUT_SAVE_LEVEL))
+			{
+				p_sCurrentGame->GetItems()->SaveItems("Items_Level");
+			}
 		}
-
 		break;
 	default:
 		break;

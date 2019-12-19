@@ -43,6 +43,7 @@ void SceneGame::Init()
 	Fields->Load("Fields_Level", GO_FLOOR);
 	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
 	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
+	Items->Load("Items_Level", GO_ITEM);
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
@@ -52,8 +53,8 @@ void SceneGame::Init()
 	HelloHp01 = new C_Ui("data/texture/HP001.png", UI_HP01);
 	// Mp
 	HelloMp = new C_Ui("data/texture/MP000.png", UI_MP);
-
-	Items->AddItem({ 10,0,0 }, TYPE_ODEN);
+	
+	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
 	HelloNumber = new C_Ui("data/texture/number.png", UI_NUMBER);
 	// Score
 	HelloScore = new C_Ui("data/texture/frame_score.png", UI_SCORE);

@@ -106,3 +106,8 @@ void C_Item::SetUse(bool use)
 {
 	bUse = use;
 }
+
+int C_Item::GetItemType()
+{
+	return nItemType;
+}

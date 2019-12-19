@@ -68,6 +68,14 @@ typedef struct GameObjectContainer {
 	XMFLOAT3 MoveEndPos;
 };
 
+typedef struct ItemContainer {
+	XMFLOAT3 Pos;
+	int nItemType;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
+
 class Go_List
 {
 private:
@@ -87,6 +95,7 @@ public:
 	void End();
 	void SaveFields(const char* szFilename);
 	void SaveWalls(const char* szFilename);
+	void SaveItems(const char* szFilename);
 	//void SaveItem(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

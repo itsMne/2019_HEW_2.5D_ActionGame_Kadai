@@ -25,5 +25,6 @@ public:
 	void Draw();
 	void Uninit();
 	void SetUse(bool);
+	int GetItemType();
 };
 

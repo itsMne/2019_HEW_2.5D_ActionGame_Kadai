@@ -422,6 +422,45 @@ void Go_List::SaveWalls(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveItems(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_ITEM)
+			{
+				ItemContainer Item;
+				C_Item* thisItem = (C_Item*)pPositionList->Object;
+				Item.Pos = thisItem->GetPosition();
+				Item.bMoveable = thisItem->IsMoveableObject();
+				Item.MoveStartPos = thisItem->GetMoveStartPosition();
+				Item.MoveEndPos = thisItem->GetMoveEndPosition();
+				Item.nItemType = thisItem->GetItemType();
+				fwrite(&Item, sizeof(ItemContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -433,22 +472,29 @@ void Go_List::Load(const char * szFilename, int nType)
 		printf_s("%sのファイルはない…\n", szFinalfilename);
 		return;
 	}
-	GameObjectContainer* container = new GameObjectContainer();
-	while (fread(container, sizeof(GameObjectContainer), 1, pFile))
-	{
-		switch (nType)
+	GameObjectContainer* go_container = new GameObjectContainer();
+	ItemContainer* item_container = new ItemContainer();
+	if (nType== GO_FLOOR || nType == GO_WALL) {
+		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
 		{
-		case GO_FLOOR:
-			AddField(container->Pos, container->Scale, container->texpath);
-			break;
-		case GO_WALL:
-			AddWall(container->Pos, container->Scale);
-			break;
-		default:
-			break;
+			switch (nType)
+			{
+			case GO_FLOOR:
+				AddField(go_container->Pos, go_container->Scale, go_container->texpath);
+				break;
+			case GO_WALL:
+				AddWall(go_container->Pos, go_container->Scale);
+				break;
+			default:
+				break;
+			}
+
 		}
-		
 	}
-	delete(container);
+	else if (nType == GO_ITEM) {
+		while ((fread(item_container, sizeof(ItemContainer), 1, pFile)))
+			AddItem(item_container->Pos, item_container->nItemType);
+	}
+	delete(go_container);
 	fclose(pFile);
 }
