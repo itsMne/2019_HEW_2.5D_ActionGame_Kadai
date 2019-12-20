@@ -12,7 +12,7 @@
 #define MAX_INPUT_TIMER 60
 #define MAX_ATTACKS 12
 #define INIT_HP 100
-#define INIT_STAMINA 100
+#define INIT_STAMINA 30
 Player3D* MainPlayer;
 enum ANIMATION_NINJA
 {
@@ -33,12 +33,15 @@ enum ANIMATION_NINJA
 	NINJA_ATTACK_COMBOAIR_D,
 	NINJA_AIR_DOWN_FORWARD,
 	NINJA_AIR_DASH,
+	NINJA_AIR_DOWN,
+	NINJA_DASH,
 	NINJA_SPIN_DASH,
 	NINJA_SHURIKEN,
 	NINJA_SHURIKEN_AIR,
 	NINJA_ON_WALL=23,
 	NINJA_KICKWALL,
 	NINJA_CRAWLING,
+	NINJA_DAMAGEDALT,
 };
 enum ANIMATION_GEISHA
 {
@@ -65,20 +68,20 @@ enum MOVEMENT_LOCKED
 PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 {
 	//忍者
-	{"A",   MODEL_NINJA, NINJA_ATTACK_COMBO_A,    false, GROUND_MOVE,	200 },
-	{"AA",  MODEL_NINJA, NINJA_ATTACK_COMBO_B,    false, GROUND_MOVE,	270 },
-	{"AAA", MODEL_NINJA, NINJA_ATTACK_COMBO_C,    false, GROUND_MOVE,	374 },
-	{"AAAA", MODEL_NINJA, NINJA_ATTACK_COMBO_D,   false, GROUND_MOVE,	374 },
-	{"AAAAA", MODEL_NINJA, NINJA_ATTACK_COMBO_E,  true,  GROUND_MOVE,	374 },
-	{"A",   MODEL_NINJA, NINJA_ATTACK_COMBOAIR_A, false, AIR_MOVE,		440 },
-	{"AA",  MODEL_NINJA, NINJA_ATTACK_COMBOAIR_B, false, AIR_MOVE,		540 },
-	{"AAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_C, false,  AIR_MOVE,		620 },
-	{"AAAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_D, true,  AIR_MOVE,		620 },
+	{"A",   MODEL_NINJA, NINJA_ATTACK_COMBO_A,    false, GROUND_MOVE,	420 },
+	{"AA",  MODEL_NINJA, NINJA_ATTACK_COMBO_B,    false, GROUND_MOVE,	520 },
+	{"AAA", MODEL_NINJA, NINJA_ATTACK_COMBO_C,    false, GROUND_MOVE,	680 },
+	{"AAAA", MODEL_NINJA, NINJA_ATTACK_COMBO_D,   false, GROUND_MOVE,	820 },
+	{"AAAAA", MODEL_NINJA, NINJA_ATTACK_COMBO_E,  true,  GROUND_MOVE,	950 },
+	{"A",   MODEL_NINJA, NINJA_ATTACK_COMBOAIR_A, false, AIR_MOVE,		1228 },
+	{"AA",  MODEL_NINJA, NINJA_ATTACK_COMBOAIR_B, false, AIR_MOVE,		1328 },
+	{"AAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_C, false,  AIR_MOVE,		1411 },
+	{"AAAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_D, true,  AIR_MOVE,		1480 },
 	//侍
-	{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		139 },
-	{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		280 },
+	{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		263 },
+	{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		348 },
 	//芸者														  
-	{"A",   MODEL_GEISHA, GEISHA_BLOCK,			  true,  BOTH_MOVE,		200 },
+	{"A",   MODEL_GEISHA, GEISHA_BLOCK,			  true,  BOTH_MOVE,		323 },
 };
 Player3D::Player3D() :GameObject3D()
 {
@@ -135,6 +138,7 @@ void Player3D::Init()
 	pMainCamera = GetMainCamera();
 	pDebugAim = new DebugAim();
 	pDebugAim->SetPosition(Position);
+	bStaminaCoolDown = false;
 	nHP /= 2;//DEL
 	
 #if SHOW_HITBOX
@@ -150,23 +154,25 @@ void Player3D::Init()
 void Player3D::Update()
 {
 	GameObject3D::Update();
-	if (bUsingDebugAim)
-	{
-		if(pDebugAim)
-			pDebugAim->Update();
+	if (DebugAimControl()) 
+		return;//使っている場合に、関数が終わり
 
-		if (GetInput(INPUT_DEBUGAIM)) {
-			GetMainCamera()->SetFocalPoint(this);
-			bUsingDebugAim = false;
-		}
+	if (nState == PLAYER_DEAD)//プレイヤーが死んだ場合に管理する
+	{
+		DeadStateControl();
 		return;
 	}
-	if(pDebugAim)
-		pDebugAim->SetPosition(Position);
-	if (GetInput(INPUT_DEBUGAIM)) {
-		GetMainCamera()->SetFocalPoint(pDebugAim);
-		bUsingDebugAim = true;
+	if (nState == PLAYER_TELEPORTING_DAMAGED)//プレイヤーはスパイクみたいな危険からダメージをもらった場合に管理する
+	{
+		DamagedTeleportingControl();
+		return;
 	}
+	if (nHP <= 0) {//HPは０になったらプレイヤーの状態が変わる
+		nState = PLAYER_DEAD;
+		return;
+	}
+	
+
 	bool bIsLocked = pCurrentAttackPlaying;
 	if (pCurrentAttackPlaying)
 		bIsLocked = (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() < pCurrentAttackPlaying->UnlockFrame);
@@ -210,8 +216,19 @@ void Player3D::Update()
 			}
 		}
 	}
-	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
-		pPlayerModels[i]->UpdateModel();
+	pPlayerModels[nCurrentTransformation]->UpdateModel();
+	if (pCurrentFloor)
+	{
+		if (++nFrameCountForSafePos > 30)
+		{
+			nFrameCountForSafePos = 0;
+			x3LastSafePos = Position;
+		}
+	}
+	else {
+		nFrameCountForSafePos = 0;
+	}
+	
 	XMFLOAT3 rotCamera;
 	if (nCurrentTransformation == MODEL_SAMURAI || nCurrentTransformation == MODEL_GEISHA)
 	{
@@ -234,6 +251,13 @@ void Player3D::Update()
 		if (nStamina > nMaxStamina)
 			nStamina = nMaxStamina;
 	}
+	if (nStamina <= 0)
+	{
+		nStamina = 0;
+		bStaminaCoolDown = true;
+	}
+	if (nStamina >= nMaxStamina)
+		bStaminaCoolDown = false;
 	// カメラの向き取得
 	rotCamera = pMainCamera->GetCameraAngle();
 	static int NumTest = 2;
@@ -243,7 +267,7 @@ void Player3D::Update()
 	switch (nState)
 	{
 	case PLAYER_IDLE:
-		SwitchAnimationSpeed(5);
+		SwitchAnimationSlowness(0);
 		if (!pCurrentFloor) 
 		{
 			if (LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) 
@@ -267,7 +291,7 @@ void Player3D::Update()
 			nState = PLAYER_WALKING;
 		break;
 	case PLAYER_WALKING:
-		SwitchAnimationSpeed(5);
+		SwitchAnimationSlowness(0);
 		if (!(!pCurrentFloor && (LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) && nCurrentTransformation==MODEL_NINJA))
 		{
 			if (GetInput(INPUT_LEFT))
@@ -299,8 +323,11 @@ void Player3D::Update()
 		}
 		else {
 			SwitchAnimation(MODEL_NINJA, NINJA_WALKING);
+			pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(1);
 			SwitchAnimation(MODEL_GEISHA, GEISHA_WALKING);
+			pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(1);
 			SwitchAnimation(MODEL_SAMURAI, SAMURAI_WALKING);
+			pPlayerModels[MODEL_SAMURAI]->SwitchAnimationSpeed(0.35f);
 		}
 		if(nCurrentTransformation==MODEL_NINJA)
 			Position.x += PLAYER_SPEED * 0.75f * nDirection*LockMovementRight*LockMovementLeft;
@@ -311,17 +338,21 @@ void Player3D::Update()
 	
 		break;
 	case PLAYER_TRANSFORMING:
-		TrasnformingStateControl();
+		TransformingStateControl();
 		break;
 	case PLAYER_ATTACKING:
-		//printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
+		SwitchAnimationSpeed(1.5f);
+		//SwitchAnimationSlowness(5);
+		f_yForce = 0;
+		printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
+		
 		if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0)
 			pCurrentAttackPlaying = nullptr;
 		if (!pCurrentAttackPlaying)
 			nState = PLAYER_IDLE;
 		break;
 	case PLAYER_KICK_WALL_STATE:
-		SwitchAnimationSpeed(3);
+		SwitchAnimationSlowness(0);
 		SwitchAnimation(MODEL_NINJA, NINJA_KICKWALL);
 		Position.x += PLAYER_SPEED * 0.75f * -nDirection;
 		if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0 ||
@@ -354,6 +385,82 @@ void Player3D::Update()
 
 }
 
+bool Player3D::DebugAimControl()
+{
+	if (bUsingDebugAim)
+	{
+		if (pDebugAim)
+			pDebugAim->Update();
+
+		if (GetInput(INPUT_DEBUGAIM)) {
+			GetMainCamera()->SetFocalPoint(this);
+			bUsingDebugAim = false;
+		}
+		return true;
+	}
+	if (pDebugAim)
+		pDebugAim->SetPosition(Position);
+	if (GetInput(INPUT_DEBUGAIM)) {
+		GetMainCamera()->SetFocalPoint(pDebugAim);
+		bUsingDebugAim = true;
+	}
+	return false;
+}
+
+void Player3D::DeadStateControl()
+{
+	pPlayerModels[MODEL_NINJA]->SetCanLoop(false);
+	if (!pCurrentFloor) {
+		GravityControl();
+		return;
+	}
+	nNextTransform = MODEL_NINJA;
+	TransformingStateControl();
+	if (nCurrentTransformation != MODEL_NINJA)
+		return;
+	SwitchAnimation(MODEL_NINJA, NINJA_DEAD);
+	pPlayerModels[MODEL_NINJA]->UpdateModel();
+}
+
+void Player3D::DamagedTeleportingControl()
+{
+	nNextTransform = MODEL_NINJA;
+	TransformingStateControl();
+	if (nCurrentTransformation != MODEL_NINJA)
+		return;
+
+	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
+	pPlayerModels[MODEL_NINJA]->UpdateModel();
+	static int fAcceleration = 0;
+	fAcceleration++;
+	if (Position.x < x3LastSafePos.x) {
+		Position.x += fAcceleration;
+		if (Position.x >= x3LastSafePos.x)
+			Position.x = x3LastSafePos.x;
+	}
+	else if (Position.x > x3LastSafePos.x) {
+		Position.x -= fAcceleration;
+		if (Position.x <= x3LastSafePos.x)
+			Position.x = x3LastSafePos.x;
+	}
+
+	if (Position.y < x3LastSafePos.y) {
+		Position.y += fAcceleration;
+		if (Position.y >= x3LastSafePos.y)
+			Position.y = x3LastSafePos.y;
+	}
+	else if (Position.y > x3LastSafePos.y) {
+		Position.y -= fAcceleration;
+		if (Position.y <= x3LastSafePos.y)
+			Position.y = x3LastSafePos.y;
+	}
+	if (Position.x == x3LastSafePos.x && Position.y == x3LastSafePos.y)
+	{
+		fAcceleration = 0;
+		nState = PLAYER_IDLE;
+	}
+}
+
 void Player3D::PlayerInputsControl(bool bIsLocked)
 {
 	if (nState == PLAYER_KICK_WALL_STATE)
@@ -376,19 +483,19 @@ void Player3D::PlayerInputsControl(bool bIsLocked)
 	}
 	if (nState == PLAYER_TRANSFORMING || bIsLocked)
 		return;
-	if (GetInput(TRANSFORM_GEISHA))
+	if (GetInput(TRANSFORM_GEISHA) && nStamina>0 && !bStaminaCoolDown)
 	{
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
 		nNextTransform = MODEL_GEISHA;
 	}
-	else if (GetInput(TRANSFORM_SAMURAI))
+	else if (GetInput(TRANSFORM_SAMURAI) && nStamina > 0 && !bStaminaCoolDown)
 	{
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
 		nNextTransform = MODEL_SAMURAI;
 	}
-	else {
+	else if(!GetInput(TRANSFORM_GEISHA) || !GetInput(TRANSFORM_SAMURAI) || nStamina <= 0 || bStaminaCoolDown){
 		nNextTransform = MODEL_NINJA;
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
@@ -415,8 +522,11 @@ void Player3D::PlayerInputsControl(bool bIsLocked)
 	}
 }
 
-void Player3D::TrasnformingStateControl()
+void Player3D::TransformingStateControl()
 {
+	if (nCurrentTransformation == nNextTransform) {
+		return;
+	}
 	static float fTransformAcceleration = 0;
 	static bool bCurrentModelFinished = false;
 	static int nCooldownInbetween=0;
@@ -434,6 +544,7 @@ void Player3D::TrasnformingStateControl()
 		}
 	}
 	else {
+		pPlayerModels[nNextTransform]->UpdateModel();
 		if (++nCooldownInbetween > 2) {
 			float fModelScale = 0;
 			if (nNextTransform == MODEL_NINJA)
@@ -459,13 +570,16 @@ void Player3D::TrasnformingStateControl()
 			}
 		}
 	}
-	if (nCurrentTransformation == nNextTransform)
+	if (nCurrentTransformation == nNextTransform && nState != PLAYER_TELEPORTING_DAMAGED) 
 		nState = PLAYER_IDLE;
+	else if(nCurrentTransformation == nNextTransform && nState == PLAYER_TELEPORTING_DAMAGED)
+		nState = PLAYER_TELEPORTING_DAMAGED;
 }
 
 void Player3D::Jump(float fJumpForce)
 {
 	if (pCurrentFloor) {
+		x3LastSafePos = Position;
 		while (IsInCollision3D(pCurrentFloor->GetHitBox(), GetHitBox(HB_FEET)))
 			Position.y += 0.01;
 	}
@@ -479,6 +593,7 @@ void Player3D::GravityControl()
 		return;
 	if (pCurrentFloor)
 	{
+		f_yForce = 0;
 		if (!IsInCollision3D(pCurrentFloor->GetHitBox(), GetHitBox(HB_FEET)))
 			pCurrentFloor = nullptr;
 	}
@@ -498,13 +613,7 @@ void Player3D::GravityControl()
 				if (GetInput(INPUT_NINJACRAWL_UP))
 					Position.y++;
 					return;
-				if (f_yForce > 5)
-					f_yForce = 5;
-				f_yForce += GRAVITY_FORCE;
-				if (f_yForce < 0)
-					Position.y -= f_yForce;
-				else
-					Position.y -= f_yForce * 0.025f;
+					f_yForce = 0;
 			}
 			else {
 				if (f_yForce > 7)
@@ -602,15 +711,26 @@ void Player3D::SwitchAnimation(int nAnimation)
 	nCurrentAnimation = nAnimation;
 }
 
-void Player3D::SwitchAnimationSpeed(int nModel, int nSpeed)
+void Player3D::SwitchAnimationSlowness(int nModel, float fSpeed)
 {
-	pPlayerModels[nModel]->SwitchAnimationSpeed(nSpeed);
+	pPlayerModels[nModel]->SwitchAnimationSlowness(fSpeed);
 }
 
-void Player3D::SwitchAnimationSpeed(int nSpeed)
+void Player3D::SwitchAnimationSlowness(float fSpeed)
 {
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
-		pPlayerModels[i]->SwitchAnimationSpeed(nSpeed);
+		pPlayerModels[i]->SwitchAnimationSlowness(fSpeed);
+}
+
+void Player3D::SwitchAnimationSpeed(float fSpeed)
+{
+	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
+		pPlayerModels[i]->SwitchAnimationSpeed(fSpeed);
+}
+
+void Player3D::SwitchAnimationSpeed(int Model, float fSpeed)
+{
+	pPlayerModels[Model]->SwitchAnimationSpeed(fSpeed);
 }
 
 Hitbox3D Player3D::GetHitBox(int hitbox)
@@ -757,4 +877,19 @@ void Player3D::RiseHP(int nhprise)
 	nHP += nhprise;
 	if (nHP >= nMaxHP)
 		nHP = nMaxHP;
+}
+
+bool Player3D::IsStaminaCooldownOn()
+{
+	return bStaminaCoolDown;
+}
+
+void Player3D::SetDamageTeleport(int Damage)
+{
+	if (nState == PLAYER_TELEPORTING_DAMAGED)
+		return;
+	nState = PLAYER_TELEPORTING_DAMAGED;
+	nHP -= Damage;
+	if (nHP < 0)
+		nHP = 0;
 }

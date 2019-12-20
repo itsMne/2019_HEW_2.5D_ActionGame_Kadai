@@ -2,7 +2,7 @@
 #include "Spike3D.h"
 
 SceneGame* CurrentGame = nullptr;
-Spike3D* HelloSpike = nullptr;
+
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
@@ -31,12 +31,10 @@ void SceneGame::Init()
 	Fields = new Go_List();
 	Walls = new Go_List();
 	Items = new Go_List();
+	Spikes = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	
-	
 
-
-	
 	SceneCamera->Init();
 	SceneLight->Init();
 	Walls->Load("Walls_Level", GO_WALL);
@@ -51,8 +49,9 @@ void SceneGame::Init()
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
-
-	HelloSpike = new Spike3D();
+	Spikes->Load("Spikes_Level", GO_SPIKE);
+	//Spikes->AddSpike({ 10,0,0 }, 1, 1, false);
+	//HelloSpike = new Spike3D();
 
 	// Hp
 	pHP_UI_BACK = new C_Ui("data/texture/HP000.png", UI_HP00);
@@ -105,7 +104,7 @@ int SceneGame::Update()
 	
 	Items->Update();
 
-	HelloSpike->Update();
+	Spikes->Update();
 	// Hp更新
 	pHP_UI_BACK->Update();
 	pHP_UI_FRONT->Update();
@@ -144,7 +143,7 @@ void SceneGame::Draw()
 	Walls->Draw();
 	Fields->Draw();
 	
-	HelloSpike->Draw();
+	Spikes->Draw();
 
 	// 背面カリング (通常は表面のみ描画)
 	
@@ -179,6 +178,11 @@ Go_List * SceneGame::GetWalls()
 Go_List * SceneGame::GetItems()
 {
 	return Items;
+}
+
+Go_List * SceneGame::GetSpikes()
+{
+	return Spikes;
 }
 
 int SceneGame::GetScore()

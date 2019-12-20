@@ -15,11 +15,13 @@ private:
 	XMFLOAT4X4	g_mtxWorld;		// ワールドマトリックス
 	bool bIsMoving = false;
 	Camera3D* pMainCamera = nullptr;
-	int nFrame;
+	float fFrame;
 	int nFramCount;
-	int nAnimationFrameSpeed;
+	float fAnimSpeed;
+	int AnimationFrameSlowness;
 	void* Parent;
 	int nCountLoop;
+	bool bCanLoop;
 public:
 	Model3D();
 	~Model3D();
@@ -35,7 +37,8 @@ public:
 	XMFLOAT3 GetRotation();
 	void SetRotationY(float y);
 	int GetMaxNumberofAnimations();
-	void SwitchAnimationSpeed(int nFrameSpeed);
+	void SwitchAnimationSlowness(int nFrameSpeed);
+	void SwitchAnimationSpeed(float nFrameSpeed);
 	void SetScale(float newScale);
 	void SetScale(XMFLOAT3 newScale);
 	void ReduceScaleOnX(float red);
@@ -50,5 +53,6 @@ public:
 	int GetEndFrameOfCurrentAnimation();
 	int GetCurrentFrame();
 	int GetLoops();
+	void SetCanLoop(bool);
 };
 #endif

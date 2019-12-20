@@ -206,6 +206,20 @@ void DebugAim::Update()
 			if (GetInput(INPUT_SCALE_DOWN_X)) {
 				pDA_Spike->RaiseSpikesX(-1);
 			}
+
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				p_sCurrentGame->GetSpikes()->AddSpike(Position, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y), true);
+				printf("Spikes->AddSpike({ %ff ,%ff ,%ff}, %d, %d, true);\n", Position.x, Position.y, Position.z, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y));
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetSpikes()->DeleteLastPosObject();
+			}
+			if (GetInput(INPUT_SAVE_LEVEL))
+			{
+				p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
+			}
 		}
 		break;
 	default:

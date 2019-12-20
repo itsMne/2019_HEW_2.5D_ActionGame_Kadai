@@ -5,9 +5,9 @@ class Spike3D :
 {
 private:
 	Model3D* pSpikeModel;
-	int SpikesOnX;
-	int SpikesOnY;
-
+	int nSpikesOnX;
+	int nSpikesOnY;
+	bool bInvisible;
 public:
 	Spike3D();
 	~Spike3D();
@@ -17,5 +17,8 @@ public:
 	void Uninit();
 	void RaiseSpikesX(int rise);
 	void RaiseSpikesY(int rise);
+	void SetSpikesNum(int x, int y);
+	void SetInvisibility(bool invisible);
+	XMFLOAT2 GetSpikesNum();
 };
 

@@ -14,8 +14,10 @@ Model3D::Model3D()
 {
 	nFramCount = 0;
 	nCountLoop = 0;
-	nAnimationFrameSpeed = 5;
+	AnimationFrameSlowness = 0;
 	Parent = nullptr;
+	fAnimSpeed = 2;
+	bCanLoop = true;
 }
 
 
@@ -41,7 +43,7 @@ HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 	// FBXファイルの読み込み
 	g_pModel = new CFbxModel();
 	Light3D* pLight = GetMainLight();
-	nFrame = g_pModel->GetInitialAnimFrame();
+	fFrame = g_pModel->GetInitialAnimFrame();
 	if (!pMainCamera)
 	{
 		printf("メインカメラがありません\n");
@@ -71,7 +73,7 @@ void Model3D::UninitModel(void)
 //=============================================================================
 void Model3D::UpdateModel(void)
 {
-
+	AnimationControl();
 }
 
 void Model3D::SwitchAnimation(int nNewAnimNum)
@@ -79,7 +81,7 @@ void Model3D::SwitchAnimation(int nNewAnimNum)
 	if (g_pModel->GetCurrentAnimation() == nNewAnimNum)
 		return;
 	g_pModel->SetAnimStack(nNewAnimNum);
-	nFrame = g_pModel->GetInitialAnimFrame();
+	fFrame = g_pModel->GetInitialAnimFrame();
 	nFramCount = nCountLoop = 0;
 }
 
@@ -130,7 +132,7 @@ void Model3D::DrawModel(void)
 	XMStoreFloat4x4(&g_mtxWorld, mtxWorld);
 
 
-	AnimationControl();
+	//AnimationControl();
 	SetZWrite(true);
 	g_pModel->Render(g_mtxWorld, pMainCamera->GetViewMatrix(), pMainCamera->GetProjMatrix(), eOpacityOnly);
 	SetZWrite(false);
@@ -139,15 +141,20 @@ void Model3D::DrawModel(void)
 
 void Model3D::AnimationControl()
 {
-	if (++nFramCount >= nAnimationFrameSpeed) {
+	if (++nFramCount >= AnimationFrameSlowness) {
 		nFramCount = 0;
-
-		if (++nFrame >= g_pModel->GetMaxAnimFrame()) {
-			if (++nCountLoop > MAX_LOOPS)
-				nCountLoop = MAX_LOOPS;
-			nFrame = g_pModel->GetInitialAnimFrame();
+		fFrame += fAnimSpeed;
+		if (++fFrame >= g_pModel->GetMaxAnimFrame()) {
+			if (bCanLoop) {
+				if (++nCountLoop > MAX_LOOPS)
+					nCountLoop = MAX_LOOPS;
+				fFrame = g_pModel->GetInitialAnimFrame();
+			}
+			else {
+				fFrame--;
+			}
 		}
-			g_pModel->SetAnimFrame(nFrame);
+			g_pModel->SetAnimFrame((int)fFrame);
 	}
 }
 
@@ -183,9 +190,14 @@ int Model3D::GetMaxNumberofAnimations()
 	return 0;
 }
 
-void Model3D::SwitchAnimationSpeed(int nFrameSpeed)
+void Model3D::SwitchAnimationSlowness(int nFrameSpeed)
 {
-	nAnimationFrameSpeed = nFrameSpeed;
+	AnimationFrameSlowness = nFrameSpeed;
+}
+
+void Model3D::SwitchAnimationSpeed(float nFrameSpeed)
+{
+	fAnimSpeed = nFrameSpeed;
 }
 
 void Model3D::SetScale(float newScale)
@@ -256,11 +268,16 @@ int Model3D::GetEndFrameOfCurrentAnimation()
 int Model3D::GetCurrentFrame()
 {
 	if (g_pModel)
-		return nFrame;
+		return fFrame;
 	return 0;
 }
 
 int Model3D::GetLoops()
 {
 	return nCountLoop;
+}
+
+void Model3D::SetCanLoop(bool loop)
+{
+	bCanLoop = loop;
 }

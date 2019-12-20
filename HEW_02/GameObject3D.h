@@ -6,6 +6,7 @@ enum goType
 	GO_PLAYER = 0,
 	GO_WALL,
 	GO_ITEM,
+	GO_SPIKE,
 	GO_FLOOR,
 	GO_DEBUG_AIM,
 	MAX_TYPE
@@ -75,6 +76,15 @@ typedef struct ItemContainer {
 	XMFLOAT3 MoveStartPos;
 	XMFLOAT3 MoveEndPos;
 };
+typedef struct SpikesContainer {
+	XMFLOAT3 Pos;
+	int SpikesX;
+	int SpikesY;
+	bool Invisible = false;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
 
 class Go_List
 {
@@ -88,7 +98,8 @@ public:
 	GameObject3D* AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char* TexturePath);
 	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale);
 	GameObject3D* AddItem(XMFLOAT3 newPosition, int nType);
-	
+	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible);
+
 	void DeleteLastPosObject();
 	void Update();
 	void Draw();
@@ -96,6 +107,7 @@ public:
 	void SaveFields(const char* szFilename);
 	void SaveWalls(const char* szFilename);
 	void SaveItems(const char* szFilename);
+	void SaveSpikes(const char* szFilename);
 	//void SaveItem(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

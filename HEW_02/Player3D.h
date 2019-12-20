@@ -28,6 +28,8 @@ enum PLAYER_STATES
 	PLAYER_TRANSFORMING,
 	PLAYER_ATTACKING,
 	PLAYER_KICK_WALL_STATE,
+	PLAYER_TELEPORTING_DAMAGED,
+	PLAYER_DEAD,
 	PLAYER_MAX
 };
 enum AirMove
@@ -74,13 +76,19 @@ private:
 	int nCurrentAnimation;
 	bool bUsingDebugAim;
 	DebugAim* pDebugAim;
+	bool bStaminaCoolDown;
+	int nFrameCountForSafePos;
+	XMFLOAT3 x3LastSafePos;
 public:
 	Player3D();
 	~Player3D();
 	void Init();
 	void Update();
+	bool DebugAimControl();
+	void DeadStateControl();
+	void DamagedTeleportingControl();
 	void PlayerInputsControl(bool bIsLocked);
-	void TrasnformingStateControl();
+	void TransformingStateControl();
 	void Jump(float fJumpForce);
 	void GravityControl();
 	void HitboxControl();
@@ -89,8 +97,10 @@ public:
 	void Uninit();
 	void SwitchAnimation(int Model, int Animation);
 	void SwitchAnimation(int Animation);
-	void SwitchAnimationSpeed(int Model, int nSpeed);
-	void SwitchAnimationSpeed(int nSpeed);
+	void SwitchAnimationSlowness(int Model, float nSpeed);
+	void SwitchAnimationSlowness(float nSpeed);
+	void SwitchAnimationSpeed(float nSpeed);
+	void SwitchAnimationSpeed(int Model, float nSpeed);
 	Hitbox3D GetHitBox(int hitbox);
 	Field3D* GetFloor();
 	int GetDirection();
@@ -109,6 +119,8 @@ public:
 	int GetPlayerMp();
 	int GetPlayerMaxMp();
 	void RiseHP(int nhprise);
+	bool IsStaminaCooldownOn();
+	void SetDamageTeleport(int Damage);
 };
 
 Player3D* GetMainPlayer();

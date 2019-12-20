@@ -1,6 +1,7 @@
 #include "GameObject3D.h"
 #include "Field3D.h"
 #include "Wall3D.h"
+#include "Spike3D.h"
 #include "C_Item.h"
 #include "String.h"
 
@@ -255,6 +256,37 @@ GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
 
 }
 
+GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new Spike3D();
+		Spike3D* thisSpike = (Spike3D*)(pWorkList->Object);
+		thisSpike->SetPosition(newPosition);
+		thisSpike->SetSpikesNum(SpikesX, SpikesY);
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new Spike3D();
+		Spike3D* thisSpike = (Spike3D*)(HeadNode->Object);
+		thisSpike->SetPosition(newPosition);
+		thisSpike->SetSpikesNum(SpikesX, SpikesY);
+		thisSpike->SetInvisibility(binvisible);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+
+}
+
 void Go_List::DeleteLastPosObject()
 {
 	if (HeadNode == nullptr)
@@ -462,6 +494,46 @@ void Go_List::SaveItems(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveSpikes(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_SPIKE)
+			{
+				
+				SpikesContainer Spike;
+				Spike3D* thisSpike = (Spike3D*)pPositionList->Object;
+				Spike.Pos = thisSpike->GetPosition();
+				Spike.bMoveable = thisSpike->IsMoveableObject();
+				Spike.MoveStartPos = thisSpike->GetMoveStartPosition();
+				Spike.MoveEndPos = thisSpike->GetMoveEndPosition();
+				Spike.SpikesX = (int)(thisSpike->GetSpikesNum().x);
+				Spike.SpikesY = (int)(thisSpike->GetSpikesNum().y);
+				fwrite(&Spike, sizeof(SpikesContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -475,6 +547,7 @@ void Go_List::Load(const char * szFilename, int nType)
 	}
 	GameObjectContainer* go_container = new GameObjectContainer();
 	ItemContainer* item_container = new ItemContainer();
+	SpikesContainer* spike_container = new SpikesContainer();
 	if (nType== GO_FLOOR || nType == GO_WALL) {
 		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
 		{
@@ -495,6 +568,11 @@ void Go_List::Load(const char * szFilename, int nType)
 	else if (nType == GO_ITEM) {
 		while ((fread(item_container, sizeof(ItemContainer), 1, pFile)))
 			AddItem(item_container->Pos, item_container->nItemType);
+	}
+	else if (nType == GO_SPIKE)
+	{
+		while ((fread(spike_container, sizeof(SpikesContainer), 1, pFile)))
+			AddSpike(spike_container->Pos, spike_container->SpikesX, spike_container->SpikesY, spike_container->Invisible);
 	}
 	delete(go_container);
 	fclose(pFile);

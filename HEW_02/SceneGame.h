@@ -14,6 +14,7 @@ private:
 	Go_List* Fields;
 	Go_List* Walls;
 	Go_List* Items;
+	Go_List* Spikes;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 	
@@ -35,6 +36,7 @@ public:
 	Go_List* GetFields();
 	Go_List* GetWalls();
 	Go_List* GetItems();
+	Go_List* GetSpikes();
 	int GetScore();
 };
 SceneGame* GetCurrentGame();

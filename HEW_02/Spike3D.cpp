@@ -1,7 +1,7 @@
 #include "Spike3D.h"
 #include "Player3D.h"
 #define MODEL_PATH "data/model/Spike.fbx"
-
+#define SPIKE_DAMAGE 10
 
 Spike3D::Spike3D() : GameObject3D()
 {
@@ -21,16 +21,18 @@ void Spike3D::Init()
 		pSpikeModel = new Model3D();
 		pSpikeModel->InitModel(MODEL_PATH, this);
 	}
-	SpikesOnX = 1;
-	SpikesOnY = 1;
+	nSpikesOnX = 1;
+	nSpikesOnY = 1;
+	bInvisible = false;
+	nType = GO_SPIKE;
 	hitbox = { 0,15,0,5,5,5 };
 }
 
 void Spike3D::Update()
 {
 	GameObject3D::Update();
-	hitbox = { 0,13.5f,0,4.8f * (float)SpikesOnX,6.5f* (float)SpikesOnY,5 };
-	if (SpikesOnX > 1 || SpikesOnY > 1) {
+	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
+	if (nSpikesOnX > 1 || nSpikesOnY > 1) {
 		pSpikeModel->SetPositionX(-3.75f);
 		pSpikeModel->SetPositionY(2.5f);
 	}
@@ -41,7 +43,7 @@ void Spike3D::Update()
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
 	{
-		//TODO: ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+		pPlayer->SetDamageTeleport(SPIKE_DAMAGE);
 	}
 	
 }
@@ -49,8 +51,10 @@ void Spike3D::Update()
 
 void Spike3D::Draw()
 {
+	if (bInvisible)
+		return;
 	GameObject3D::Draw();
-	if (SpikesOnX == 1 && SpikesOnY==1)
+	if (nSpikesOnX == 1 && nSpikesOnY==1)
 	{
 		if (pSpikeModel)
 			pSpikeModel->DrawModel();
@@ -58,10 +62,10 @@ void Spike3D::Draw()
 	}
 	
 	XMFLOAT3 tempPos = Position;
-	for (float j = -SpikesOnY *0.5f; j < SpikesOnY *0.5f; j++)
+	for (float j = -nSpikesOnY *0.5f; j < nSpikesOnY *0.5f; j++)
 	{
 		Position.y = tempPos.y-13 * j;
-		for (float i = -SpikesOnX * 0.5f; i < SpikesOnX *0.5f; i++)
+		for (float i = -nSpikesOnX * 0.5f; i < nSpikesOnX *0.5f; i++)
 		{
 			Position.x = tempPos.x-10 * i;
 			if (pSpikeModel)
@@ -79,14 +83,30 @@ void Spike3D::Uninit()
 
 void Spike3D::RaiseSpikesX(int rise)
 {
-	SpikesOnX += rise;
-	if (SpikesOnX < 1)
-		SpikesOnX = 1;
+	nSpikesOnX += rise;
+	if (nSpikesOnX < 1)
+		nSpikesOnX = 1;
 }
 
 void Spike3D::RaiseSpikesY(int rise)
 {
-	SpikesOnY += rise;
-	if (SpikesOnY < 1)
-		SpikesOnY = 1;
+	nSpikesOnY += rise;
+	if (nSpikesOnY < 1)
+		nSpikesOnY = 1;
+}
+
+void Spike3D::SetSpikesNum(int x, int y)
+{
+	nSpikesOnX = x;
+	nSpikesOnY = y;
+}
+
+void Spike3D::SetInvisibility(bool invisible)
+{
+	bInvisible = invisible;
+}
+
+XMFLOAT2 Spike3D::GetSpikesNum()
+{
+	return { (float)nSpikesOnX, (float)nSpikesOnY };
 }
