@@ -19,10 +19,8 @@ void Enemy3D::Init()
 	switch (nEnemyType)
 	{
 	case TYPE_ONI:
-		//InitModel(ONI_MODEL_PATH);
-		EnemyModel = new Model3D();
-		EnemyModel->InitModel(ONI_MODEL_PATH, this);
-		EnemyModel->SetScale({ 1,1,1 });
+		InitModel(ONI_MODEL_PATH);
+		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		break;
 	default:
 		break;
@@ -32,13 +30,11 @@ void Enemy3D::Init()
 void Enemy3D::Update()
 {
 	GameObject3D::Update();
-	//EnemyModel->UpdateModel();
 }
 
 void Enemy3D::Draw()
 {
 	GameObject3D::Draw();
-	EnemyModel->DrawModel();
 }
 
 void Enemy3D::Uninit()

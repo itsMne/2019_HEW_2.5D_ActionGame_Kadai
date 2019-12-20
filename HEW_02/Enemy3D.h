@@ -10,7 +10,6 @@ class Enemy3D :
 {
 private:
 	int nEnemyType;
-	Model3D* EnemyModel;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
