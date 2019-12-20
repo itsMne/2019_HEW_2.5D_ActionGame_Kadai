@@ -22,6 +22,7 @@ private:
 	void* Parent;
 	int nCountLoop;
 	bool bCanLoop;
+	bool AnimationFrame;
 public:
 	Model3D();
 	~Model3D();

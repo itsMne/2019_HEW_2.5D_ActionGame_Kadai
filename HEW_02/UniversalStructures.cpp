@@ -4,6 +4,9 @@
 bool IsInCollision3D(Hitbox3D a, Hitbox3D b)
 {
 	//check the X axis
+	if (a.SizeX == 0 || a.SizeY == 0 || a.SizeZ == 0 ||
+		b.SizeX == 0 || b.SizeY == 0 || b.SizeZ == 0)
+		return false;
 	float comX = a.x - b.x;
 	if (comX < 0)
 		comX *= -1;

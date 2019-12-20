@@ -994,7 +994,7 @@ void CFbxModel::SetAnimStack(int nAnimStack)
 	int nStackCount = m_strAnimStackName.GetCount();
 	if (nAnimStack < 0 || nAnimStack >= nStackCount)
 		return;
-	m_nAnimStack = nAnimStack;//a
+	m_nAnimStack = nAnimStack;
 	FbxAnimStack *AnimationStack = m_pScene->FindMember<FbxAnimStack>(m_strAnimStackName[m_nAnimStack]->Buffer());
 	m_pScene->SetCurrentAnimationStack(AnimationStack);
 	FbxTakeInfo *takeInfo = m_pScene->GetTakeInfo(*m_strAnimStackName[m_nAnimStack]);

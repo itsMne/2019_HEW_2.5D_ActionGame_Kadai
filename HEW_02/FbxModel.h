@@ -212,7 +212,9 @@ private:
 	// アニメーションフレーム
 	int m_nAnimFrame;
 	FbxTime m_tStart;
+	int nStartFrame;
 	FbxTime m_tStop;
+	int nEndFrame;
 	int m_nAnimStack;
 	FbxArray<FbxString*> m_strAnimStackName;
 

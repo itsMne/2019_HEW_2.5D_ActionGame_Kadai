@@ -312,9 +312,9 @@ bool DXWindow3D::UpdateDXWindow()
 			dwExecLastTime = dwCurrentTime;
 			// XVˆ—
 			Update();
+			// •`‰æˆ—
+			Draw();
 		}
-		// •`‰æˆ—
-		Draw();
 		dwFrameCount++;
 	}
 	timeEndPeriod(1);

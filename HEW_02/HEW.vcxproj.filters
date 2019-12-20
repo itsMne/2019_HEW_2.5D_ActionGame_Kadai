@@ -108,6 +108,7 @@
     <ClCompile Include="Spike3D.cpp">
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -197,6 +198,7 @@
     <ClInclude Include="Spike3D.h">
       <Filter>H\ゲームH\ゲームオブジェクト</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy3D.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

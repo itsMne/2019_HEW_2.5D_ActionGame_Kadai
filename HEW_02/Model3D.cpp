@@ -18,6 +18,7 @@ Model3D::Model3D()
 	Parent = nullptr;
 	fAnimSpeed = 2;
 	bCanLoop = true;
+	AnimationFrame = false;
 }
 
 
@@ -73,7 +74,7 @@ void Model3D::UninitModel(void)
 //=============================================================================
 void Model3D::UpdateModel(void)
 {
-	AnimationControl();
+	//AnimationFrame = true;
 }
 
 void Model3D::SwitchAnimation(int nNewAnimNum)
@@ -131,8 +132,11 @@ void Model3D::DrawModel(void)
 	// ワールドマトリックスの設定
 	XMStoreFloat4x4(&g_mtxWorld, mtxWorld);
 
-
-	//AnimationControl();
+	AnimationFrame = true;
+	if (AnimationFrame) {
+		AnimationControl();
+		AnimationFrame = false;
+	}
 	SetZWrite(true);
 	g_pModel->Render(g_mtxWorld, pMainCamera->GetViewMatrix(), pMainCamera->GetProjMatrix(), eOpacityOnly);
 	SetZWrite(false);

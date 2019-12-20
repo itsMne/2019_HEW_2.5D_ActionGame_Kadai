@@ -95,10 +95,11 @@ void C_Ui::Update()
 		if (!pPlayer)
 			return;
 		nHP = pPlayer->GetPlayerHp();
+		nMaxHP = pPlayer->GetPlayerMaxHp();
 		if(nHP>0)
-			SetPolygonColor(1, (nMP / (float)nMaxMP), (nMP / (float)nMaxMP));
+			SetPolygonColor(1, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
 		else
-			SetPolygonColor(0.25f, (nMP / (float)nMaxMP), (nMP / (float)nMaxMP));
+			SetPolygonColor(0.25f, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
 		break;
 	case UI_HP01:
 		pPlayer = GetMainPlayer();
@@ -128,7 +129,7 @@ void C_Ui::Update()
 		if (nHP > 0)
 			SetPolygonColor(1, (nMP/ (float)nMaxMP), (nMP / (float)nMaxMP));
 		else
-			SetPolygonColor(0.25f, (nMP / (float)nMaxMP), (nMP / (float)nMaxMP));
+			SetPolygonColor(0.25f, 0.25f, 0.25f);
 		if(pPlayer->IsStaminaCooldownOn())
 			SetPolygonColor(1, 0, 0);
 		break;

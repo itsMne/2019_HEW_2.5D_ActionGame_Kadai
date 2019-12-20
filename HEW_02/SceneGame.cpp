@@ -1,8 +1,8 @@
 #include "SceneGame.h"
-#include "Spike3D.h"
+#include "Enemy3D.h"
 
 SceneGame* CurrentGame = nullptr;
-
+Enemy3D* HelloEnemy = nullptr;
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
@@ -25,8 +25,10 @@ void SceneGame::Init()
 	MainWindow = GetMainWindow();
 	if (MainWindow)
 		MainWindow->SetWindowColor(231.0f / 255.0f, 182.0f / 255.0f, 128.0f / 255.0f);
+	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
+	HelloEnemy = new Enemy3D(TYPE_ONI);
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();
@@ -115,6 +117,9 @@ int SceneGame::Update()
 	// Score更新
 	pSCORE_FRAME_UI->Update();
 
+	if(HelloEnemy)
+		HelloEnemy->Update();
+
 	// Number更新
 	pSCORE_UI->Update();
 	return nSceneType;
@@ -134,6 +139,9 @@ void SceneGame::Draw()
 	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
+
+	if (HelloEnemy)
+		HelloEnemy->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
 
