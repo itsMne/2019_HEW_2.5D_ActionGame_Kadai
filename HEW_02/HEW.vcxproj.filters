@@ -105,7 +105,9 @@
     <ClCompile Include="Mesh3D.cpp">
       <Filter>CPP\エンジンCPP</Filter>
     </ClCompile>
-    <ClCompile Include="Spike3D.cpp" />
+    <ClCompile Include="Spike3D.cpp">
+      <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -192,7 +194,9 @@
     <ClInclude Include="Camera3D.h">
       <Filter>H\エンジンH</Filter>
     </ClInclude>
-    <ClInclude Include="Spike3D.h" />
+    <ClInclude Include="Spike3D.h">
+      <Filter>H\ゲームH\ゲームオブジェクト</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">
