@@ -34,6 +34,11 @@ void Wall3D::Update()
 	Player3D* pPlayer = GetMainPlayer();
 	if (!pPlayer)
 		return;
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), GetHitBox()) && pPlayer->GetYForce()<0)
+	{
+		pPlayer->SetYForce(0);
+		return;
+	}
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_RIGHT), GetHitBox()))
 	{
 		pPlayer->SetRightWall(this);

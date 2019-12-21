@@ -179,6 +179,7 @@ void Field3D::UninitField(void)
 //=============================================================================
 void Field3D::Update(void)
 {
+	GameObject3D::Update();
 	Player3D* pPlayer = GetMainPlayer();
 	if (pPlayer)
 	{
@@ -343,10 +344,10 @@ void Field3D::SetPosition(XMFLOAT3 newPos)
 	Position = newPos;
 }
 
-Hitbox3D Field3D::GetHitBox()
-{
-	return { hitbox.x + Position.x,hitbox.y + Position.y, hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };
-}
+//Hitbox3D Field3D::GetHitBox()
+//{
+//	return { hitbox.x + Position.x,hitbox.y + Position.y, hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };
+//}
 
 void Field3D::SetScaleWithHitbox(float newScale)
 {

@@ -4,20 +4,7 @@
 #include "InputManager.h"
 #define DEBUG_AIM_SPEED 3
 
-enum DEBUG_AIM_OBJECTYPES
-{
-	DA_DEBUGAIM=0,
-	DA_FIELD,
-	DA_WALL,
-	DA_SPIKE,
-	DA_ITEM_SUSHI,
-	DA_ITEM_UDON,
-	DA_ITEM_ODEN,
-	DA_ITEM_DANGO,
-	DA_ITEM_TAI,
 
-	DA_MAX
-};
 
 DebugAim::DebugAim(): GameObject3D()
 {
@@ -40,6 +27,7 @@ void DebugAim::Init()
 	pDA_Spike = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
+	hitbox = { 0,10.0f,0,2,2,6 };
 }
 
 void DebugAim::Update()
@@ -194,19 +182,39 @@ void DebugAim::Update()
 		else {
 			pDA_Spike->Update();
 			pDA_Spike->SetPosition(Position);
-			if (GetInput(INPUT_SCALE_UP_Z)) {
-				pDA_Spike->RaiseSpikesY(1);
+			if (GetInput(INPUT_SHIFT)) {
+				if (GetInput(INPUT_SCALE_UP_Z)) {
+					GetMainCamera()->ZoomOutZ(fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_Z)) {
+					GetMainCamera()->ZoomOutZ(-fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_UP_X)) {
+					GetMainCamera()->ZoomOutZ(fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_X)) {
+					GetMainCamera()->ZoomOutZ(-fSpeed);
+				}
 			}
-			if (GetInput(INPUT_SCALE_DOWN_Z)) {
-				pDA_Spike->RaiseSpikesY(-1);
+			else {
+				fSpeed *= 3.5f;
+				if (GetInput(INPUT_SCALE_UP_Z)) {
+					pDA_Spike->RaiseSpikesY(1);
+					GetMainCamera()->ZoomOutZ(fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_Z)) {
+					pDA_Spike->RaiseSpikesY(-1);
+					GetMainCamera()->ZoomOutZ(-fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_UP_X)) {
+					pDA_Spike->RaiseSpikesX(1);
+					GetMainCamera()->ZoomOutZ(fSpeed);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_X)) {
+					pDA_Spike->RaiseSpikesX(-1);
+					GetMainCamera()->ZoomOutZ(-fSpeed);
+				}
 			}
-			if (GetInput(INPUT_SCALE_UP_X)) {
-				pDA_Spike->RaiseSpikesX(1);
-			}
-			if (GetInput(INPUT_SCALE_DOWN_X)) {
-				pDA_Spike->RaiseSpikesX(-1);
-			}
-
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
 				p_sCurrentGame->GetSpikes()->AddSpike(Position, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y), true);
@@ -326,4 +334,9 @@ void DebugAim::Draw()
 void DebugAim::Uninit()
 {
 	GameObject3D::Uninit();
+}
+
+int DebugAim::GetCurrentType()
+{
+	return nObjectType;
 }

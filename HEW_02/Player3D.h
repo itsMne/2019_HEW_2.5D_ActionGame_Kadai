@@ -19,6 +19,7 @@ enum PLAYER_HITBOXES
 	HB_BODY,
 	HB_RIGHT,
 	HB_LEFT,
+	HB_HEAD,
 	MAX_HB
 };
 enum PLAYER_STATES
@@ -121,6 +122,11 @@ public:
 	void RiseHP(int nhprise);
 	bool IsStaminaCooldownOn();
 	void SetDamageTeleport(int Damage);
+	float GetYForce();
+	void SetYForce(float fyforce);
+	int GetState();
+	DebugAim* GetDebugAim();
+	bool IsDebugAimOn();
 };
 
 Player3D* GetMainPlayer();

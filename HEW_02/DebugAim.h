@@ -4,6 +4,22 @@
 #include "Wall3D.h"
 #include "C_Item.h"
 #include "Spike3D.h"
+
+enum DEBUG_AIM_OBJECTYPES
+{
+	DA_DEBUGAIM = 0,
+	DA_FIELD,
+	DA_WALL,
+	DA_SPIKE,
+	DA_ITEM_SUSHI,
+	DA_ITEM_UDON,
+	DA_ITEM_ODEN,
+	DA_ITEM_DANGO,
+	DA_ITEM_TAI,
+
+	DA_MAX
+};
+
 class DebugAim :
 	public GameObject3D
 {
@@ -23,5 +39,6 @@ public:
 	void ScaleControl(float fSpeed);
 	void Draw();
 	void Uninit();
+	int GetCurrentType();
 };
 

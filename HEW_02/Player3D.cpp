@@ -13,6 +13,7 @@
 #define MAX_ATTACKS 12
 #define INIT_HP 100
 #define INIT_STAMINA 30
+#define TRANSFORM_ACCELERATION 0.075f
 Player3D* MainPlayer;
 enum ANIMATION_NINJA
 {
@@ -120,6 +121,7 @@ void Player3D::Init()
 	nInputTimer = 0;
 	Hitboxes[HB_FEET] = { 0,10,0,3,3,1.5f };
 	Hitboxes[HB_BODY] = { 0,15,0,3,8,6 };
+	Hitboxes[HB_HEAD] = { 0,22,0,2,2,5 };
 	Hitboxes[HB_RIGHT] = { 5,15,0,3,3,6 };
 	Hitboxes[HB_LEFT] = { -5,15,0,1,3,6 };
 	pCurrentFloor = nullptr;
@@ -272,7 +274,7 @@ void Player3D::Update()
 		{
 			if (LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) 
 			{
-				if(!GetInput(INPUT_NINJACRAWL_UP))
+				if(!GetInput(INPUT_NINJACRAWL_UP) && !GetInput(INPUT_DOWN))
 					SwitchAnimation(MODEL_NINJA, NINJA_ON_WALL);
 				else
 					SwitchAnimation(MODEL_NINJA, NINJA_CRAWLING);
@@ -535,7 +537,7 @@ void Player3D::TransformingStateControl()
 			pPlayerModels[nCurrentTransformation]->ReduceScaleOnX(0.035f);
 		if (pPlayerModels[nCurrentTransformation]->GetRotation().y > 90 - (XM_PI*0.65f)) {
 			pPlayerModels[nCurrentTransformation]->RotateAroundY(fTransformAcceleration);
-			fTransformAcceleration -= 0.035f;
+			fTransformAcceleration -= TRANSFORM_ACCELERATION;
 		}
 		else if (pPlayerModels[nCurrentTransformation]->GetRotation().y <= 90 - (XM_PI*0.65f)) {
 			pPlayerModels[nCurrentTransformation]->SetRotationY(90 - (XM_PI*0.65f));
@@ -608,12 +610,18 @@ void Player3D::GravityControl()
 			if (f_yForce > 7)
 				f_yForce = 7;
 		}else {
-			if ((LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) && nCurrentTransformation == MODEL_NINJA && !GetInput(INPUT_DOWN))
+			if ((LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) && nCurrentTransformation == MODEL_NINJA)
 			{
-				if (GetInput(INPUT_NINJACRAWL_UP))
+				if (GetInput(INPUT_NINJACRAWL_UP)) {
 					Position.y++;
-					return;
 					f_yForce = 0;
+				}
+				else if (GetInput(INPUT_DOWN))
+				{
+					Position.y--;
+					f_yForce = 0;
+				}
+				return;
 			}
 			else {
 				if (f_yForce > 7)
@@ -892,4 +900,29 @@ void Player3D::SetDamageTeleport(int Damage)
 	nHP -= Damage;
 	if (nHP < 0)
 		nHP = 0;
+}
+
+float Player3D::GetYForce()
+{
+	return f_yForce;
+}
+
+void Player3D::SetYForce(float fyforce)
+{
+	f_yForce = fyforce;
+}
+
+int Player3D::GetState()
+{
+	return nState;
+}
+
+DebugAim * Player3D::GetDebugAim()
+{
+	return pDebugAim;
+}
+
+bool Player3D::IsDebugAimOn()
+{
+	return bUsingDebugAim;
 }

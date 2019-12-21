@@ -30,7 +30,6 @@ private:
 	float						g_fPower;	// スペキュラ強度
 	XMFLOAT4						g_Ke;		// エミッシブ
 	Light3D*					pSceneLight;
-	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
 	char szTexturePath[256];
 public:
@@ -43,7 +42,7 @@ public:
 	void SetFieldLight(Light3D* SceneLight);
 	HRESULT MakeVertexField(ID3D11Device* pDevice);
 	void SetPosition(XMFLOAT3 newPos);
-	Hitbox3D GetHitBox();
+	//Hitbox3D GetHitBox();
 	void SetScaleWithHitbox(float newScale);
 	void SetScaleWithHitbox(XMFLOAT3 newScale);
 	void SetRotation(XMFLOAT3 newRot);

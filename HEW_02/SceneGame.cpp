@@ -28,7 +28,7 @@ void SceneGame::Init()
 	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
-	HelloEnemy = new Enemy3D(TYPE_ONI);
+	//HelloEnemy = new Enemy3D(TYPE_ONI);
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();

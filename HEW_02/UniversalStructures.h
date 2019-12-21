@@ -9,9 +9,9 @@
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
 #define HITBOX_Z_POS -10
-#define SHOW_HITBOX	false
+#define SHOW_HITBOX	true
 #define USE_CONSOLE true
-
+#define DEBUG_MODE true
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(x) {if(x){(x)->Release();x=nullptr;}}
 #endif

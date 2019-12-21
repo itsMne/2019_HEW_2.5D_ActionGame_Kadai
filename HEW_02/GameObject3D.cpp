@@ -3,6 +3,9 @@
 #include "Wall3D.h"
 #include "Spike3D.h"
 #include "C_Item.h"
+#include "Player3D.h"
+#include "InputManager.h"
+#include "SceneGame.h"
 #include "String.h"
 
 GameObject3D::GameObject3D()
@@ -39,6 +42,47 @@ void GameObject3D::Update()
 #if SHOW_HITBOX
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 	pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
+#endif
+
+#if DEBUG_MODE
+	if (nType == GO_DEBUG_AIM)
+		return;
+	Player3D* pPlayer = GetMainPlayer();
+	SceneGame* pS_Game = GetCurrentGame();
+	if (!pPlayer)
+		return;
+	if (!pPlayer->IsDebugAimOn())
+		return;
+	if (!pS_Game)
+		return;
+	DebugAim* pDA = pPlayer->GetDebugAim();
+	Go_List* List;
+	if (GetInput(INPUT_DEBUGAIM_DELETE) && pDA->GetCurrentType() == DA_DEBUGAIM) {
+		if (IsInCollision3D(pDA->GetHitBox(), GetHitBox()))
+		{
+			switch (nType)
+			{
+			case GO_FLOOR:
+				List = pS_Game->GetFields();
+				List->DeleteObject(this);
+				return;
+			case GO_WALL:
+				List = pS_Game->GetWalls();
+				List->DeleteObject(this);
+				return;
+			case GO_ITEM:
+				List = pS_Game->GetItems();
+				List->DeleteObject(this);
+				return;
+			case GO_SPIKE:
+				List = pS_Game->GetSpikes();
+				List->DeleteObject(this);
+				return;
+			default:
+				break;
+			}
+		}
+	}
 #endif
 }
 
@@ -315,6 +359,52 @@ void Go_List::DeleteLastPosObject()
 		delete(pPositionList);
 		pPositionList = nullptr;
 		PreviousPos->next = nullptr;
+	}
+	return;
+}
+
+void Go_List::DeleteObject(GameObject3D * pSearch)
+{
+	if (HeadNode == nullptr)
+		return;
+	if (HeadNode->Object == pSearch)
+	{
+		go_node* pPositionList = HeadNode;
+		HeadNode = HeadNode->next;
+		delete(pPositionList->Object);
+		pPositionList->Object = nullptr;
+		delete(pPositionList);
+		pPositionList = nullptr;
+		return;
+	}
+	if (HeadNode->next->Object == pSearch)
+	{
+		go_node* pPositionList = HeadNode->next;
+		HeadNode->next = HeadNode->next->next;
+		delete(pPositionList->Object);
+		pPositionList->Object = nullptr;
+		delete(pPositionList);
+		pPositionList = nullptr;
+		return;
+	}
+	go_node* pPositionList = HeadNode->next;
+	go_node* PreviousPos = HeadNode;
+	if (pPositionList == nullptr)
+		return;
+	while (true) {
+		if (pPositionList->next == nullptr)
+			return;
+		if (pPositionList->Object == pSearch)
+			break;
+		pPositionList = pPositionList->next;
+		PreviousPos = PreviousPos->next;
+	}
+	if (pPositionList->Object) {
+		PreviousPos->next = pPositionList->next;
+		delete(pPositionList->Object);
+		pPositionList->Object = nullptr;
+		delete(pPositionList);
+		pPositionList = nullptr;
 	}
 	return;
 }

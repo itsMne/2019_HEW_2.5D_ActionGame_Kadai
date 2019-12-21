@@ -101,6 +101,7 @@ public:
 	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible);
 
 	void DeleteLastPosObject();
+	void DeleteObject(GameObject3D*);
 	void Update();
 	void Draw();
 	void End();

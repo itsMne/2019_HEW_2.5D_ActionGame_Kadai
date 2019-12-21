@@ -26,7 +26,7 @@ void UpdateInputManager()
 	bInputs[INPUT_DOWN] = (GetKeyPress(VK_S) && !GetKeyPress(VK_LCONTROL)) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
 	bInputs[INPUT_RIGHT] = GetKeyPress(VK_D) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
 	bInputs[INPUT_DEBUGAIM] = GetKeyTrigger(VK_1) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) && !bHoldingXinput[INPUT_DEBUGAIM]);
-	//bInputs[INPUT_NINJACRAWL_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
+	bInputs[INPUT_NINJACRAWL_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
 	bInputs[INPUT_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
 	bInputs[TRANSFORM_GEISHA] = GetKeyPress(VK_LSHIFT) || (bXinputConnected && Player1->GetState().Gamepad.bRightTrigger > 0);
 	bInputs[INPUT_JUMP] = GetKeyTrigger(VK_K) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A && !bHoldingXinput[INPUT_JUMP]);

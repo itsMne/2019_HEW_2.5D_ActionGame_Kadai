@@ -17,7 +17,7 @@
 #define VIEW_FAR			(1000.0f)
 #define VALUE_MOVE_CAMERA	(2.0f)	
 #define VALUE_ROTATE_CAMERA	(XM_PI*0.01f)	
-#define OFFSET_VALUE	{0,20,0}
+#define OFFSET_VALUE	{0,20,-50}
 Camera3D* MainCamera = nullptr;
 
 Camera3D::Camera3D(): FocalPoint(nullptr)

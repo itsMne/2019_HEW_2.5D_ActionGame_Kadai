@@ -283,7 +283,7 @@ void DXWindow3D::Uninit(void)
 
 	// ウィンドウクラスの登録を解除
 	UnregisterClass(CLASS_NAME, g_hInst);
-
+	timeEndPeriod(1);
 	// COM終了処理
 	CoUninitialize();
 }
@@ -314,10 +314,11 @@ bool DXWindow3D::UpdateDXWindow()
 			Update();
 			// 描画処理
 			Draw();
+			dwFrameCount++;
 		}
-		dwFrameCount++;
+		
 	}
-	timeEndPeriod(1);
+	
 	return true;
 }
 
