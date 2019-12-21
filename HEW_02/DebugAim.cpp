@@ -25,6 +25,7 @@ void DebugAim::Init()
 	pCurrentGame = nullptr;
 	pDA_Item = nullptr;
 	pDA_Spike = nullptr;
+	pDA_Goal = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
 	hitbox = { 0,10.0f,0,2,2,6 };
@@ -81,6 +82,15 @@ void DebugAim::Update()
 			GetMainCamera()->ZoomOutZ(-fSpeed);
 		}
 	}
+	if (GetInput(INPUT_SAVE_LEVEL))
+	{
+		p_sCurrentGame->GetFields()->SaveFields("Fields_Level");
+		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
+		p_sCurrentGame->GetWalls()->SaveWalls("Walls_Level");
+		p_sCurrentGame->GetItems()->SaveItems("Items_Level");
+		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
+		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
+	}
 	Player3D* pPlayer = nullptr;
 	int nitemType;
 	switch (nObjectType)
@@ -94,7 +104,6 @@ void DebugAim::Update()
 			pPlayer->SetPosition(Position);
 			printf("‹’“_F(%f, %f, %f);\n", Position.x, Position.y, Position.z);
 		}
-
 		break;
 	case DA_FIELD:
 		if (!pDA_Field) {
@@ -114,10 +123,6 @@ void DebugAim::Update()
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
 				p_sCurrentGame->GetFields()->DeleteLastPosObject();
-			}
-			if (GetInput(INPUT_SAVE_LEVEL))
-			{
-				p_sCurrentGame->GetFields()->SaveFields("Fields_Level");
 			}
 		}
 		break;
@@ -139,10 +144,6 @@ void DebugAim::Update()
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
 				p_sCurrentGame->GetWalls()->DeleteLastPosObject();
-			}
-			if (GetInput(INPUT_SAVE_LEVEL))
-			{
-				p_sCurrentGame->GetWalls()->SaveWalls("Walls_Level");
 			}
 		}
 		break;
@@ -166,10 +167,6 @@ void DebugAim::Update()
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
 				p_sCurrentGame->GetItems()->DeleteLastPosObject();
-			}
-			if (GetInput(INPUT_SAVE_LEVEL))
-			{
-				p_sCurrentGame->GetItems()->SaveItems("Items_Level");
 			}
 		}
 		break;
@@ -224,9 +221,26 @@ void DebugAim::Update()
 			{
 				p_sCurrentGame->GetSpikes()->DeleteLastPosObject();
 			}
-			if (GetInput(INPUT_SAVE_LEVEL))
+		}
+		break;
+	case DA_GOAL:
+		if (!pDA_Goal) {
+			pDA_Goal = new Goal3D();
+			pDA_Goal->SetPosition(Position);
+			Scale = { 1,1,1 };
+		}
+		else {
+			pDA_Goal->Update();
+			pDA_Goal->SetPosition(Position);
+
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
+				p_sCurrentGame->GetGoals()->AddMisc(Position, GO_GOAL);
+				printf("Misc->AddGoal({ %ff ,%ff ,%ff}, GO_GOAL);\n", Position.x, Position.y, Position.z);
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetGoals()->DeleteLastPosObject();
 			}
 		}
 		break;
@@ -325,6 +339,10 @@ void DebugAim::Draw()
 	case DA_SPIKE:
 		if (pDA_Spike)
 			pDA_Spike->Draw();
+		break;
+	case DA_GOAL:
+		if (pDA_Goal)
+			pDA_Goal->Draw();
 		break;
 	default:
 		break;

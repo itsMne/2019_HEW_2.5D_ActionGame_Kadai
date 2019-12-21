@@ -5,6 +5,7 @@
 #include "C_Item.h"
 #include "Player3D.h"
 #include "InputManager.h"
+#include "Goal3D.h"
 #include "SceneGame.h"
 #include "String.h"
 
@@ -78,6 +79,10 @@ void GameObject3D::Update()
 				List = pS_Game->GetSpikes();
 				List->DeleteObject(this);
 				return;
+			case GO_GOAL:
+				List = pS_Game->GetGoals();
+				List->DeleteObject(this);
+				break;
 			default:
 				break;
 			}
@@ -329,6 +334,43 @@ GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY,
 		return HeadNode->Object;
 	}
 
+}
+
+GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		switch (nType)
+		{
+		case GO_GOAL:
+			pWorkList->Object = new Goal3D();
+			break;
+		}
+		GameObject3D* thisObj = pWorkList->Object;
+		thisObj->SetPosition(newPosition);
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		switch (nType)
+		{
+		case GO_GOAL:
+			HeadNode->Object = new Goal3D();
+			break;
+		}
+		GameObject3D* thisObj = HeadNode->Object;
+		thisObj->SetPosition(newPosition);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
 }
 
 void Go_List::DeleteLastPosObject()
@@ -624,6 +666,41 @@ void Go_List::SaveSpikes(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveMisc(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr)
+		{
+			MiscContainer gameObject;
+			GameObject3D* thisObject = (GameObject3D*)pPositionList->Object;
+			gameObject.Pos = thisObject->GetPosition();
+			gameObject.bMoveable = thisObject->IsMoveableObject();
+			gameObject.MoveStartPos = thisObject->GetMoveStartPosition();
+			gameObject.MoveEndPos = thisObject->GetMoveEndPosition();
+			gameObject.nType = thisObject->GetType();
+			fwrite(&gameObject, sizeof(MiscContainer), 1, pFile);
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -636,33 +713,32 @@ void Go_List::Load(const char * szFilename, int nType)
 		return;
 	}
 	GameObjectContainer* go_container = new GameObjectContainer();
+	MiscContainer* misc_container = new MiscContainer();
 	ItemContainer* item_container = new ItemContainer();
 	SpikesContainer* spike_container = new SpikesContainer();
-	if (nType== GO_FLOOR || nType == GO_WALL) {
+	switch (nType)
+	{
+	case GO_FLOOR: 
 		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
-		{
-			switch (nType)
-			{
-			case GO_FLOOR:
-				AddField(go_container->Pos, go_container->Scale, go_container->texpath);
-				break;
-			case GO_WALL:
-				AddWall(go_container->Pos, go_container->Scale);
-				break;
-			default:
-				break;
-			}
-
-		}
-	}
-	else if (nType == GO_ITEM) {
+			AddField(go_container->Pos, go_container->Scale, go_container->texpath);
+		break;
+	case GO_WALL:
+		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
+			AddWall(go_container->Pos, go_container->Scale);
+		break;
+	case GO_ITEM:
 		while ((fread(item_container, sizeof(ItemContainer), 1, pFile)))
 			AddItem(item_container->Pos, item_container->nItemType);
-	}
-	else if (nType == GO_SPIKE)
-	{
+		break;
+	case GO_SPIKE:
 		while ((fread(spike_container, sizeof(SpikesContainer), 1, pFile)))
 			AddSpike(spike_container->Pos, spike_container->SpikesX, spike_container->SpikesY, spike_container->Invisible);
+		break;
+	case GO_GOAL:
+		while ((fread(misc_container, sizeof(MiscContainer), 1, pFile)))
+			AddMisc(misc_container->Pos, GO_GOAL);
+	default:
+		break;
 	}
 	delete(go_container);
 	fclose(pFile);

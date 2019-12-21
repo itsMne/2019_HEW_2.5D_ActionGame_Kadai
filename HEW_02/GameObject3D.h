@@ -8,6 +8,7 @@ enum goType
 	GO_ITEM,
 	GO_SPIKE,
 	GO_FLOOR,
+	GO_GOAL,
 	GO_DEBUG_AIM,
 	MAX_TYPE
 };
@@ -23,7 +24,6 @@ protected:
 	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
 	bool bUnlit;
-
 	//自動で動いているオブジェクトなら
 	bool bMoveable;
 	XMFLOAT3 x3MoveStartPos;
@@ -68,7 +68,14 @@ typedef struct GameObjectContainer {
 	XMFLOAT3 MoveStartPos;
 	XMFLOAT3 MoveEndPos;
 };
-
+typedef struct MiscContainer {
+	XMFLOAT3 Pos;
+	XMFLOAT3 Scale;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+	int nType;
+};
 typedef struct ItemContainer {
 	XMFLOAT3 Pos;
 	int nItemType;
@@ -99,6 +106,7 @@ public:
 	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale);
 	GameObject3D* AddItem(XMFLOAT3 newPosition, int nType);
 	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible);
+	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType);
 
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);
@@ -109,6 +117,7 @@ public:
 	void SaveWalls(const char* szFilename);
 	void SaveItems(const char* szFilename);
 	void SaveSpikes(const char* szFilename);
+	void SaveMisc(const char* szFilename);
 	//void SaveItem(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

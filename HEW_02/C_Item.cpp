@@ -58,6 +58,7 @@ void C_Item::Init()
 
 void C_Item::Update()
 {
+	GameObject3D::Update();
 	if (!bUse)
 		return;
 	bbItem->SetPosition(Position);

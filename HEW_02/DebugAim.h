@@ -3,6 +3,7 @@
 #include "Field3D.h"
 #include "Wall3D.h"
 #include "C_Item.h"
+#include "Goal3D.h"
 #include "Spike3D.h"
 
 enum DEBUG_AIM_OBJECTYPES
@@ -16,7 +17,7 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_ITEM_ODEN,
 	DA_ITEM_DANGO,
 	DA_ITEM_TAI,
-
+	DA_GOAL,
 	DA_MAX
 };
 
@@ -29,6 +30,7 @@ private:
 	Wall3D* pDA_Wall;
 	C_Item* pDA_Item;
 	Spike3D* pDA_Spike;
+	Goal3D* pDA_Goal;
 	void* pCurrentGame;
 public:
 	DebugAim();

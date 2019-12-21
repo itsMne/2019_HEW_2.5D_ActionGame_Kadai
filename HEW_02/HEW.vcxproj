@@ -172,6 +172,7 @@
     <ClCompile Include="FbxModel.cpp" />
     <ClCompile Include="Field3D.cpp" />
     <ClCompile Include="GameObject3D.cpp" />
+    <ClCompile Include="Goal3D.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Light3D.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="FbxModel.h" />
     <ClInclude Include="Field3D.h" />
     <ClInclude Include="GameObject3D.h" />
+    <ClInclude Include="Goal3D.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Light3D.h" />

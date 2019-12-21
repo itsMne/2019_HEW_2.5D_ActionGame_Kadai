@@ -1,5 +1,6 @@
 #include "SceneGame.h"
 #include "Enemy3D.h"
+#include "Goal3D.h"
 
 SceneGame* CurrentGame = nullptr;
 Enemy3D* HelloEnemy = nullptr;
@@ -8,6 +9,7 @@ SceneGame::SceneGame(): SceneBase()
 	Init();
 	CurrentGame = this;
 	nScore = 0;
+	bGoalReached = false;
 }
 
 
@@ -34,14 +36,18 @@ void SceneGame::Init()
 	Walls = new Go_List();
 	Items = new Go_List();
 	Spikes = new Go_List();
+	Goals = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	
+	//Misc->AddMisc({ 0,0,0 }, GO_GOAL);
 
 	SceneCamera->Init();
 	SceneLight->Init();
 	Walls->Load("Walls_Level", GO_WALL);
 	Fields->Load("Fields_Level", GO_FLOOR);
 	Items->Load("Items_Level", GO_ITEM);
+	Goals->Load("Goals_Level", GO_GOAL);
+	Spikes->Load("Spikes_Level", GO_SPIKE);
 	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
 	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
 	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
@@ -51,7 +57,7 @@ void SceneGame::Init()
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
-	Spikes->Load("Spikes_Level", GO_SPIKE);
+	
 	//Spikes->AddSpike({ 10,0,0 }, 1, 1, false);
 	//HelloSpike = new Spike3D();
 
@@ -81,6 +87,10 @@ void SceneGame::Uninit()
 
 int SceneGame::Update()
 {
+	if (bGoalReached)
+	{
+		return nSceneType;//後で次のシーンで変更する
+	}
 	// デバッグ文字列表示更新
 	UpdateDebugProc();
 
@@ -119,7 +129,7 @@ int SceneGame::Update()
 
 	if(HelloEnemy)
 		HelloEnemy->Update();
-
+	Goals->Update();
 	// Number更新
 	pSCORE_UI->Update();
 	return nSceneType;
@@ -139,12 +149,12 @@ void SceneGame::Draw()
 	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
-
-	if (HelloEnemy)
-		HelloEnemy->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
-
+	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
+	if (HelloEnemy)
+		HelloEnemy->Draw();
+	Goals->Draw();
 
 	SkySphere->Draw();
 	// フィールド描画
@@ -193,9 +203,19 @@ Go_List * SceneGame::GetSpikes()
 	return Spikes;
 }
 
+Go_List * SceneGame::GetGoals()
+{
+	return Goals;
+}
+
 int SceneGame::GetScore()
 {
 	return nScore;
+}
+
+void SceneGame::SetGoalReached()
+{
+	bGoalReached = true;
 }
 
 SceneGame * GetCurrentGame()

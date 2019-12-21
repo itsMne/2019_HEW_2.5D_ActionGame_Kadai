@@ -9,7 +9,7 @@
 // É}ÉNÉçíËã`
 //*****************************************************************************
 #define HITBOX_Z_POS -10
-#define SHOW_HITBOX	true
+#define SHOW_HITBOX	false
 #define USE_CONSOLE true
 #define DEBUG_MODE true
 #ifndef SAFE_RELEASE

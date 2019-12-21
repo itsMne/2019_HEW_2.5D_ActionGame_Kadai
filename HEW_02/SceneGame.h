@@ -15,6 +15,7 @@ private:
 	Go_List* Walls;
 	Go_List* Items;
 	Go_List* Spikes;
+	Go_List* Goals;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 	
@@ -25,6 +26,7 @@ private:
 	//C_Item* HelloItem;
 	C_Ui* pSCORE_UI;
 	C_Ui* pSCORE_FRAME_UI;
+	bool bGoalReached;
 public:
 	
 	SceneGame();
@@ -37,6 +39,8 @@ public:
 	Go_List* GetWalls();
 	Go_List* GetItems();
 	Go_List* GetSpikes();
+	Go_List* GetGoals();
 	int GetScore();
+	void SetGoalReached();
 };
 SceneGame* GetCurrentGame();
