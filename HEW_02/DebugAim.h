@@ -53,5 +53,6 @@ public:
 	void Draw();
 	void Uninit();
 	int GetCurrentType();
+	bool IsStaticMode();
 };
 

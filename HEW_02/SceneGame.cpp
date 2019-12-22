@@ -38,9 +38,6 @@ void SceneGame::Init()
 	Spikes = new Go_List();
 	Goals = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
-	
-	//Misc->AddMisc({ 0,0,0 }, GO_GOAL);
-
 	SceneCamera->Init();
 	SceneLight->Init();
 	Walls->Load("Walls_Level", GO_WALL);
@@ -48,18 +45,10 @@ void SceneGame::Init()
 	Items->Load("Items_Level", GO_ITEM);
 	Goals->Load("Goals_Level", GO_GOAL);
 	Spikes->Load("Spikes_Level", GO_SPIKE);
-	//Items->AddItem({ 10,0,0 }, TYPE_ODEN);
-	//Fields->AddField({ 0,0,0 }, { 300,3, 300 }, "data/texture/field000.jpg");
-	//Fields->AddField({ 80,500,0 }, { 100,3, 100 }, "data/texture/field000.jpg");
-	//Walls->AddWall({ 105,55,0 }, { 2,80,1 });
-	//Walls->AddWall({ 40,325,0 }, { 2,50,1 });
 	
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
-	
-	//Spikes->AddSpike({ 10,0,0 }, 1, 1, false);
-	//HelloSpike = new Spike3D();
 
 	// Hp
 	pHP_UI_BACK = new C_Ui("data/texture/HP000.png", UI_HP00);
@@ -67,9 +56,14 @@ void SceneGame::Init()
 	// Mp
 	pMP_UI = new C_Ui("data/texture/MP000.png", UI_MP);
 	
-	pSCORE_UI = new C_Ui("data/texture/number.png", UI_NUMBER);
+	pScore_UI = new C_Ui("data/texture/number.png", UI_NUMBER);
 	// Score
-	pSCORE_FRAME_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
+	pScore_Frame_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
+
+	//レベルエディター
+	pLevel_Editor_UI = new C_Ui("data/texture/UI_LEINSTRUCTIONS.tga", UI_LEVEL_EDITOR);
+	pLevel_Editor_MOVEMODE_UI = new C_Ui("data/texture/UI_MOVEABLEMODE.tga", UI_LEVEL_EDITOR_MOVEABLEMODE);
+	pLevel_Editor_STATICMODE_UI = new C_Ui("data/texture/UI_STATICMODE.tga", UI_LEVEL_EDITOR_STATICMODE);
 
 }
 
@@ -125,13 +119,17 @@ int SceneGame::Update()
 	pMP_UI->Update();
 
 	// Score更新
-	pSCORE_FRAME_UI->Update();
+	pScore_Frame_UI->Update();
 
 	if(HelloEnemy)
 		HelloEnemy->Update();
 	Goals->Update();
 	// Number更新
-	pSCORE_UI->Update();
+	pScore_UI->Update();
+	//レベルエディター更新
+	pLevel_Editor_UI->Update();
+	pLevel_Editor_MOVEMODE_UI->Update();
+	pLevel_Editor_STATICMODE_UI->Update();
 	return nSceneType;
 }
 
@@ -175,10 +173,14 @@ void SceneGame::Draw()
 	pMP_UI->Draw();
 
 	// Number描画
-	pSCORE_UI->Draw();
+	pScore_UI->Draw();
 
 	// Score描画
-	pSCORE_FRAME_UI->Draw();
+	pScore_Frame_UI->Draw();
+	//レベルエディター更新
+	pLevel_Editor_UI->Draw();
+	pLevel_Editor_MOVEMODE_UI->Draw();
+	pLevel_Editor_STATICMODE_UI->Draw();
 	// デバッグ文字列表示
 	DrawDebugProc();
 }

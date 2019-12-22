@@ -502,3 +502,8 @@ int DebugAim::GetCurrentType()
 {
 	return nObjectType;
 }
+
+bool DebugAim::IsStaticMode()
+{
+	return bStaticObject;
+}

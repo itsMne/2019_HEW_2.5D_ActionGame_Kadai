@@ -61,6 +61,18 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(FRAME_SIZE_X, FRAME_SIZE_Y);
 		SetPolygonPos(FRAME_POS_X, FRAME_POS_Y);
 		break;
+	case UI_LEVEL_EDITOR:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+		break;
+	case UI_LEVEL_EDITOR_MOVEABLEMODE:
+		SetPolygonSize(390, 124);
+		SetPolygonPos(0, -SCREEN_HEIGHT / 2 + 80);
+		break;
+	case UI_LEVEL_EDITOR_STATICMODE:
+		SetPolygonSize(289, 34);
+		SetPolygonPos(0, -SCREEN_HEIGHT / 2 + 34);
+		break;
 
 	}
 }
@@ -135,6 +147,7 @@ void C_Ui::Update()
 		break;
 	case UI_NUMBER:
 		break;
+
 	}
 
 
@@ -158,6 +171,32 @@ void C_Ui::Draw()
 	case UI_NUMBER:
 		Draw(&vScorePos, (unsigned)nScore, SCORE_WIDTH,
 			SCORE_SIZE_X, SCORE_SIZE_Y);
+	case UI_LEVEL_EDITOR:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		DrawPolygon(GetDeviceContext());
+		break;
+	case UI_LEVEL_EDITOR_MOVEABLEMODE:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		if(!(pPlayer->GetDebugAim()->IsStaticMode()))
+			DrawPolygon(GetDeviceContext());
+		break;
+	case UI_LEVEL_EDITOR_STATICMODE:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		if (pPlayer->GetDebugAim()->IsStaticMode())
+			DrawPolygon(GetDeviceContext());
+		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -168,6 +207,7 @@ void C_Ui::Draw()
 void C_Ui::Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 	float fSizeX, float fSizeY)
 {
+
 	SetPolygonSize(fSizeX, fSizeY);
 	SetPolygonFrameSize(1.0f / NUMBER_FRAME_X, 1.0f / NUMBER_FRAME_Y);
 	float fX = pPos->x + (nWidth - 0.5f) * fSizeX;

@@ -24,8 +24,11 @@ private:
 	C_Ui* pHP_UI_FRONT;
 	C_Ui* pMP_UI;
 	//C_Item* HelloItem;
-	C_Ui* pSCORE_UI;
-	C_Ui* pSCORE_FRAME_UI;
+	C_Ui* pScore_UI;
+	C_Ui* pScore_Frame_UI;
+	C_Ui* pLevel_Editor_UI;
+	C_Ui* pLevel_Editor_MOVEMODE_UI;
+	C_Ui* pLevel_Editor_STATICMODE_UI;
 	bool bGoalReached;
 public:
 	
