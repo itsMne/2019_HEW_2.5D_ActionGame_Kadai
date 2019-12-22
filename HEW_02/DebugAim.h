@@ -32,11 +32,21 @@ private:
 	Spike3D* pDA_Spike;
 	Goal3D* pDA_Goal;
 	void* pCurrentGame;
+	bool bStaticObject;
+	bool bSetStart;
+	bool bSetEnd;
+	XMFLOAT3 x3Start;
+	XMFLOAT3 x3End;
+	float	fSpeedMoveable;
+	Model3D* ModelPosStart;
+	Model3D* ModelPosEnd;
 public:
 	DebugAim();
 	~DebugAim();
 	void Init();
 	void Update();
+	void SaveAllControl();
+	void MoveableObjectPositionControl();
 	void SwitchObjectTypeControl();
 	void ScaleControl(float fSpeed);
 	void Draw();

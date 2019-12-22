@@ -44,6 +44,7 @@ void UpdateInputManager()
 	bInputs[INPUT_SAVE_LEVEL] = GetKeyPress(VK_LCONTROL) && GetKeyTrigger(VK_S);
 	bInputs[INPUT_DEBUGAIM_DELETE] = GetKeyTrigger(VK_BACK);
 	bInputs[INPUT_SHIFT] = GetKeyPress(VK_LSHIFT);
+	bInputs[INPUT_SWITCH_STATIC_OBJECT] = GetKeyTrigger(VK_2);
 	XinputTriggerControl(false);
 }
 

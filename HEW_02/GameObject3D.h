@@ -14,6 +14,12 @@ enum goType
 };
 class GameObject3D
 {
+private:
+	//自動で動いているオブジェクトなら
+	bool bMoveable;
+	bool bGoToStartPos;
+	XMFLOAT3 x3MoveStartPos;
+	XMFLOAT3 x3MoveEndPos;
 protected:
 	Model3D* pModel;//モデル
 	XMFLOAT3 Rotation;//回転
@@ -24,15 +30,12 @@ protected:
 	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
 	bool bUnlit;
-	//自動で動いているオブジェクトなら
-	bool bMoveable;
-	XMFLOAT3 x3MoveStartPos;
-	XMFLOAT3 x3MoveEndPos;
 public:
 	GameObject3D();
 	~GameObject3D();
 	virtual void Init();
 	virtual void Update();
+	void AutomaticMovementControl();
 	virtual void Draw();
 	virtual void Uninit();
 	XMFLOAT3 GetPosition();
@@ -46,7 +49,7 @@ public:
 	Hitbox3D GetHitBox();
 	void SetHitbox(Hitbox3D hb);
 	int GetType();
-
+	void SetMovement(XMFLOAT3 Start, XMFLOAT3 End);
 	//自動で動いているオブジェクトなら
 	bool IsMoveableObject();
 	XMFLOAT3 GetMoveStartPosition();
@@ -103,10 +106,15 @@ public:
 	~Go_List();
 	int GetNumberOfObjects();
 	GameObject3D* AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char* TexturePath);
+	GameObject3D* AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char* TexturePath, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale);
+	GameObject3D* AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddItem(XMFLOAT3 newPosition, int nType);
+	GameObject3D* AddItem(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible);
+	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType);
+	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);

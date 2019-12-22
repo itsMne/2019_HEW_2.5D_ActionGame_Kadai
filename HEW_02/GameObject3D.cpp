@@ -29,6 +29,7 @@ void GameObject3D::Init()
 	hitbox = { 0,0,0,0,0,0 };
 	pModel = nullptr;
 	bMoveable = false;
+	bGoToStartPos = false;
 #if SHOW_HITBOX
 	pVisualHitbox = new Cube3D("data/texture/hbox.tga");
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
@@ -40,6 +41,10 @@ void GameObject3D::Update()
 {
 	if (pModel)
 		pModel->UpdateModel();
+	if (bMoveable)
+	{
+		AutomaticMovementControl();
+	}
 #if SHOW_HITBOX
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
 	pVisualHitbox->SetScale({ GetHitBox().SizeX, GetHitBox().SizeY, GetHitBox().SizeZ });
@@ -89,6 +94,72 @@ void GameObject3D::Update()
 		}
 	}
 #endif
+}
+
+void GameObject3D::AutomaticMovementControl()
+{
+	XMFLOAT2 Destination = {0,0};
+	float fSpeed =0;
+	if (bGoToStartPos)
+	{
+		Destination.x = x3MoveStartPos.x;
+		Destination.y = x3MoveStartPos.y;
+		fSpeed = x3MoveStartPos.z;
+	}
+	else {
+		Destination.x = x3MoveEndPos.x;
+		Destination.y = x3MoveEndPos.y;
+		fSpeed = x3MoveEndPos.z;
+	}
+
+	bool bIsPlayerFloor = false;
+	Player3D* pPlayer = GetMainPlayer();
+	if (pPlayer) {
+		if (pPlayer->GetFloor() == this)
+		{
+			bIsPlayerFloor = true;
+		}
+	}
+
+	if (Position.x < Destination.x)
+	{
+		Position.x += fSpeed;
+		if (bIsPlayerFloor)
+			pPlayer->TranslateX(fSpeed);
+		if (Position.x > Destination.x)
+			Position.x = Destination.x;
+	}
+	else if (Position.x > Destination.x){
+		Position.x -= fSpeed;
+		if (bIsPlayerFloor)
+			pPlayer->TranslateX(-fSpeed);
+		if (Position.x < Destination.x)
+			Position.x = Destination.x;
+	}
+
+	if (Position.y < Destination.y)
+	{
+		Position.y += fSpeed;
+		if (bIsPlayerFloor)
+			pPlayer->TranslateY(fSpeed);
+		if (Position.y > Destination.y)
+			Position.y = Destination.y;
+	}
+	else if (Position.y > Destination.y) {
+		Position.y -= fSpeed;
+		if (bIsPlayerFloor)
+			pPlayer->TranslateY(-fSpeed);
+		if (Position.y < Destination.y)
+			Position.y = Destination.y;
+	}
+	if (Position.y == Destination.y && Position.x == Destination.x)
+	{
+		if (bGoToStartPos)
+			bGoToStartPos = false;
+		else
+			bGoToStartPos = true;
+	}
+
 }
 
 void GameObject3D::Draw()
@@ -186,6 +257,14 @@ int GameObject3D::GetType()
 	return nType;
 }
 
+void GameObject3D::SetMovement(XMFLOAT3 Start, XMFLOAT3 End)
+{
+	x3MoveStartPos = Start;
+	x3MoveEndPos = End;
+	bGoToStartPos = true;
+	bMoveable = true;
+}
+
 bool GameObject3D::IsMoveableObject()
 {
 	return bMoveable;
@@ -219,6 +298,11 @@ int Go_List::GetNumberOfObjects()
 
 GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char * TexturePath)
 {
+	return AddField(newPosition, newScale, TexturePath, false, { 0,0,0 }, { 0,0,0 });
+}
+
+GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char * TexturePath, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
+{
 	go_node* pPositionList = HeadNode;
 	if (HeadNode != nullptr) {
 		while (pPositionList->next != nullptr) {
@@ -229,6 +313,8 @@ GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const 
 		Field3D* ThisField = (Field3D*)(pWorkList->Object);
 		ThisField->SetScaleWithHitbox(newScale);
 		ThisField->SetPosition(newPosition);
+		if (Moveable)
+			ThisField->SetMovement(Start, End);
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
 		nObjectCount++;
@@ -240,6 +326,8 @@ GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const 
 		Field3D* ThisField = (Field3D*)(HeadNode->Object);
 		ThisField->SetScaleWithHitbox(newScale);
 		ThisField->SetPosition(newPosition);
+		if (Moveable)
+			ThisField->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
@@ -248,7 +336,11 @@ GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const 
 
 GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale)
 {
+	return AddWall(newPosition, newScale, false, { 0,0,0 }, { 0,0,0 });
+}
 
+GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
+{
 	go_node* pPositionList = HeadNode;
 	if (HeadNode != nullptr) {
 		while (pPositionList->next != nullptr) {
@@ -259,6 +351,8 @@ GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale)
 		Wall3D* ThisWall = (Wall3D*)(pWorkList->Object);
 		ThisWall->SetScale(newScale);
 		ThisWall->SetPosition(newPosition);
+		if (Moveable)
+			ThisWall->SetMovement(Start, End);
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
 		nObjectCount++;
@@ -270,14 +364,20 @@ GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale)
 		Wall3D* ThisWall = (Wall3D*)(HeadNode->Object);
 		ThisWall->SetScale(newScale);
 		ThisWall->SetPosition(newPosition);
+		if (Moveable)
+			ThisWall->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
 	}
-
 }
 
 GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
+{
+	return AddItem(newPosition, nType, false, { 0,0,0 }, { 0,0,0 });
+}
+
+GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
 	if (HeadNode != nullptr) {
@@ -290,6 +390,8 @@ GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
 		thisItem->SetPosition(newPosition);
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
+		if (Moveable)
+			thisItem->SetMovement(Start, End);
 		nObjectCount++;
 		return pWorkList->Object;
 	}
@@ -298,14 +400,21 @@ GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
 		HeadNode->Object = new C_Item(nType);
 		C_Item* thisItem = (C_Item*)(HeadNode->Object);
 		thisItem->SetPosition(newPosition);
+		if (Moveable)
+			thisItem->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
 	}
-
 }
 
 GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible)
+{
+	
+	return AddSpike(newPosition, SpikesX, SpikesY, binvisible, false, { 0,0,0 }, { 0,0,0 });
+}
+
+GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
 	if (HeadNode != nullptr) {
@@ -317,6 +426,8 @@ GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY,
 		Spike3D* thisSpike = (Spike3D*)(pWorkList->Object);
 		thisSpike->SetPosition(newPosition);
 		thisSpike->SetSpikesNum(SpikesX, SpikesY);
+		if (Moveable)
+			thisSpike->SetMovement(Start, End);
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
 		nObjectCount++;
@@ -329,14 +440,20 @@ GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY,
 		thisSpike->SetPosition(newPosition);
 		thisSpike->SetSpikesNum(SpikesX, SpikesY);
 		thisSpike->SetInvisibility(binvisible);
+		if (Moveable)
+			thisSpike->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
 	}
-
 }
 
 GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType)
+{
+	return AddMisc(newPosition, nType, false, {0,0,0}, {0,0,0});
+}
+
+GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
 	if (HeadNode != nullptr) {
@@ -352,6 +469,8 @@ GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType)
 		}
 		GameObject3D* thisObj = pWorkList->Object;
 		thisObj->SetPosition(newPosition);
+		if (Moveable)
+			thisObj->SetMovement(Start, End);
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
 		nObjectCount++;
@@ -367,6 +486,8 @@ GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType)
 		}
 		GameObject3D* thisObj = HeadNode->Object;
 		thisObj->SetPosition(newPosition);
+		if (Moveable)
+			thisObj->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
@@ -719,24 +840,24 @@ void Go_List::Load(const char * szFilename, int nType)
 	switch (nType)
 	{
 	case GO_FLOOR: 
-		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
-			AddField(go_container->Pos, go_container->Scale, go_container->texpath);
+		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile))) 
+			AddField(go_container->Pos, go_container->Scale, go_container->texpath, go_container->bMoveable, go_container->MoveStartPos, go_container->MoveEndPos);
 		break;
 	case GO_WALL:
 		while ((fread(go_container, sizeof(GameObjectContainer), 1, pFile)))
-			AddWall(go_container->Pos, go_container->Scale);
+			AddWall(go_container->Pos, go_container->Scale, go_container->bMoveable, go_container->MoveStartPos, go_container->MoveEndPos);
 		break;
 	case GO_ITEM:
 		while ((fread(item_container, sizeof(ItemContainer), 1, pFile)))
-			AddItem(item_container->Pos, item_container->nItemType);
+			AddItem(item_container->Pos, item_container->nItemType, item_container->bMoveable, item_container->MoveStartPos, item_container->MoveEndPos);
 		break;
 	case GO_SPIKE:
 		while ((fread(spike_container, sizeof(SpikesContainer), 1, pFile)))
-			AddSpike(spike_container->Pos, spike_container->SpikesX, spike_container->SpikesY, spike_container->Invisible);
+			AddSpike(spike_container->Pos, spike_container->SpikesX, spike_container->SpikesY, spike_container->Invisible, spike_container->bMoveable, spike_container->MoveStartPos, spike_container->MoveEndPos);
 		break;
 	case GO_GOAL:
 		while ((fread(misc_container, sizeof(MiscContainer), 1, pFile)))
-			AddMisc(misc_container->Pos, GO_GOAL);
+			AddMisc(misc_container->Pos, GO_GOAL, misc_container->bMoveable, misc_container->MoveStartPos, misc_container->MoveEndPos);
 	default:
 		break;
 	}

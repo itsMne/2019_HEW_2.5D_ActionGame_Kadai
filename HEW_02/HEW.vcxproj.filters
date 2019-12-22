@@ -109,7 +109,9 @@
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
     <ClCompile Include="Enemy3D.cpp" />
-    <ClCompile Include="Goal3D.cpp" />
+    <ClCompile Include="Goal3D.cpp">
+      <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -200,7 +202,9 @@
       <Filter>H\ゲームH\ゲームオブジェクト</Filter>
     </ClInclude>
     <ClInclude Include="Enemy3D.h" />
-    <ClInclude Include="Goal3D.h" />
+    <ClInclude Include="Goal3D.h">
+      <Filter>H\ゲームH\ゲームオブジェクト</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

@@ -3,7 +3,7 @@
 #include "SceneGame.h"
 #include "InputManager.h"
 #define DEBUG_AIM_SPEED 3
-
+#define POS_START_X "data/model/X1.fbx"
 
 
 DebugAim::DebugAim(): GameObject3D()
@@ -29,6 +29,16 @@ void DebugAim::Init()
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
 	hitbox = { 0,10.0f,0,2,2,6 };
+	bStaticObject = true;
+	x3Start = {0,0,0};
+	x3End = {0,0,0};
+	fSpeedMoveable = 1;
+	bSetStart =false;
+	bSetEnd = false;
+	ModelPosStart = new Model3D();
+	ModelPosStart->InitModel(POS_START_X, nullptr);
+	ModelPosEnd = new Model3D();
+	ModelPosEnd->InitModel(POS_START_X, nullptr);
 }
 
 void DebugAim::Update()
@@ -39,8 +49,16 @@ void DebugAim::Update()
 		pCurrentGame = GetCurrentGame();
 		return;
 	}
+
 	SceneGame* p_sCurrentGame = (SceneGame*)pCurrentGame;
 	int fSpeed = DEBUG_AIM_SPEED;
+	if (GetInput(INPUT_SWITCH_STATIC_OBJECT))
+	{
+		if (bStaticObject)
+			bStaticObject = false;
+		else
+			bStaticObject = true;
+	}
 	if (GetInput(INPUT_DEBUGAIM_SPEEDDOWN))
 		fSpeed *= 0.5f;
 	else if (GetInput(INPUT_DEBUGAIM_SPEEDUP))
@@ -82,15 +100,10 @@ void DebugAim::Update()
 			GetMainCamera()->ZoomOutZ(-fSpeed);
 		}
 	}
-	if (GetInput(INPUT_SAVE_LEVEL))
-	{
-		p_sCurrentGame->GetFields()->SaveFields("Fields_Level");
-		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
-		p_sCurrentGame->GetWalls()->SaveWalls("Walls_Level");
-		p_sCurrentGame->GetItems()->SaveItems("Items_Level");
-		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
-		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
-	}
+
+	SaveAllControl();
+	MoveableObjectPositionControl();
+
 	Player3D* pPlayer = nullptr;
 	int nitemType;
 	switch (nObjectType)
@@ -117,8 +130,18 @@ void DebugAim::Update()
 			ScaleControl(fSpeed);
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetFields()->AddField({ Position.x,Position.y + 12,Position.z }, { Scale.x,3,Scale.z }, "data/texture/field000.jpg");
-				printf("Fields->AddField({ %ff ,%ff ,%ff}, { %ff, %ff ,%ff }, \"%s\");\n", Position.x, Position.y + 12, Position.z, Scale.x, 3, Scale.z, "data/texture/field000.jpg");
+				if (bStaticObject) {
+					p_sCurrentGame->GetFields()->AddField({ Position.x,Position.y + 12,Position.z }, { Scale.x,3,Scale.z }, "data/texture/field000.jpg");
+					printf("Fields->AddField({ %ff ,%ff ,%ff}, { %ff, %ff ,%ff }, \"%s\");\n", Position.x, Position.y + 12, Position.z, Scale.x, 3, Scale.z, "data/texture/field000.jpg");
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetFields()->AddField({ Position.x,Position.y + 12,Position.z }, { Scale.x,3,Scale.z }, "data/texture/field000.jpg", true, x3Start, x3End);
+					}
+				}
 			}
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
@@ -138,8 +161,18 @@ void DebugAim::Update()
 			ScaleControl(fSpeed*0.25f);
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetWalls()->AddWall({ Position.x,Position.y + 16, Position.z }, Scale);
-				printf("Walls->AddWall({ %ff ,%ff ,%ff}, { %ff, %ff ,%ff });\n", Position.x, Position.y+16, Position.z, Scale.x, Scale.y, Scale.z);
+				if (bStaticObject) {
+					p_sCurrentGame->GetWalls()->AddWall({ Position.x,Position.y + 16, Position.z }, Scale);
+					printf("Walls->AddWall({ %ff ,%ff ,%ff}, { %ff, %ff ,%ff });\n", Position.x, Position.y + 16, Position.z, Scale.x, Scale.y, Scale.z);
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetWalls()->AddWall({ Position.x,Position.y + 16, Position.z }, Scale, true, x3Start, x3End);
+					}
+				}
 			}
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
@@ -161,8 +194,18 @@ void DebugAim::Update()
 
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetItems()->AddItem(Position, nitemType);
-				printf("Items->AddItem({ %ff ,%ff ,%ff}, %d);\n", Position.x, Position.y, Position.z, nitemType);
+				if (bStaticObject) {
+					p_sCurrentGame->GetItems()->AddItem(Position, nitemType);
+					printf("Items->AddItem({ %ff ,%ff ,%ff}, %d);\n", Position.x, Position.y, Position.z, nitemType);
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetItems()->AddItem(Position, nitemType, true, x3Start, x3End);
+					}
+				}
 			}
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
@@ -214,8 +257,18 @@ void DebugAim::Update()
 			}
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetSpikes()->AddSpike(Position, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y), true);
-				printf("Spikes->AddSpike({ %ff ,%ff ,%ff}, %d, %d, true);\n", Position.x, Position.y, Position.z, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y));
+				if (bStaticObject) {
+					p_sCurrentGame->GetSpikes()->AddSpike(Position, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y), true);
+					printf("Spikes->AddSpike({ %ff ,%ff ,%ff}, %d, %d, true);\n", Position.x, Position.y, Position.z, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y));
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetSpikes()->AddSpike(Position, ((int)pDA_Spike->GetSpikesNum().x), ((int)pDA_Spike->GetSpikesNum().y), true, true, x3Start, x3End);
+					}
+				}
 			}
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
@@ -235,8 +288,18 @@ void DebugAim::Update()
 
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
-				p_sCurrentGame->GetGoals()->AddMisc(Position, GO_GOAL);
-				printf("Misc->AddGoal({ %ff ,%ff ,%ff}, GO_GOAL);\n", Position.x, Position.y, Position.z);
+				if (bStaticObject) {
+					p_sCurrentGame->GetGoals()->AddMisc(Position, GO_GOAL);
+					printf("Misc->AddGoal({ %ff ,%ff ,%ff}, GO_GOAL);\n", Position.x, Position.y, Position.z);
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetGoals()->AddMisc(Position, GO_GOAL, true, x3Start, x3End);
+					}
+				}
 			}
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
@@ -246,6 +309,49 @@ void DebugAim::Update()
 		break;
 	default:
 		break;
+	}
+}
+
+void DebugAim::SaveAllControl()
+{
+	if (GetInput(INPUT_SAVE_LEVEL))
+	{
+		SceneGame* p_sCurrentGame = (SceneGame*)pCurrentGame;
+		p_sCurrentGame->GetFields()->SaveFields("Fields_Level");
+		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
+		p_sCurrentGame->GetWalls()->SaveWalls("Walls_Level");
+		p_sCurrentGame->GetItems()->SaveItems("Items_Level");
+		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
+		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
+	}
+}
+
+void DebugAim::MoveableObjectPositionControl()
+{
+	if (!bStaticObject && nObjectType != DA_DEBUGAIM) {
+		if (ModelPosEnd) {
+			ModelPosEnd->UpdateModel();
+			if (!bSetEnd) {
+				ModelPosEnd->SetPosition({ Position.x,Position.y + 12,Position.z });
+				if (bSetStart)
+				{
+					if (GetInput(INPUT_DEBUGAIM_ACCEPT)) {
+						bSetEnd = true;
+						x3End = { Position.x, Position.y + 12, fSpeedMoveable };
+					}
+				}
+			}
+		}
+		if (ModelPosStart) {
+			ModelPosStart->UpdateModel();
+			if (!bSetStart) {
+				ModelPosStart->SetPosition({ Position.x,Position.y + 12,Position.z });
+				if (GetInput(INPUT_DEBUGAIM_ACCEPT)) {
+					bSetStart = true;
+					x3Start = { Position.x, Position.y + 12, fSpeedMoveable };
+				}
+			}
+		}
 	}
 }
 
@@ -313,7 +419,6 @@ void DebugAim::ScaleControl(float fSpeed)
 
 void DebugAim::Draw()
 {
-	
 	switch (nObjectType)
 	{
 	case DA_DEBUGAIM:
@@ -346,6 +451,12 @@ void DebugAim::Draw()
 		break;
 	default:
 		break;
+	}
+	if (!bStaticObject) {
+		if (ModelPosStart)
+			ModelPosStart->DrawModel();
+		if (ModelPosEnd)
+			ModelPosEnd->DrawModel();
 	}
 }
 
