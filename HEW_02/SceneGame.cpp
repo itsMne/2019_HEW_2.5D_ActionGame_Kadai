@@ -64,6 +64,8 @@ void SceneGame::Init()
 	pLevel_Editor_UI = new C_Ui("data/texture/UI_LEINSTRUCTIONS.tga", UI_LEVEL_EDITOR);
 	pLevel_Editor_MOVEMODE_UI = new C_Ui("data/texture/UI_MOVEABLEMODE.tga", UI_LEVEL_EDITOR_MOVEABLEMODE);
 	pLevel_Editor_STATICMODE_UI = new C_Ui("data/texture/UI_STATICMODE.tga", UI_LEVEL_EDITOR_STATICMODE);
+	pSpeed_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_OBJSPEED);
+	pDelay_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_DELAY);
 
 }
 
@@ -130,6 +132,8 @@ int SceneGame::Update()
 	pLevel_Editor_UI->Update();
 	pLevel_Editor_MOVEMODE_UI->Update();
 	pLevel_Editor_STATICMODE_UI->Update();
+	pSpeed_MoveObject_UI->Update();
+	pDelay_MoveObject_UI->Update();
 	return nSceneType;
 }
 
@@ -181,6 +185,8 @@ void SceneGame::Draw()
 	pLevel_Editor_UI->Draw();
 	pLevel_Editor_MOVEMODE_UI->Draw();
 	pLevel_Editor_STATICMODE_UI->Draw();
+	pSpeed_MoveObject_UI->Draw();
+	pDelay_MoveObject_UI->Draw();
 	// デバッグ文字列表示
 	DrawDebugProc();
 }

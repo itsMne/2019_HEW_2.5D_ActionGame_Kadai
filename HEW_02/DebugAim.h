@@ -54,5 +54,7 @@ public:
 	void Uninit();
 	int GetCurrentType();
 	bool IsStaticMode();
+	int GetMoveSpeedInt();
+	int GetDelayObj();
 };
 

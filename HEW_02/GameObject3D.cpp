@@ -103,6 +103,7 @@ void GameObject3D::AutomaticMovementControl()
 		return;
 	XMFLOAT2 Destination = {0,0};
 	float fSpeed = x3MoveStartPos.z;
+	//printf("%f\n", Position.z);
 	float fDelay = x3MoveEndPos.z;
 
 	if (bGoToStartPos)

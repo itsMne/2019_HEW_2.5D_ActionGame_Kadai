@@ -29,6 +29,8 @@ private:
 	C_Ui* pLevel_Editor_UI;
 	C_Ui* pLevel_Editor_MOVEMODE_UI;
 	C_Ui* pLevel_Editor_STATICMODE_UI;
+	C_Ui* pSpeed_MoveObject_UI;
+	C_Ui* pDelay_MoveObject_UI;
 	bool bGoalReached;
 public:
 	

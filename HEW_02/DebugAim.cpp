@@ -80,27 +80,23 @@ void DebugAim::Update()
 		if (GetInput(INPUT_MOVEABLE_OBJECT_SPEED_UP))
 		{
 			fSpeedMoveable += 0.5f;
-			printf("動けるオブジェクトの設定した速さは：%f\n", fSpeedMoveable);
 		}
 		if (GetInput(INPUT_MOVEABLE_OBJECT_SPEED_DOWN))
 		{
 			fSpeedMoveable -= 0.5f;
 			if (fSpeedMoveable < 0.5f)
 				fSpeedMoveable = 0.5f;
-			printf("動けるオブジェクトの設定した速さは：%f\n", fSpeedMoveable);
 		}
 
 		if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_UP))
 		{
 			fDelayBetweenStops += 1;
-			printf("動けるオブジェクトの設定したディレイは：%f秒\n", fDelayBetweenStops);
 		}
 		if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_DOWN))
 		{
 			fDelayBetweenStops -= 1;
 			if (fDelayBetweenStops < 0)
 				fDelayBetweenStops = 0;
-			printf("動けるオブジェクトの設定したディレイは：%f秒\n", fDelayBetweenStops);
 		}
 	}
 	if (GetInput(INPUT_SWITCH_DEBUG_TYPE_UP))
@@ -133,7 +129,7 @@ void DebugAim::Update()
 	}
 	SaveAllControl();
 	MoveableObjectPositionControl();
-	x3Start.z = fSpeed;
+	x3Start.z = fSpeedMoveable;
 	x3End.z = fDelayBetweenStops;
 	Player3D* pPlayer = nullptr;
 	int nitemType;
@@ -506,4 +502,14 @@ int DebugAim::GetCurrentType()
 bool DebugAim::IsStaticMode()
 {
 	return bStaticObject;
+}
+
+int DebugAim::GetMoveSpeedInt()
+{
+	return (int)(fSpeedMoveable*10);
+}
+
+int DebugAim::GetDelayObj()
+{
+	return (int)fDelayBetweenStops;
 }

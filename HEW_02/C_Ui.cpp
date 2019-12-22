@@ -73,7 +73,12 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(289, 34);
 		SetPolygonPos(0, -SCREEN_HEIGHT / 2 + 34);
 		break;
-
+	case UI_LEVEL_EDITOR_OBJSPEED:
+		vScorePos = { -30,-222 };
+		break;	
+	case UI_LEVEL_EDITOR_DELAY:
+		vScorePos = { -30,-220-45 };
+		break;
 	}
 }
 
@@ -196,6 +201,28 @@ void C_Ui::Draw()
 			return;
 		if (pPlayer->GetDebugAim()->IsStaticMode())
 			DrawPolygon(GetDeviceContext());
+		break;
+	case UI_LEVEL_EDITOR_OBJSPEED:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		if (pPlayer->GetDebugAim()->IsStaticMode())
+			return;
+		Draw(&vScorePos, pPlayer->GetDebugAim()->GetMoveSpeedInt(), 5,
+			25, 25);
+		break;	
+	case UI_LEVEL_EDITOR_DELAY:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		if (pPlayer->GetDebugAim()->IsStaticMode())
+			return;
+		Draw(&vScorePos, pPlayer->GetDebugAim()->GetDelayObj(), 5,
+			25, 25);
 		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
