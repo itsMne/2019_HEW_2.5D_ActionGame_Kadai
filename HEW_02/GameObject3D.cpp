@@ -30,6 +30,7 @@ void GameObject3D::Init()
 	pModel = nullptr;
 	bMoveable = false;
 	bGoToStartPos = false;
+	nDelayFramesBetweenStops = 0;
 #if SHOW_HITBOX
 	pVisualHitbox = new Cube3D("data/texture/hbox.tga");
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
@@ -98,18 +99,20 @@ void GameObject3D::Update()
 
 void GameObject3D::AutomaticMovementControl()
 {
+	if (--nDelayFramesBetweenStops > 0)
+		return;
 	XMFLOAT2 Destination = {0,0};
-	float fSpeed =0;
+	float fSpeed = x3MoveStartPos.z;
+	float fDelay = x3MoveEndPos.z;
+
 	if (bGoToStartPos)
 	{
 		Destination.x = x3MoveStartPos.x;
 		Destination.y = x3MoveStartPos.y;
-		fSpeed = x3MoveStartPos.z;
 	}
 	else {
 		Destination.x = x3MoveEndPos.x;
 		Destination.y = x3MoveEndPos.y;
-		fSpeed = x3MoveEndPos.z;
 	}
 
 	bool bIsPlayerFloorOrCrawling = false;
@@ -158,6 +161,7 @@ void GameObject3D::AutomaticMovementControl()
 			bGoToStartPos = false;
 		else
 			bGoToStartPos = true;
+		nDelayFramesBetweenStops = (int)x3MoveEndPos.z*60;
 	}
 
 }

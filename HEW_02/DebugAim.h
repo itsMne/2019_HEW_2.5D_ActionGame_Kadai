@@ -37,7 +37,8 @@ private:
 	bool bSetEnd;
 	XMFLOAT3 x3Start;
 	XMFLOAT3 x3End;
-	float	fSpeedMoveable;
+	float fSpeedMoveable;
+	float fDelayBetweenStops;
 	Model3D* ModelPosStart;
 	Model3D* ModelPosEnd;
 public:

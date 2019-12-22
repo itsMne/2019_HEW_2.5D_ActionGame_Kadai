@@ -20,6 +20,7 @@ private:
 	bool bGoToStartPos;
 	XMFLOAT3 x3MoveStartPos;
 	XMFLOAT3 x3MoveEndPos;
+	int nDelayFramesBetweenStops;
 protected:
 	Model3D* pModel;//ƒ‚ƒfƒ‹
 	XMFLOAT3 Rotation;//‰ñ“]

@@ -33,6 +33,7 @@ void DebugAim::Init()
 	x3Start = {0,0,0};
 	x3End = {0,0,0};
 	fSpeedMoveable = 1;
+	fDelayBetweenStops = 0;
 	bSetStart =false;
 	bSetEnd = false;
 	ModelPosStart = new Model3D();
@@ -56,8 +57,11 @@ void DebugAim::Update()
 	{
 		if (bStaticObject)
 			bStaticObject = false;
-		else
+		else {
+			bSetStart = false;
+			bSetEnd = false;
 			bStaticObject = true;
+		}
 	}
 	if (GetInput(INPUT_DEBUGAIM_SPEEDDOWN))
 		fSpeed *= 0.5f;
@@ -71,7 +75,34 @@ void DebugAim::Update()
 		Position.x+= fSpeed;
 	if (GetInput(INPUT_LEFT))
 		Position.x-= fSpeed;
-	
+
+	if (!bStaticObject) {
+		if (GetInput(INPUT_MOVEABLE_OBJECT_SPEED_UP))
+		{
+			fSpeedMoveable += 0.5f;
+			printf("動けるオブジェクトの設定した速さは：%f\n", fSpeedMoveable);
+		}
+		if (GetInput(INPUT_MOVEABLE_OBJECT_SPEED_DOWN))
+		{
+			fSpeedMoveable -= 0.5f;
+			if (fSpeedMoveable < 0.5f)
+				fSpeedMoveable = 0.5f;
+			printf("動けるオブジェクトの設定した速さは：%f\n", fSpeedMoveable);
+		}
+
+		if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_UP))
+		{
+			fDelayBetweenStops += 1;
+			printf("動けるオブジェクトの設定したディレイは：%f秒\n", fDelayBetweenStops);
+		}
+		if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_DOWN))
+		{
+			fDelayBetweenStops -= 1;
+			if (fDelayBetweenStops < 0)
+				fDelayBetweenStops = 0;
+			printf("動けるオブジェクトの設定したディレイは：%f秒\n", fDelayBetweenStops);
+		}
+	}
 	if (GetInput(INPUT_SWITCH_DEBUG_TYPE_UP))
 	{
 		nObjectType++;
@@ -100,10 +131,10 @@ void DebugAim::Update()
 			GetMainCamera()->ZoomOutZ(-fSpeed);
 		}
 	}
-
 	SaveAllControl();
 	MoveableObjectPositionControl();
-
+	x3Start.z = fSpeed;
+	x3End.z = fDelayBetweenStops;
 	Player3D* pPlayer = nullptr;
 	int nitemType;
 	switch (nObjectType)
@@ -117,6 +148,8 @@ void DebugAim::Update()
 			pPlayer->SetPosition(Position);
 			printf("拠点：(%f, %f, %f);\n", Position.x, Position.y, Position.z);
 		}
+		bSetStart = false;
+		bSetEnd = false;
 		break;
 	case DA_FIELD:
 		if (!pDA_Field) {
@@ -337,7 +370,7 @@ void DebugAim::MoveableObjectPositionControl()
 				{
 					if (GetInput(INPUT_DEBUGAIM_ACCEPT)) {
 						bSetEnd = true;
-						x3End = { Position.x, Position.y + 12, fSpeedMoveable };
+						x3End = { Position.x, Position.y + 12, fDelayBetweenStops };
 					}
 				}
 			}
@@ -452,7 +485,7 @@ void DebugAim::Draw()
 	default:
 		break;
 	}
-	if (!bStaticObject) {
+	if (!bStaticObject && nObjectType!=DA_DEBUGAIM) {
 		if (ModelPosStart)
 			ModelPosStart->DrawModel();
 		if (ModelPosEnd)

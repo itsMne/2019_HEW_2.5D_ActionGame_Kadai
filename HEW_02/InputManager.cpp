@@ -45,6 +45,11 @@ void UpdateInputManager()
 	bInputs[INPUT_DEBUGAIM_DELETE] = GetKeyTrigger(VK_BACK);
 	bInputs[INPUT_SHIFT] = GetKeyPress(VK_LSHIFT);
 	bInputs[INPUT_SWITCH_STATIC_OBJECT] = GetKeyTrigger(VK_2);
+	bInputs[INPUT_MOVEABLE_OBJECT_SPEED_UP] = GetKeyTrigger(VK_UP);
+	bInputs[INPUT_MOVEABLE_OBJECT_SPEED_DOWN] = GetKeyTrigger(VK_DOWN);
+
+	bInputs[INPUT_MOVEABLE_OBJECT_DELAY_UP] = GetKeyTrigger(VK_RIGHT);
+	bInputs[INPUT_MOVEABLE_OBJECT_DELAY_DOWN] = GetKeyTrigger(VK_LEFT);
 	XinputTriggerControl(false);
 }
 
