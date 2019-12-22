@@ -112,26 +112,26 @@ void GameObject3D::AutomaticMovementControl()
 		fSpeed = x3MoveEndPos.z;
 	}
 
-	bool bIsPlayerFloor = false;
+	bool bIsPlayerFloorOrCrawling = false;
 	Player3D* pPlayer = GetMainPlayer();
 	if (pPlayer) {
 		if (pPlayer->GetFloor() == this)
-		{
-			bIsPlayerFloor = true;
-		}
+			bIsPlayerFloorOrCrawling = true;
+		if(pPlayer->GetWallCrawling()==this)
+			bIsPlayerFloorOrCrawling = true;
 	}
 
 	if (Position.x < Destination.x)
 	{
 		Position.x += fSpeed;
-		if (bIsPlayerFloor)
+		if (bIsPlayerFloorOrCrawling)
 			pPlayer->TranslateX(fSpeed);
 		if (Position.x > Destination.x)
 			Position.x = Destination.x;
 	}
 	else if (Position.x > Destination.x){
 		Position.x -= fSpeed;
-		if (bIsPlayerFloor)
+		if (bIsPlayerFloorOrCrawling)
 			pPlayer->TranslateX(-fSpeed);
 		if (Position.x < Destination.x)
 			Position.x = Destination.x;
@@ -140,14 +140,14 @@ void GameObject3D::AutomaticMovementControl()
 	if (Position.y < Destination.y)
 	{
 		Position.y += fSpeed;
-		if (bIsPlayerFloor)
+		if (bIsPlayerFloorOrCrawling)
 			pPlayer->TranslateY(fSpeed);
 		if (Position.y > Destination.y)
 			Position.y = Destination.y;
 	}
 	else if (Position.y > Destination.y) {
 		Position.y -= fSpeed;
-		if (bIsPlayerFloor)
+		if (bIsPlayerFloorOrCrawling)
 			pPlayer->TranslateY(-fSpeed);
 		if (Position.y < Destination.y)
 			Position.y = Destination.y;

@@ -72,6 +72,7 @@ private:
 	PLAYER_ATTACK_MOVE* pCurrentAttackPlaying;
 	Wall3D* RightWall;
 	Wall3D* LeftWall;
+	Wall3D* WallAttachedTo;
 	float LockMovementRight;
 	float LockMovementLeft;
 	int nCurrentAnimation;
@@ -127,6 +128,7 @@ public:
 	int GetState();
 	DebugAim* GetDebugAim();
 	bool IsDebugAimOn();
+	GameObject3D* GetWallCrawling();
 };
 
 Player3D* GetMainPlayer();

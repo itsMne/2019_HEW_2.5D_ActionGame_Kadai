@@ -133,6 +133,7 @@ void Player3D::Init()
 	nMaxStamina = nStamina = INIT_STAMINA;
 	RightWall = nullptr;
 	LeftWall = nullptr;
+	WallAttachedTo = nullptr;
 	LockMovementRight = 1;
 	LockMovementLeft = 1;
 	nCurrentAnimation = 0;
@@ -174,7 +175,7 @@ void Player3D::Update()
 		return;
 	}
 	
-
+	WallAttachedTo = nullptr;
 	bool bIsLocked = pCurrentAttackPlaying;
 	if (pCurrentAttackPlaying)
 		bIsLocked = (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() < pCurrentAttackPlaying->UnlockFrame);
@@ -191,6 +192,9 @@ void Player3D::Update()
 					Position.x -= 0.001f;
 					LockMovementRight = M_LOCKED;
 				}
+				Position.x += 0.001f;
+				if(!pCurrentFloor)
+					WallAttachedTo = RightWall;
 			}
 			else
 			{
@@ -210,6 +214,9 @@ void Player3D::Update()
 					Position.x += 0.001f;
 					LockMovementLeft = M_LOCKED;
 				}
+				Position.x -= 0.001f;
+				if (!pCurrentFloor)
+					WallAttachedTo = LeftWall;
 			}
 			else 
 			{
@@ -925,4 +932,9 @@ DebugAim * Player3D::GetDebugAim()
 bool Player3D::IsDebugAimOn()
 {
 	return bUsingDebugAim;
+}
+
+GameObject3D * Player3D::GetWallCrawling()
+{
+	return WallAttachedTo;
 }
