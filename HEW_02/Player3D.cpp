@@ -228,10 +228,12 @@ void Player3D::Update()
 	pPlayerModels[nCurrentTransformation]->UpdateModel();
 	if (pCurrentFloor)
 	{
-		if (++nFrameCountForSafePos > 30)
-		{
-			nFrameCountForSafePos = 0;
-			x3LastSafePos = Position;
+		if (!(pCurrentFloor->IsMoveableObject())) {
+			if (++nFrameCountForSafePos > 30)
+			{
+				nFrameCountForSafePos = 0;
+				x3LastSafePos = Position;
+			}
 		}
 	}
 	else {
@@ -588,7 +590,8 @@ void Player3D::TransformingStateControl()
 void Player3D::Jump(float fJumpForce)
 {
 	if (pCurrentFloor) {
-		x3LastSafePos = Position;
+		if (!(pCurrentFloor->IsMoveableObject()))
+			x3LastSafePos = Position;
 		while (IsInCollision3D(pCurrentFloor->GetHitBox(), GetHitBox(HB_FEET)))
 			Position.y += 0.01;
 	}
