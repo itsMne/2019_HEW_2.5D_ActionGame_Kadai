@@ -1,9 +1,10 @@
 #include "SceneGame.h"
 #include "Enemy3D.h"
-#include "Goal3D.h"
+#include "Mirror3D.h"
 
 SceneGame* CurrentGame = nullptr;
 Enemy3D* HelloEnemy = nullptr;
+Mirror3D* HelloMirror = nullptr;
 SceneGame::SceneGame(): SceneBase()
 {
 	Init();
@@ -46,6 +47,7 @@ void SceneGame::Init()
 	Goals->Load("Goals_Level", GO_GOAL);
 	Spikes->Load("Spikes_Level", GO_SPIKE);
 	
+	HelloMirror = new Mirror3D();
 
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
@@ -113,6 +115,9 @@ int SceneGame::Update()
 	Items->Update();
 
 	Spikes->Update();
+
+	HelloMirror->Update();
+
 	// Hp更新
 	pHP_UI_BACK->Update();
 	pHP_UI_FRONT->Update();
@@ -165,7 +170,7 @@ void SceneGame::Draw()
 	
 	Spikes->Draw();
 
-	// 背面カリング (通常は表面のみ描画)
+	HelloMirror->Draw();
 	
 	// Zバッファ無効
 	SetZBuffer(false);

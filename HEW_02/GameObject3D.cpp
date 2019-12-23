@@ -78,6 +78,7 @@ void GameObject3D::Update()
 				List->DeleteObject(this);
 				return;
 			case GO_ITEM:
+				printf("a");
 				List = pS_Game->GetItems();
 				List->DeleteObject(this);
 				return;
@@ -170,13 +171,7 @@ void GameObject3D::AutomaticMovementControl()
 void GameObject3D::Draw()
 {
 	bool bPreviousLight = GetMainLight()->IsLightEnabled();
-#if SHOW_HITBOX
-	GetMainLight()->SetLightEnable(false);
-	SetCullMode(CULLMODE_NONE);
-	pVisualHitbox->Draw();
-	SetCullMode(CULLMODE_CCW);
-	GetMainLight()->SetLightEnable(bPreviousLight);
-#endif
+
 	
 	if (bUnlit)
 		GetMainLight()->SetLightEnable(false);
@@ -184,6 +179,13 @@ void GameObject3D::Draw()
 		pModel->DrawModel();
 	if (bUnlit)
 		GetMainLight()->SetLightEnable(bPreviousLight);
+#if SHOW_HITBOX
+	GetMainLight()->SetLightEnable(false);
+	SetCullMode(CULLMODE_NONE);
+	pVisualHitbox->Draw();
+	SetCullMode(CULLMODE_CCW);
+	GetMainLight()->SetLightEnable(bPreviousLight);
+#endif
 }
 
 void GameObject3D::Uninit()

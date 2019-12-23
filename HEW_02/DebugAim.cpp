@@ -3,7 +3,7 @@
 #include "SceneGame.h"
 #include "InputManager.h"
 #define DEBUG_AIM_SPEED 3
-#define POS_START_X "data/model/X1.fbx"
+#define MODEL_PATH_X "data/model/X1.fbx"
 
 
 DebugAim::DebugAim(): GameObject3D()
@@ -37,9 +37,9 @@ void DebugAim::Init()
 	bSetStart =false;
 	bSetEnd = false;
 	ModelPosStart = new Model3D();
-	ModelPosStart->InitModel(POS_START_X, nullptr);
+	ModelPosStart->InitModel(MODEL_PATH_X, nullptr);
 	ModelPosEnd = new Model3D();
-	ModelPosEnd->InitModel(POS_START_X, nullptr);
+	ModelPosEnd->InitModel(MODEL_PATH_X, nullptr);
 }
 
 void DebugAim::Update()
