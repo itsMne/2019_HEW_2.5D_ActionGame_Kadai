@@ -116,7 +116,8 @@ public:
 	GameObject3D* AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType);
 	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
-
+	GameObject3D* AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination);
+	GameObject3D* AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);
 	void Update();

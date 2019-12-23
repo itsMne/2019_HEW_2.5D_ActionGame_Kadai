@@ -165,6 +165,11 @@ void Player3D::Update()
 		DeadStateControl();
 		return;
 	}
+	if (nState == PLAYER_TELEPORTING)
+	{
+		TeleportControl();
+		return;
+	}
 	if (nState == PLAYER_TELEPORTING_DAMAGED)//プレイヤーはスパイクみたいな危険からダメージをもらった場合に管理する
 	{
 		DamagedTeleportingControl();
@@ -394,6 +399,69 @@ void Player3D::Update()
 	HitboxControl();
 	
 
+}
+
+void Player3D::TeleportControl()
+{
+	static float acceleration;
+	if (CompVector(Position, x3TeleportDestination))
+	{
+		acceleration += 0.005f;
+		Scale.x += acceleration;
+		Scale.y += acceleration;
+		Scale.z += acceleration;
+		if (Scale.x > 1)
+			Scale.x = 1;
+		if (Scale.y > 1)
+			Scale.y = 1;
+		if (Scale.z > 1)
+			Scale.z = 1;
+		if (CompVector(Scale, { 1,1,1 }))
+		{
+			acceleration = 0;
+			nState = PLAYER_IDLE;
+		}
+		return;
+	}
+	if (IsVectorZero(Scale))
+	{
+		static int f_Acceleration = 0;
+		f_Acceleration++;
+		if (Position.x < x3TeleportDestination.x) {
+			Position.x += f_Acceleration;
+			if (Position.x >= x3TeleportDestination.x)
+				Position.x = x3TeleportDestination.x;
+		}
+		else if (Position.x > x3TeleportDestination.x) {
+			Position.x -= f_Acceleration;
+			if (Position.x <= x3TeleportDestination.x)
+				Position.x = x3TeleportDestination.x;
+		}
+
+		if (Position.y < x3TeleportDestination.y) {
+			Position.y += f_Acceleration;
+			if (Position.y >= x3TeleportDestination.y)
+				Position.y = x3TeleportDestination.y;
+		}
+		else if (Position.y > x3TeleportDestination.y) {
+			Position.y -= f_Acceleration;
+			if (Position.y <= x3TeleportDestination.y)
+				Position.y = x3TeleportDestination.y;
+		}
+	}
+
+	acceleration += 0.005f;
+	Scale.x -= acceleration;
+	Scale.y -= acceleration;
+	Scale.z -= acceleration;
+	if (Scale.x < 0)
+		Scale.x = 0;
+	if (Scale.y < 0)
+		Scale.y = 0;
+	if (Scale.z < 0)
+		Scale.z = 0;
+	if (IsVectorZero(Scale))
+		acceleration = 0;
 }
 
 bool Player3D::DebugAimControl()
@@ -940,4 +1008,13 @@ bool Player3D::IsDebugAimOn()
 GameObject3D * Player3D::GetWallCrawling()
 {
 	return WallAttachedTo;
+}
+
+void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
+{
+	if (nState == PLAYER_TELEPORTING || nState == PLAYER_TELEPORTING_DAMAGED)
+		return;
+	nState = PLAYER_TELEPORTING;
+	x3TeleportDestination = Destination;
+	x3TeleportDestination.z = Position.z;
 }

@@ -9,7 +9,7 @@
 // É}ÉNÉçíËã`
 //*****************************************************************************
 #define HITBOX_Z_POS -10
-#define SHOW_HITBOX	true
+#define SHOW_HITBOX	false
 #define USE_CONSOLE true
 #define DEBUG_MODE true
 #ifndef SAFE_RELEASE
@@ -75,3 +75,5 @@ typedef struct UV
 
 bool IsInCollision3D(Hitbox3D a, Hitbox3D b);
 bool IsInCollision2D(Hitbox2D hbA, Hitbox2D hbB);
+bool IsVectorZero(XMFLOAT3 vec);
+bool CompVector(XMFLOAT3 a, XMFLOAT3 b);

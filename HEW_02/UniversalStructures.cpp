@@ -43,3 +43,25 @@ bool IsInCollision2D(Hitbox2D hbA, Hitbox2D hbB)
 	b.y = b.y - (b.h*0.5f);
 	return (((a.x + a.w) >= b.x) && (a.x) <= (b.x + b.w) && (a.y + a.h) >= b.y && a.y <= (b.y + b.h));
 }
+
+bool IsVectorZero(XMFLOAT3 vec)
+{
+	if (vec.x != 0)
+		return false;
+	if (vec.y != 0)
+		return false;
+	if (vec.z != 0)
+		return false;
+	return true;
+}
+
+bool CompVector(XMFLOAT3 a, XMFLOAT3 b)
+{
+	if (a.x != b.x)
+		return false;
+	if (a.y != b.y)
+		return false;
+	if (a.z != b.z)
+		return false;
+	return true;
+}

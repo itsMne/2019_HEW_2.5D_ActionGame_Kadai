@@ -29,6 +29,7 @@ enum PLAYER_STATES
 	PLAYER_TRANSFORMING,
 	PLAYER_ATTACKING,
 	PLAYER_KICK_WALL_STATE,
+	PLAYER_TELEPORTING,
 	PLAYER_TELEPORTING_DAMAGED,
 	PLAYER_DEAD,
 	PLAYER_MAX
@@ -81,11 +82,13 @@ private:
 	bool bStaminaCoolDown;
 	int nFrameCountForSafePos;
 	XMFLOAT3 x3LastSafePos;
+	XMFLOAT3 x3TeleportDestination;
 public:
 	Player3D();
 	~Player3D();
 	void Init();
 	void Update();
+	void TeleportControl();
 	bool DebugAimControl();
 	void DeadStateControl();
 	void DamagedTeleportingControl();
@@ -129,6 +132,7 @@ public:
 	DebugAim* GetDebugAim();
 	bool IsDebugAimOn();
 	GameObject3D* GetWallCrawling();
+	void SetPlayerTeleporting(XMFLOAT3 Destination);
 };
 
 Player3D* GetMainPlayer();

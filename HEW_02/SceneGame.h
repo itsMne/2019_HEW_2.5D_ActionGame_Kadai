@@ -16,6 +16,7 @@ private:
 	Go_List* Items;
 	Go_List* Spikes;
 	Go_List* Goals;
+	Go_List* Mirrors;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 	

@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "Goal3D.h"
 #include "SceneGame.h"
+#include "Mirror3D.h"
 #include "String.h"
 
 GameObject3D::GameObject3D()
@@ -495,6 +496,44 @@ GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, 
 		thisObj->SetPosition(newPosition);
 		if (Moveable)
 			thisObj->SetMovement(Start, End);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+}
+
+GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination)
+{
+	return AddMirror(newPosition, Destination, false, { 0,0,0 }, { 0,0,0 });
+}
+
+GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new Mirror3D();
+		Mirror3D* thisMirror = (Mirror3D*)(pWorkList->Object);
+		thisMirror->SetPosition(newPosition);
+		thisMirror->SetDestination(Destination);
+		if (Moveable)
+			thisMirror->SetMovement(Start, End);
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new Mirror3D();
+		Mirror3D* thisMirror = (Mirror3D*)(HeadNode->Object);
+		thisMirror->SetPosition(newPosition);
+		thisMirror->SetDestination(Destination);
+		if (Moveable)
+			thisMirror->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
