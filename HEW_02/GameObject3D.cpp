@@ -519,8 +519,10 @@ GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bo
 		Mirror3D* thisMirror = (Mirror3D*)(pWorkList->Object);
 		thisMirror->SetPosition(newPosition);
 		thisMirror->SetDestination(Destination);
-		if (Moveable)
+		if (Moveable) {
+			printf("\nMOVE MIRROR MOVE\n");
 			thisMirror->SetMovement(Start, End);
+		}
 		pWorkList->next = nullptr;
 		pPositionList->next = pWorkList;
 		nObjectCount++;
@@ -868,6 +870,44 @@ void Go_List::SaveMisc(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveMirrors(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_MIRROR)
+			{
+				MirrorContainer thisMirror;
+				Mirror3D* thisObject = (Mirror3D*)pPositionList->Object;
+				thisMirror.Pos = thisObject->GetPosition();
+				thisMirror.bMoveable = thisObject->IsMoveableObject();
+				thisMirror.MoveStartPos = thisObject->GetMoveStartPosition();
+				thisMirror.MoveEndPos = thisObject->GetMoveEndPosition();
+				thisMirror.Destination = thisObject->GetDestination();
+				fwrite(&thisMirror, sizeof(MirrorContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -883,6 +923,7 @@ void Go_List::Load(const char * szFilename, int nType)
 	MiscContainer* misc_container = new MiscContainer();
 	ItemContainer* item_container = new ItemContainer();
 	SpikesContainer* spike_container = new SpikesContainer();
+	MirrorContainer* mirror_container = new MirrorContainer();
 	switch (nType)
 	{
 	case GO_FLOOR: 
@@ -904,6 +945,10 @@ void Go_List::Load(const char * szFilename, int nType)
 	case GO_GOAL:
 		while ((fread(misc_container, sizeof(MiscContainer), 1, pFile)))
 			AddMisc(misc_container->Pos, GO_GOAL, misc_container->bMoveable, misc_container->MoveStartPos, misc_container->MoveEndPos);
+	case GO_MIRROR:
+		while ((fread(mirror_container, sizeof(MirrorContainer), 1, pFile)))
+			AddMirror(mirror_container->Pos, mirror_container->Destination, mirror_container->bMoveable, mirror_container->MoveStartPos, mirror_container->MoveEndPos);
+		break;
 	default:
 		break;
 	}

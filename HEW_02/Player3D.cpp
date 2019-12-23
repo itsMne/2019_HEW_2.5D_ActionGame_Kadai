@@ -404,7 +404,8 @@ void Player3D::Update()
 void Player3D::TeleportControl()
 {
 	static float acceleration;
-	if (CompVector(Position, x3TeleportDestination))
+	static bool reachedDestination = false;
+	if (reachedDestination)
 	{
 		acceleration += 0.005f;
 		Scale.x += acceleration;
@@ -420,13 +421,14 @@ void Player3D::TeleportControl()
 		{
 			acceleration = 0;
 			nState = PLAYER_IDLE;
+			reachedDestination = false;
 		}
 		return;
 	}
 	if (IsVectorZero(Scale))
 	{
-		static int f_Acceleration = 0;
-		f_Acceleration++;
+		static float f_Acceleration = 0;
+		f_Acceleration+=0.5f;
 		if (Position.x < x3TeleportDestination.x) {
 			Position.x += f_Acceleration;
 			if (Position.x >= x3TeleportDestination.x)
@@ -447,6 +449,10 @@ void Player3D::TeleportControl()
 			Position.y -= f_Acceleration;
 			if (Position.y <= x3TeleportDestination.y)
 				Position.y = x3TeleportDestination.y;
+		}
+		if (CompVector(Position, x3TeleportDestination)) {
+			f_Acceleration = 0;
+			reachedDestination = true;
 		}
 	}
 

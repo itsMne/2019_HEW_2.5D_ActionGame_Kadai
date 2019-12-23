@@ -47,9 +47,7 @@ void SceneGame::Init()
 	Items->Load("Items_Level", GO_ITEM);
 	Goals->Load("Goals_Level", GO_GOAL);
 	Spikes->Load("Spikes_Level", GO_SPIKE);
-	
-	Mirrors->AddMirror({ 20,0,0 }, { 500,500,0 });
-
+	Mirrors->Load("Mirrors_Level", GO_MIRROR);
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
 
@@ -220,6 +218,11 @@ Go_List * SceneGame::GetSpikes()
 Go_List * SceneGame::GetGoals()
 {
 	return Goals;
+}
+
+Go_List * SceneGame::GetMirrors()
+{
+	return Mirrors;
 }
 
 int SceneGame::GetScore()

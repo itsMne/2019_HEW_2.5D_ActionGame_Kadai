@@ -9,6 +9,7 @@ enum goType
 	GO_SPIKE,
 	GO_FLOOR,
 	GO_GOAL,
+	GO_MIRROR,
 	GO_DEBUG_AIM,
 	MAX_TYPE
 };
@@ -96,6 +97,13 @@ typedef struct SpikesContainer {
 	XMFLOAT3 MoveStartPos;
 	XMFLOAT3 MoveEndPos;
 };
+typedef struct MirrorContainer {
+	XMFLOAT3 Pos;
+	XMFLOAT3 Destination;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
 
 class Go_List
 {
@@ -128,6 +136,6 @@ public:
 	void SaveItems(const char* szFilename);
 	void SaveSpikes(const char* szFilename);
 	void SaveMisc(const char* szFilename);
-	//void SaveItem(const char* szFilename);
+	void SaveMirrors(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

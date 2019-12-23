@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #define DEBUG_AIM_SPEED 3
 #define MODEL_PATH_X "data/model/X1.fbx"
+#define MODEL_PATH_X2 "data/model/X2.fbx"
 
 
 DebugAim::DebugAim(): GameObject3D()
@@ -26,20 +27,27 @@ void DebugAim::Init()
 	pDA_Item = nullptr;
 	pDA_Spike = nullptr;
 	pDA_Goal = nullptr;
+	pDA_Mirror = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
 	hitbox = { 0,10.0f,0,2,2,6 };
 	bStaticObject = true;
 	x3Start = {0,0,0};
 	x3End = {0,0,0};
+	TeleportDestination = {0,0,0};
+	TeleportPosition = {0,0,0};
 	fSpeedMoveable = 1;
 	fDelayBetweenStops = 0;
 	bSetStart =false;
 	bSetEnd = false;
+	bTeleportSet = false;
+	bTeleportDestinationSet = false;
 	ModelPosStart = new Model3D();
 	ModelPosStart->InitModel(MODEL_PATH_X, nullptr);
 	ModelPosEnd = new Model3D();
 	ModelPosEnd->InitModel(MODEL_PATH_X, nullptr);
+	ModelPosTeleport = new Model3D();
+	ModelPosTeleport->InitModel(MODEL_PATH_X2, nullptr);
 }
 
 void DebugAim::Update()
@@ -314,7 +322,6 @@ void DebugAim::Update()
 		else {
 			pDA_Goal->Update();
 			pDA_Goal->SetPosition(Position);
-
 			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
 			{
 				if (bStaticObject) {
@@ -336,6 +343,56 @@ void DebugAim::Update()
 			}
 		}
 		break;
+	case DA_MIRROR:
+		if (!pDA_Mirror)
+		{
+			pDA_Mirror = new Mirror3D();
+			pDA_Mirror->SetPosition(Position);
+			Scale = { 1,1,1 };
+		}
+		else {
+			if(!bTeleportSet)
+				pDA_Mirror->SetPosition(Position);
+			else {
+				pDA_Mirror->SetPosition(TeleportPosition);
+				ModelPosTeleport->SetPosition({ Position.x,Position.y + 12,Position.z });
+			}
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				if (bStaticObject || (!bStaticObject && bSetStart && bSetEnd)) {
+					if (!bTeleportSet)
+					{
+						TeleportPosition = Position;
+						bTeleportSet = true;
+						return;
+					}
+					if (bTeleportSet)
+					{
+						TeleportDestination = { Position.x,Position.y + 12,Position.z };
+						bTeleportDestinationSet = true;
+					}
+				}
+				if (bTeleportSet && bTeleportDestinationSet)
+				{
+					if (bStaticObject)
+					{
+						p_sCurrentGame->GetMirrors()->AddMirror(TeleportPosition, TeleportDestination);
+					}
+					else {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetMirrors()->AddMirror(TeleportPosition, TeleportDestination, true, x3Start, x3End);
+					}
+					bTeleportDestinationSet = bTeleportSet = false;
+				}
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetMirrors()->DeleteLastPosObject();
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -352,6 +409,7 @@ void DebugAim::SaveAllControl()
 		p_sCurrentGame->GetItems()->SaveItems("Items_Level");
 		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
 		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
+		p_sCurrentGame->GetMirrors()->SaveMirrors("Mirrors_Level");
 	}
 }
 
@@ -390,6 +448,8 @@ void DebugAim::SwitchObjectTypeControl()
 	SAFE_DELETE(pDA_Wall);
 	SAFE_DELETE(pDA_Item);
 	SAFE_DELETE(pDA_Spike);
+	SAFE_DELETE(pDA_Goal);
+	SAFE_DELETE(pDA_Mirror);
 
 	Scale = { 1,1,1 };
 }
@@ -478,6 +538,10 @@ void DebugAim::Draw()
 		if (pDA_Goal)
 			pDA_Goal->Draw();
 		break;
+	case DA_MIRROR:
+		if (pDA_Mirror)
+			pDA_Mirror->Draw();
+		break;
 	default:
 		break;
 	}
@@ -487,6 +551,8 @@ void DebugAim::Draw()
 		if (ModelPosEnd)
 			ModelPosEnd->DrawModel();
 	}
+	if (bTeleportSet && ModelPosTeleport) 
+		ModelPosTeleport->DrawModel();
 }
 
 void DebugAim::Uninit()

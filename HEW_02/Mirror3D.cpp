@@ -24,6 +24,7 @@ void Mirror3D::Init(XMFLOAT3 Destination)
 	pModel->SetScale({ 1, 1, 1 });
 	hitbox = { 0,10,0,7,7,5 };
 	Position.x += 20;
+	nType = GO_MIRROR;
 }
 
 void Mirror3D::Update()
@@ -33,7 +34,7 @@ void Mirror3D::Update()
 	Player3D* pPlayer = GetMainPlayer();
 	if (!pPlayer)
 		return;
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && !(pPlayer->IsDebugAimOn()))
 		pPlayer->SetPlayerTeleporting(x3DestinationPos);
 }
 
@@ -49,4 +50,9 @@ void Mirror3D::Uninit()
 void Mirror3D::SetDestination(XMFLOAT3 newDest)
 {
 	x3DestinationPos = newDest;
+}
+
+XMFLOAT3 Mirror3D::GetDestination()
+{
+	return x3DestinationPos;
 }

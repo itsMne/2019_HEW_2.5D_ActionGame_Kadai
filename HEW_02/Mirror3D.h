@@ -14,5 +14,5 @@ public:
 	void Draw();
 	void Uninit();
 	void SetDestination(XMFLOAT3 newDest);
+	XMFLOAT3 GetDestination();
 };
-

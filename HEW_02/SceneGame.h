@@ -46,6 +46,7 @@ public:
 	Go_List* GetItems();
 	Go_List* GetSpikes();
 	Go_List* GetGoals();
+	Go_List* GetMirrors();
 	int GetScore();
 	void SetGoalReached();
 };
