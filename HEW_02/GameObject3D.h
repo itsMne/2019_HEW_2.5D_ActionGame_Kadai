@@ -22,6 +22,7 @@ private:
 	XMFLOAT3 x3MoveStartPos;
 	XMFLOAT3 x3MoveEndPos;
 	int nDelayFramesBetweenStops;
+	int nPauseFrames;
 protected:
 	Model3D* pModel;//ƒ‚ƒfƒ‹
 	XMFLOAT3 Rotation;//‰ñ“]
@@ -56,6 +57,7 @@ public:
 	bool IsMoveableObject();
 	XMFLOAT3 GetMoveStartPosition();
 	XMFLOAT3 GetMoveEndPosition();
+	void PauseObject(int pauseFrames);
 };
 
 //*****************************************************************************

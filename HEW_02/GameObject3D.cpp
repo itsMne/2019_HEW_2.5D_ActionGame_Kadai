@@ -33,6 +33,7 @@ void GameObject3D::Init()
 	bGoToStartPos = false;
 	bUnlit = false;
 	nDelayFramesBetweenStops = 0;
+	nPauseFrames = 0;
 #if SHOW_HITBOX
 	pVisualHitbox = new Cube3D("data/texture/hbox.tga");
 	pVisualHitbox->SetPosition({ GetHitBox().x, GetHitBox().y, GetHitBox().z });
@@ -101,8 +102,11 @@ void GameObject3D::Update()
 
 void GameObject3D::AutomaticMovementControl()
 {
+	if (--nPauseFrames > 0)
+		return;
 	if (--nDelayFramesBetweenStops > 0)
 		return;
+	nPauseFrames = 0;
 	XMFLOAT2 Destination = {0,0};
 	float fSpeed = x3MoveStartPos.z;
 	//printf("%f\n", Position.z);
@@ -172,10 +176,11 @@ void GameObject3D::AutomaticMovementControl()
 void GameObject3D::Draw()
 {
 	Light3D* pLight = GetMainLight();
+	bool bPreviousLight;
 	if (pModel) {
 		if (!pLight)
 			return;
-		bool bPreviousLight = GetMainLight()->IsLightEnabled();
+		bPreviousLight = GetMainLight()->IsLightEnabled();
 		if (bUnlit) {
 			GetMainLight()->SetLightEnable(false);
 			pModel->SetLight(GetMainLight());
@@ -186,6 +191,9 @@ void GameObject3D::Draw()
 			GetMainLight()->SetLightEnable(bPreviousLight);
 	}
 #if SHOW_HITBOX
+	if (!pLight)
+		return;
+	bPreviousLight = GetMainLight()->IsLightEnabled();
 	GetMainLight()->SetLightEnable(false);
 	SetCullMode(CULLMODE_NONE);
 	pVisualHitbox->Draw();
@@ -291,6 +299,11 @@ XMFLOAT3 GameObject3D::GetMoveStartPosition()
 XMFLOAT3 GameObject3D::GetMoveEndPosition()
 {
 	return x3MoveEndPos;
+}
+
+void GameObject3D::PauseObject(int pauseFrames)
+{
+	nPauseFrames = pauseFrames;
 }
 
 Go_List::Go_List()

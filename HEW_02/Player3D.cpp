@@ -14,6 +14,7 @@
 #define INIT_HP 100
 #define INIT_STAMINA 30
 #define TRANSFORM_ACCELERATION 0.075f
+#define ATTACK_HITBOX_SCALE { 3,8,6 }
 Player3D* MainPlayer;
 enum ANIMATION_NINJA
 {
@@ -97,7 +98,6 @@ Player3D::~Player3D()
 
 void Player3D::Init()
 {
-	GameObject3D::Init();
 	strcpy(szInputs, "********");
 	MainPlayer = this;
 	pCurrentAttackPlaying = nullptr;
@@ -124,6 +124,7 @@ void Player3D::Init()
 	Hitboxes[HB_HEAD] = { 0,22,0,2,2,5 };
 	Hitboxes[HB_RIGHT] = { 5,15,0,3,3,6 };
 	Hitboxes[HB_LEFT] = { -5,15,0,1,3,6 };
+	Hitboxes[HB_ATTACK] = { 7.5f,15,0,0,0,0 };
 	pCurrentFloor = nullptr;
 	nNextTransform = nCurrentTransformation = MODEL_NINJA;
 	nState = PLAYER_IDLE;
@@ -279,6 +280,7 @@ void Player3D::Update()
 	rotCamera = pMainCamera->GetCameraAngle();
 	static int NumTest = 2;
 	static int nKickWallFrameCounter=0;
+	
 	if (nState != PLAYER_KICK_WALL_STATE) 
 		nKickWallFrameCounter = 0;
 	switch (nState)
@@ -358,15 +360,7 @@ void Player3D::Update()
 		TransformingStateControl();
 		break;
 	case PLAYER_ATTACKING:
-		SwitchAnimationSpeed(1.5f);
-		//SwitchAnimationSlowness(5);
-		f_yForce = 0;
-		printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
-		
-		if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0)
-			pCurrentAttackPlaying = nullptr;
-		if (!pCurrentAttackPlaying)
-			nState = PLAYER_IDLE;
+		AttackingStateControl();
 		break;
 	case PLAYER_KICK_WALL_STATE:
 		SwitchAnimationSlowness(0);
@@ -396,10 +390,101 @@ void Player3D::Update()
 	default:
 		break;
 	}
-
 	HitboxControl();
-	
+}
 
+void Player3D::AttackingStateControl()
+{
+	SwitchAnimationSpeed(1.5f);
+	Hitboxes[HB_ATTACK].x = 7.5f*nDirection;
+	XMFLOAT3 hbAttackScale = ATTACK_HITBOX_SCALE;
+	bool bIsAttacking = false;
+	bool bTwiceTheHitbox = false;
+	int nAttackFrame = pPlayerModels[nCurrentTransformation]->GetCurrentFrame();
+	int nCurrentAnim = 0;
+	f_yForce = 0;
+	printf("%d\n", nAttackFrame);
+	if (pCurrentAttackPlaying) {
+		nCurrentAnim = pCurrentAttackPlaying->Animation;
+		switch (pCurrentAttackPlaying->Animation)
+		{
+		case NINJA_ATTACK_COMBO_A:
+			if (nAttackFrame > 403 && nAttackFrame < 436) {
+				bIsAttacking = true;
+			}
+			break;
+		case NINJA_ATTACK_COMBO_B:
+			if (nAttackFrame > 501 && nAttackFrame < 546) {
+				bIsAttacking = true;
+				Position.x += 1 * nDirection;
+			}
+			break;
+		case NINJA_ATTACK_COMBO_C:
+			if (nAttackFrame > 648 && nAttackFrame < 688) {
+				Position.x += 1 * nDirection;
+				bIsAttacking = true;
+			}
+			break;
+		case NINJA_ATTACK_COMBO_D:
+			if (nAttackFrame > 808 && nAttackFrame < 826) {
+				Position.x += 1 * nDirection;
+				bIsAttacking = true;
+			}
+			break;
+		case NINJA_ATTACK_COMBO_E:
+			if (nAttackFrame > 906 && nAttackFrame < 931) {
+				Position.x += 3 * nDirection;
+				bIsAttacking = true;
+				bTwiceTheHitbox = true;
+			}
+			break;
+		case NINJA_ATTACK_COMBOAIR_A:
+			bTwiceTheHitbox = true;
+			if (nAttackFrame > 1201 && nAttackFrame < 1233)
+				bIsAttacking = true;
+			break;
+		case NINJA_ATTACK_COMBOAIR_B:
+			bTwiceTheHitbox = true;
+			if (nAttackFrame > 1306 && nAttackFrame < 1331)
+				bIsAttacking = true;
+			break;
+		case NINJA_ATTACK_COMBOAIR_C:
+			bTwiceTheHitbox = true;
+			if (nAttackFrame > 1383 && nAttackFrame < 1408)
+				bIsAttacking = true;
+			break;
+		case NINJA_ATTACK_COMBOAIR_D:
+			bTwiceTheHitbox = true;
+			if (nAttackFrame > 1461 && nAttackFrame < 1491)
+				bIsAttacking = true;
+			break;
+		default:
+			break;
+		}
+	}
+	if (bIsAttacking)
+	{
+		Hitboxes[HB_ATTACK].SizeX = hbAttackScale.x;
+		Hitboxes[HB_ATTACK].SizeY = hbAttackScale.y;
+		Hitboxes[HB_ATTACK].SizeZ = hbAttackScale.z;
+		if (bTwiceTheHitbox)
+		{
+			Hitboxes[HB_ATTACK].x = 11.5f*nDirection;
+			Hitboxes[HB_ATTACK].SizeX = hbAttackScale.x*2;
+			Hitboxes[HB_ATTACK].SizeY = hbAttackScale.y;
+			Hitboxes[HB_ATTACK].SizeZ = hbAttackScale.z*2;
+		}
+	}
+	else {
+		Hitboxes[HB_ATTACK].SizeX = 0;
+		Hitboxes[HB_ATTACK].SizeY = 0;
+		Hitboxes[HB_ATTACK].SizeZ = 0;
+	}
+
+	if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0)
+		pCurrentAttackPlaying = nullptr;
+	if (!pCurrentAttackPlaying)
+		nState = PLAYER_IDLE;
 }
 
 void Player3D::TeleportControl()
@@ -556,8 +641,13 @@ void Player3D::PlayerInputsControl(bool bIsLocked)
 	if ((GetInput(INPUT_JUMP) && pCurrentFloor) || (GetInput(INPUT_JUMP) && (LockMovementLeft == M_LOCKED || LockMovementRight == M_LOCKED)))
 	{
 		pCurrentAttackPlaying = nullptr;
-		if(pCurrentFloor)
+		if (pCurrentFloor) {
+			if (pCurrentFloor->IsMoveableObject())
+			{
+				pCurrentFloor->PauseObject(15);
+			}
 			Jump(JUMP_FORCE);
+		}
 		else if ((!pCurrentFloor && (LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) && nCurrentTransformation == MODEL_NINJA))
 		{
 			Jump(JUMP_FORCE);

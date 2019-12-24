@@ -20,6 +20,7 @@ enum PLAYER_HITBOXES
 	HB_RIGHT,
 	HB_LEFT,
 	HB_HEAD,
+	HB_ATTACK,
 	MAX_HB
 };
 enum PLAYER_STATES
@@ -89,6 +90,7 @@ public:
 	~Player3D();
 	void Init();
 	void Update();
+	void AttackingStateControl();
 	void TeleportControl();
 	bool DebugAimControl();
 	void DeadStateControl();
