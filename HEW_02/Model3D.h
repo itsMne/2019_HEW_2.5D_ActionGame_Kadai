@@ -27,6 +27,7 @@ public:
 	Model3D();
 	~Model3D();
 	HRESULT InitModel(const char*ModelPath, void* Parent);
+	void SetLight(Light3D * pLight);
 	void UninitModel(void);
 	void UpdateModel(void);
 	void SwitchAnimation(int nNewAnimNum);

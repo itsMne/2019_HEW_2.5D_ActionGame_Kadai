@@ -83,6 +83,7 @@ private:
 	int nFrameCountForSafePos;
 	XMFLOAT3 x3LastSafePos;
 	XMFLOAT3 x3TeleportDestination;
+	bool bDeadAnimation;
 public:
 	Player3D();
 	~Player3D();
@@ -133,6 +134,7 @@ public:
 	bool IsDebugAimOn();
 	GameObject3D* GetWallCrawling();
 	void SetPlayerTeleporting(XMFLOAT3 Destination);
+	bool PlayerGameOver();
 };
 
 Player3D* GetMainPlayer();

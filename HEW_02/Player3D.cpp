@@ -138,6 +138,7 @@ void Player3D::Init()
 	LockMovementLeft = 1;
 	nCurrentAnimation = 0;
 	bUsingDebugAim = false;
+	bDeadAnimation = false;
 	pMainCamera = GetMainCamera();
 	pDebugAim = new DebugAim();
 	pDebugAim->SetPosition(Position);
@@ -505,6 +506,8 @@ void Player3D::DeadStateControl()
 		return;
 	SwitchAnimation(MODEL_NINJA, NINJA_DEAD);
 	pPlayerModels[MODEL_NINJA]->UpdateModel();
+	bDeadAnimation = true;
+	printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
 }
 
 void Player3D::DamagedTeleportingControl()
@@ -1023,4 +1026,11 @@ void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
 	nState = PLAYER_TELEPORTING;
 	x3TeleportDestination = Destination;
 	x3TeleportDestination.z = Position.z;
+}
+
+bool Player3D::PlayerGameOver()
+{
+	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() > 300 && nState == PLAYER_DEAD && bDeadAnimation)
+		return true;
+	return false;
 }

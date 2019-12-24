@@ -53,10 +53,14 @@ HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 	hr = g_pModel->Init(pDevice, pDeviceContext, ModelPath);
 	if (SUCCEEDED(hr)) {
 		g_pModel->SetCamera(pMainCamera->GetCameraPos());
-		if (pLight)
-			g_pModel->SetLight(pLight->GetLight());
+		SetLight(pLight);
 	}
 	return hr;
+}
+
+void Model3D::SetLight(Light3D * pLight)
+{
+	g_pModel->SetLight(pLight->GetLight());
 }
 
 

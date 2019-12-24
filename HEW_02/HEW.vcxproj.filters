@@ -113,6 +113,7 @@
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
     <ClCompile Include="Mirror3D.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

@@ -31,6 +31,7 @@ void GameObject3D::Init()
 	pModel = nullptr;
 	bMoveable = false;
 	bGoToStartPos = false;
+	bUnlit = false;
 	nDelayFramesBetweenStops = 0;
 #if SHOW_HITBOX
 	pVisualHitbox = new Cube3D("data/texture/hbox.tga");
@@ -79,7 +80,6 @@ void GameObject3D::Update()
 				List->DeleteObject(this);
 				return;
 			case GO_ITEM:
-				printf("a");
 				List = pS_Game->GetItems();
 				List->DeleteObject(this);
 				return;
@@ -171,15 +171,20 @@ void GameObject3D::AutomaticMovementControl()
 
 void GameObject3D::Draw()
 {
-	bool bPreviousLight = GetMainLight()->IsLightEnabled();
-
-	
-	if (bUnlit)
-		GetMainLight()->SetLightEnable(false);
-	if (pModel)
-		pModel->DrawModel();
-	if (bUnlit)
-		GetMainLight()->SetLightEnable(bPreviousLight);
+	Light3D* pLight = GetMainLight();
+	if (pModel) {
+		if (!pLight)
+			return;
+		bool bPreviousLight = GetMainLight()->IsLightEnabled();
+		if (bUnlit) {
+			GetMainLight()->SetLightEnable(false);
+			pModel->SetLight(GetMainLight());
+		}
+		if (pModel)
+			pModel->DrawModel();
+		if (bUnlit)
+			GetMainLight()->SetLightEnable(bPreviousLight);
+	}
 #if SHOW_HITBOX
 	GetMainLight()->SetLightEnable(false);
 	SetCullMode(CULLMODE_NONE);

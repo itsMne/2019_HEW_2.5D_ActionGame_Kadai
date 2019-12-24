@@ -13,6 +13,8 @@ enum UITYPE
 	UI_LEVEL_EDITOR_STATICMODE,
 	UI_LEVEL_EDITOR_OBJSPEED,
 	UI_LEVEL_EDITOR_DELAY,
+	UI_TITLE,
+	UI_GAMEOVER,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -29,7 +31,6 @@ public:
 	C_Ui();
 	C_Ui(const char*, int);
 	~C_Ui();
-
 	//ÉÅÉìÉoä÷êî
 	void Init();
 	void Uninit();

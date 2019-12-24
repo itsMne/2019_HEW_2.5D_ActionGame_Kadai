@@ -79,6 +79,14 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	case UI_LEVEL_EDITOR_DELAY:
 		vScorePos = { -30,-220-45 };
 		break;
+	case UI_TITLE:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+		break;
+	case UI_GAMEOVER:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+		break;
 	}
 }
 
@@ -89,7 +97,6 @@ C_Ui::~C_Ui()
 
 void C_Ui::Init()
 {
-
 }
 
 void C_Ui::Uninit()
@@ -99,6 +106,7 @@ void C_Ui::Uninit()
 
 void C_Ui::Update()
 {
+
 	//if (GetKeyPress(VK_Z))
 	SceneGame* pCurrentGame = GetCurrentGame();
 	if (!pCurrentGame)
@@ -223,6 +231,13 @@ void C_Ui::Draw()
 			return;
 		Draw(&vScorePos, pPlayer->GetDebugAim()->GetDelayObj(), 5,
 			25, 25);
+		break;
+	case UI_TITLE:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_GAMEOVER:
+		printf("hi\n");
+		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());

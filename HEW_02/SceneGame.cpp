@@ -31,7 +31,6 @@ void SceneGame::Init()
 	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
-	//HelloEnemy = new Enemy3D(TYPE_ONI);
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();
@@ -39,6 +38,7 @@ void SceneGame::Init()
 	Spikes = new Go_List();
 	Goals = new Go_List();
 	Mirrors = new Go_List();
+	HelloEnemy = new Enemy3D(TYPE_ONI);
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	SceneCamera->Init();
 	SceneLight->Init();
@@ -84,6 +84,10 @@ void SceneGame::Uninit()
 
 int SceneGame::Update()
 {
+	if (pPlayer->PlayerGameOver())
+	{
+		return SCENE_GAMEOVER;
+	}
 	if (bGoalReached)
 	{
 		return nSceneType;//Œã‚ÅŽŸ‚ÌƒV[ƒ“‚Å•ÏX‚·‚é
@@ -155,11 +159,12 @@ void SceneGame::Draw()
 	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
+	if (HelloEnemy)
+		HelloEnemy->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
 	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
-	if (HelloEnemy)
-		HelloEnemy->Draw();
+
 	Goals->Draw();
 
 	SkySphere->Draw();

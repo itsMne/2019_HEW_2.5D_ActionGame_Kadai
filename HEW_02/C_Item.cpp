@@ -95,6 +95,7 @@ void C_Item::Draw()
 	GameObject3D::Draw();
 	if (!bUse)
 		return;
+	SetCullMode(CULLMODE_NONE);
 	bbItem->Draw();
 }
 

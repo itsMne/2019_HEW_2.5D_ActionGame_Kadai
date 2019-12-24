@@ -1,8 +1,9 @@
 #include "SceneManager.h"
+#include "SceneTitle.h"
 #include "SceneGame.h"
 
 SceneBase* Scene = nullptr;
-int nSceneType = SCENE_GAME;
+int nSceneType = SCENE_TITLE;
 HRESULT InitScene()
 {
 	if (Scene)
@@ -10,7 +11,7 @@ HRESULT InitScene()
 	switch (nSceneType)
 	{
 	case SCENE_TITLE:
-		//Scene = new SceneTitle();
+		Scene = new SceneTitle();
 		break;
 	case SCENE_GAME:
 		Scene = new SceneGame();
