@@ -458,6 +458,18 @@ void Player3D::AttackingStateControl()
 			if (nAttackFrame > 1461 && nAttackFrame < 1491)
 				bIsAttacking = true;
 			break;
+		case SAMURAI_COMBOA:
+			if (nAttackFrame > 241 && nAttackFrame < 261)
+				bIsAttacking = true;
+			break;
+		case SAMURAI_COMBOB:
+			if (nAttackFrame > 303 && nAttackFrame < 331)
+				bIsAttacking = true;
+			break;
+		case GEISHA_BLOCK:
+			if (nAttackFrame > 261 && nAttackFrame < 318)
+				bIsAttacking = true;
+			break;
 		default:
 			break;
 		}
@@ -470,9 +482,15 @@ void Player3D::AttackingStateControl()
 		if (bTwiceTheHitbox)
 		{
 			Hitboxes[HB_ATTACK].x = 11.5f*nDirection;
-			Hitboxes[HB_ATTACK].SizeX = hbAttackScale.x*2;
+			Hitboxes[HB_ATTACK].SizeX = hbAttackScale.x * 2;
 			Hitboxes[HB_ATTACK].SizeY = hbAttackScale.y;
-			Hitboxes[HB_ATTACK].SizeZ = hbAttackScale.z*2;
+			Hitboxes[HB_ATTACK].SizeZ = hbAttackScale.z * 2;
+		}
+		if (nCurrentAnim == GEISHA_BLOCK)
+		{
+			Hitboxes[HB_ATTACK].SizeX = hbAttackScale.x * 2;
+			Hitboxes[HB_ATTACK].SizeY = hbAttackScale.y;
+			Hitboxes[HB_ATTACK].SizeZ = hbAttackScale.z * 2;
 		}
 	}
 	else {
