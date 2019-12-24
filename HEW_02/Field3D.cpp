@@ -51,8 +51,20 @@ struct SHADER_GLOBAL2 {
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+enum FLOOR_TEXTURES
+{
+	REGULAR_FLOOR=0,
+	MAX_TEXTURES_FLOOR
+};
+typedef struct 
+{
+	const char* TexturePath;
+	ID3D11ShaderResourceView*	g_pTexture;				// テクスチャへのポインタ
 
+}TextureContainer;
 
+TextureContainer Textures[MAX_TEXTURES_FLOOR]=
+{ "data/texture/field000.jpg", nullptr };
 Field3D::Field3D(const char* TexturePath) : GameObject3D()
 {
 	pSceneLight = nullptr;
@@ -128,9 +140,23 @@ HRESULT Field3D::Init(const char* TexturePath)
 	g_Ke = M_EMISSIVE;
 
 	// テクスチャの読み込み
-	hr = CreateTextureFromFile(pDevice,			// デバイスへのポインタ
-		TexturePath,	// ファイルの名前
-		&g_pTexture);	// 読み込むメモリー
+	for (int i = 0; i < MAX_TEXTURES_FLOOR; i++)
+	{
+		//nTexture
+		if (!strcmp(Textures[i].TexturePath, TexturePath))
+		{
+			nTexture = i;
+			if (!Textures[i].g_pTexture)
+			{
+				printf("CREATED: %s\n", TexturePath);
+				hr = CreateTextureFromFile(pDevice,			// デバイスへのポインタ
+					TexturePath,	// ファイルの名前
+					&Textures[i].g_pTexture);	// 読み込むメモリー
+			}
+			break;//テクスチャ見つかった
+		}
+	}
+
 	if (hr == S_OK)
 		printf("%s  OK\n", TexturePath);
 	if (FAILED(hr))
@@ -154,8 +180,6 @@ HRESULT Field3D::Init(const char* TexturePath)
 //=============================================================================
 void Field3D::UninitField(void)
 {
-	// テクスチャ解放
-	SAFE_RELEASE(g_pTexture);
 	// テクスチャ サンプラの開放
 	SAFE_RELEASE(g_pSamplerState);
 	// 頂点バッファの解放
@@ -172,6 +196,15 @@ void Field3D::UninitField(void)
 	SAFE_RELEASE(g_pVertexShader);
 
 	SAFE_DELETE(pVisualHitbox);
+}
+
+void Field3D::UninitTextures(void)
+{
+	// テクスチャ解放
+	for (int i = 0; i < MAX_TEXTURES_FLOOR; i++)
+	{
+		SAFE_RELEASE(Textures[i].g_pTexture);
+	}
 }
 
 //=============================================================================
@@ -248,7 +281,7 @@ void Field3D::Draw(void)
 	pDeviceContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
 	pDeviceContext->PSSetSamplers(0, 1, &g_pSamplerState);
-	pDeviceContext->PSSetShaderResources(0, 1, &g_pTexture);
+	pDeviceContext->PSSetShaderResources(0, 1, &Textures[nTexture].g_pTexture);
 
 	SHADER_GLOBAL cb;
 
@@ -273,7 +306,7 @@ void Field3D::Draw(void)
 
 	cb2.vDiffuse = XMLoadFloat4(&g_Kd);
 	cb2.vAmbient = XMVectorSet(g_Ka.x, g_Ka.y, g_Ka.z,
-		(g_pTexture != nullptr) ? 1.f : 0.f);
+		(Textures[nTexture].g_pTexture != nullptr) ? 1.f : 0.f);
 	cb2.vSpecular = XMVectorSet(g_Ks.x, g_Ks.y, g_Ks.z, g_fPower);
 	cb2.vEmissive = XMLoadFloat4(&g_Ke);
 	pDeviceContext->UpdateSubresource(g_pConstantBuffer[1], 0, nullptr, &cb2, 0, 0);

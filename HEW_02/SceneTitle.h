@@ -6,6 +6,10 @@ class SceneTitle :
 {
 private:
 	C_Ui* Title;
+	C_Ui* SlashEffect;
+	C_Ui* Effect1;
+	C_Ui* Effect2;
+	float alpha1, alpha2;
 public:
 	SceneTitle();
 	~SceneTitle();

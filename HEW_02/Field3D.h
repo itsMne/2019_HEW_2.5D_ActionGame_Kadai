@@ -7,9 +7,8 @@
 class Field3D: public GameObject3D
 {
 private:
-	ID3D11ShaderResourceView*	g_pTexture;				// テクスチャへのポインタ
 	VERTEX_3D					g_vertexWk[NUM_VERTEX];	// 頂点情報格納ワーク
-
+	int nTexture;
 	ID3D11Buffer*				g_pConstantBuffer[2];	// 定数バッファ
 	ID3D11Buffer*				g_pVertexBuffer;		// 頂点バッファ
 	ID3D11SamplerState*			g_pSamplerState;		// テクスチャ サンプラ
@@ -37,6 +36,7 @@ public:
 	~Field3D();
 	HRESULT Init(const char* TexturePath);
 	void UninitField(void);
+	void UninitTextures(void);
 	void Update(void);
 	void Draw(void);
 	void SetFieldLight(Light3D* SceneLight);

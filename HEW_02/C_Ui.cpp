@@ -90,9 +90,17 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	case UI_CLEAR:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		SetPolygonPos(0, 0);
+		break;
 	case UI_RANKING:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		SetPolygonPos(0, 0);
+		break;
+	case UI_SLASH_EFFECT:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		uv = { 0,0 };
+		SetPolygonFrameSize(1.0f/4.0f, 1.0f/8.0f);
+		SetPolygonPos(0, 0);
+		break;
 	}
 }
 
@@ -112,12 +120,12 @@ void C_Ui::Uninit()
 
 void C_Ui::Update()
 {
-
 	//if (GetKeyPress(VK_Z))
 	SceneGame* pCurrentGame = GetCurrentGame();
-	if (!pCurrentGame)
+	if (!pCurrentGame && nType!= UI_SLASH_EFFECT)
 		return;
-	nScore = pCurrentGame->GetScore();
+	if(pCurrentGame)
+		nScore = pCurrentGame->GetScore();
 
 	switch (nType)
 	{
@@ -166,7 +174,19 @@ void C_Ui::Update()
 		break;
 	case UI_NUMBER:
 		break;
-
+	case UI_SLASH_EFFECT:
+		if (uv.U == 3 && uv.V == 7)
+			break;
+		if (++nFrameCounter >= 60)
+		{
+			uv.U++;
+			if (uv.U == 4) {
+				uv.V++;
+				uv.U = 0;
+			}
+		}
+		
+		break;
 	}
 
 
@@ -248,6 +268,10 @@ void C_Ui::Draw()
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	case UI_RANKING:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_SLASH_EFFECT:
+		SetPolygonUV(uv.U / 4.0f, uv.V / 8.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	default:

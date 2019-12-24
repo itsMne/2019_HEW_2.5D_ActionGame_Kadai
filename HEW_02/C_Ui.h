@@ -17,6 +17,7 @@ enum UITYPE
 	UI_GAMEOVER,
 	UI_CLEAR,
 	UI_RANKING,
+	UI_SLASH_EFFECT,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D

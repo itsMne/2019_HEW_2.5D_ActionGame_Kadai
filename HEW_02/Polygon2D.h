@@ -40,6 +40,8 @@ protected:
 	XMFLOAT4X4					g_mView;				// ビュー変換行列
 	XMFLOAT4X4					g_mWorld;				// ワールド変換行列
 	XMFLOAT4X4					g_mTex;					// テクスチャ変換行列
+	UV uv;
+	int nFrameCounter;
 
 public:
 	ID3D11ShaderResourceView * gpTexture;
@@ -59,6 +61,9 @@ public:
 	void SetPolygonFrameSize(float fWidth, float fHeight);
 	void SetPolygonColor(float fRed, float fGreen, float fBlue);
 	void SetPolygonAlpha(float fAlpha);
+	void ReduceAlpha(float fAlpha);
+	float GetAlpha();
+	UV GetUV();
 	HRESULT MakeVertexPolygon(ID3D11Device* pDevice);
 	void SetVertexPolygon(void);
 };

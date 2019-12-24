@@ -49,7 +49,7 @@ Polygon2D::~Polygon2D()
 HRESULT Polygon2D::InitPolygon(ID3D11Device* pDevice)
 {
 	HRESULT hr = S_OK;
-
+	nFrameCounter = 0;
 	// シェーダ初期化
 	static const D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -334,6 +334,24 @@ void Polygon2D::SetPolygonAlpha(float fAlpha)
 		g_colPolygon.w = fAlpha;
 		g_bInvalidate = true;
 	}
+}
+
+void Polygon2D::ReduceAlpha(float fAlpha)
+{
+	if (fAlpha != g_colPolygon.w) {
+		g_colPolygon.w -= fAlpha;
+		g_bInvalidate = true;
+	}
+}
+
+float Polygon2D::GetAlpha()
+{
+	return g_colPolygon.w;
+}
+
+UV Polygon2D::GetUV()
+{
+	return uv;
 }
 
 
