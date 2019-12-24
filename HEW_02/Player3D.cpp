@@ -4,7 +4,6 @@
 #include "input.h"
 #include "string.h"
 #define PLAYER_SPEED	(5.0f)					// ˆÚ“®‘¬“x
-#define GRAVITY_FORCE 0.4f
 #define JUMP_FORCE 7.0f
 #define SCALE_NINJA	  1.0f
 #define SCALE_SAMURAI 1.0f
@@ -119,7 +118,7 @@ void Player3D::Init()
 	pPlayerModels[MODEL_SAMURAI]->SetScale({ 0,SCALE_SAMURAI ,SCALE_SAMURAI });
 	f_yForce = 0;
 	nInputTimer = 0;
-	Hitboxes[HB_FEET] = { 0,10,0,3,3,1.5f };
+	Hitboxes[HB_FEET] = { 0,9.25f,0,3,3,1.5f };
 	Hitboxes[HB_BODY] = { 0,15,0,3,8,6 };
 	Hitboxes[HB_HEAD] = { 0,22,0,2,2,5 };
 	Hitboxes[HB_RIGHT] = { 5,15,0,3,3,6 };
@@ -144,6 +143,8 @@ void Player3D::Init()
 	pDebugAim = new DebugAim();
 	pDebugAim->SetPosition(Position);
 	bStaminaCoolDown = false;
+	Position = { 0,0,0 };
+	nDirection = RIGHT_DIR;
 	nHP /= 2;//DEL
 	
 #if SHOW_HITBOX

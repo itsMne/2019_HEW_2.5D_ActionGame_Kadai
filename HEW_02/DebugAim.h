@@ -6,6 +6,7 @@
 #include "Goal3D.h"
 #include "Spike3D.h"
 #include "Mirror3D.h"
+#include "Enemy3D.h"
 
 enum DEBUG_AIM_OBJECTYPES
 {
@@ -20,6 +21,7 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_ITEM_TAI,
 	DA_GOAL,
 	DA_MIRROR,
+	DA_ENEMY_ONI,
 	DA_MAX
 };
 
@@ -33,6 +35,7 @@ private:
 	C_Item* pDA_Item;
 	Spike3D* pDA_Spike;
 	Goal3D* pDA_Goal;
+	Enemy3D* pDA_Enemy;
 	Mirror3D* pDA_Mirror;
 	void* pCurrentGame;
 	bool bStaticObject;

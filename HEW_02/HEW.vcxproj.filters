@@ -112,11 +112,21 @@
     <ClCompile Include="Goal3D.cpp">
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
-    <ClCompile Include="Mirror3D.cpp" />
-    <ClCompile Include="SceneTitle.cpp" />
-    <ClCompile Include="SceneClear.cpp" />
-    <ClCompile Include="SceneGameOver.cpp" />
-    <ClCompile Include="SceneRanking.cpp" />
+    <ClCompile Include="SceneGameOver.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRanking.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneClear.cpp">
+      <Filter>CPP\ゲームCPP\シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="Mirror3D.cpp">
+      <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -210,11 +220,21 @@
     <ClInclude Include="Goal3D.h">
       <Filter>H\ゲームH\ゲームオブジェクト</Filter>
     </ClInclude>
-    <ClInclude Include="Mirror3D.h" />
-    <ClInclude Include="SceneClear.h" />
-    <ClInclude Include="SceneGameOver.h" />
-    <ClInclude Include="SceneRanking.h" />
-    <ClInclude Include="SceneTitle.h" />
+    <ClInclude Include="SceneClear.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGameOver.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneRanking.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>H\ゲームH\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="Mirror3D.h">
+      <Filter>H\ゲームH\ゲームオブジェクト</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

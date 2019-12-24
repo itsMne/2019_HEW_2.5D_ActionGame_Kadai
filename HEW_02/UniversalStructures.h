@@ -9,6 +9,7 @@
 // É}ÉNÉçíËã`
 //*****************************************************************************
 #define HITBOX_Z_POS -10
+#define GRAVITY_FORCE 0.4f
 #define SHOW_HITBOX	true
 #define USE_CONSOLE true
 #define DEBUG_MODE true

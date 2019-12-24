@@ -93,6 +93,10 @@ void GameObject3D::Update()
 				List = pS_Game->GetGoals();
 				List->DeleteObject(this);
 				break;
+			case GO_ENEMY:
+				List = pS_Game->GetEnemies();
+				List->DeleteObject(this);
+				break;
 			default:
 				break;
 			}
@@ -577,6 +581,7 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 		pWorkList->Object = new Enemy3D(TYPE_ONI);
 		Enemy3D* thisEnemy = (Enemy3D*)(pWorkList->Object);
 		thisEnemy->SetPosition(newPosition);
+		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		if (Moveable) {
 			thisEnemy->SetMovement(Start, End);
 		}
@@ -590,6 +595,7 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 		HeadNode->Object = new Enemy3D(TYPE_ONI);
 		Enemy3D* thisMirror = (Enemy3D*)(HeadNode->Object);
 		thisMirror->SetPosition(newPosition);
+		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		if (Moveable)
 			thisMirror->SetMovement(Start, End);
 		HeadNode->next = nullptr;
@@ -597,6 +603,26 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 		return HeadNode->Object;
 	}
 }
+
+GameObject3D * Go_List::CheckCollision(Hitbox3D hb)
+{
+	if (HeadNode == nullptr)
+		return nullptr;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr) 
+		{
+			if (IsInCollision3D(pPositionList->Object->GetHitBox(), hb))
+				return pPositionList->Object;
+		}
+		pPositionList = pPositionList->next;
+	}
+	return nullptr;
+}
+
+
 
 void Go_List::DeleteLastPosObject()
 {
@@ -964,6 +990,44 @@ void Go_List::SaveMirrors(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveEnemies(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_ENEMY)
+			{
+				EnemyContainer thisMirror;
+				Enemy3D* thisObject = (Enemy3D*)pPositionList->Object;
+				thisMirror.Pos = thisObject->GetPosition();
+				thisMirror.bMoveable = thisObject->IsMoveableObject();
+				thisMirror.MoveStartPos = thisObject->GetMoveStartPosition();
+				thisMirror.MoveEndPos = thisObject->GetMoveEndPosition();
+				thisMirror.EnemyType = thisObject->GetEnemyType();
+				fwrite(&thisMirror, sizeof(EnemyContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -980,6 +1044,7 @@ void Go_List::Load(const char * szFilename, int nType)
 	ItemContainer* item_container = new ItemContainer();
 	SpikesContainer* spike_container = new SpikesContainer();
 	MirrorContainer* mirror_container = new MirrorContainer();
+	EnemyContainer* enemy_container = new EnemyContainer();
 	switch (nType)
 	{
 	case GO_FLOOR: 
@@ -1004,6 +1069,11 @@ void Go_List::Load(const char * szFilename, int nType)
 	case GO_MIRROR:
 		while ((fread(mirror_container, sizeof(MirrorContainer), 1, pFile)))
 			AddMirror(mirror_container->Pos, mirror_container->Destination, mirror_container->bMoveable, mirror_container->MoveStartPos, mirror_container->MoveEndPos);
+		break;
+	case GO_ENEMY:
+		while ((fread(enemy_container, sizeof(EnemyContainer), 1, pFile)))
+			AddEnemy(enemy_container->Pos, enemy_container->EnemyType, enemy_container->bMoveable, enemy_container->MoveStartPos, enemy_container->MoveEndPos);
+		break;
 		break;
 	default:
 		break;

@@ -43,13 +43,13 @@ void SceneGame::Init()
 	SceneCamera->Init();
 	SceneLight->Init();
 
-	Enemies->AddEnemy({ 0,0,0 }, TYPE_ONI);
 	Walls->Load("Walls_Level", GO_WALL);
 	Fields->Load("Fields_Level", GO_FLOOR);
 	Items->Load("Items_Level", GO_ITEM);
 	Goals->Load("Goals_Level", GO_GOAL);
 	Spikes->Load("Spikes_Level", GO_SPIKE);
 	Mirrors->Load("Mirrors_Level", GO_MIRROR);
+	Enemies->Load("Enemies_Level", GO_ENEMY);
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
 
@@ -227,6 +227,11 @@ Go_List * SceneGame::GetGoals()
 Go_List * SceneGame::GetMirrors()
 {
 	return Mirrors;
+}
+
+Go_List * SceneGame::GetEnemies()
+{
+	return Enemies;
 }
 
 int SceneGame::GetScore()

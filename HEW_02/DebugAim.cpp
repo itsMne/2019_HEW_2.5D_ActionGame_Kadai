@@ -28,6 +28,7 @@ void DebugAim::Init()
 	pDA_Spike = nullptr;
 	pDA_Goal = nullptr;
 	pDA_Mirror = nullptr;
+	pDA_Enemy = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
 	hitbox = { 0,10.0f,0,2,2,6 };
@@ -393,6 +394,34 @@ void DebugAim::Update()
 			}
 		}
 		break;
+	case DA_ENEMY_ONI:
+		if (!pDA_Enemy) {
+			pDA_Enemy = new Enemy3D(nObjectType - DA_ENEMY_ONI);
+			Scale = { 1,1,1 };
+			pDA_Enemy->SetPosition({ Position.x,Position.y,Position.z });
+		}
+		else {
+			pDA_Enemy->SetPosition({ Position.x,Position.y,Position.z });
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				if (bStaticObject) {
+					p_sCurrentGame->GetEnemies()->AddEnemy({ Position.x,Position.y,Position.z }, nObjectType - DA_ENEMY_ONI);
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetEnemies()->AddEnemy({ Position.x,Position.y,Position.z }, nObjectType - DA_ENEMY_ONI, true, x3Start, x3End);
+					}
+				}
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetEnemies()->DeleteLastPosObject();
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -410,6 +439,7 @@ void DebugAim::SaveAllControl()
 		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
 		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
 		p_sCurrentGame->GetMirrors()->SaveMirrors("Mirrors_Level");
+		p_sCurrentGame->GetEnemies()->SaveEnemies("Enemies_Level");
 	}
 }
 
@@ -541,6 +571,10 @@ void DebugAim::Draw()
 	case DA_MIRROR:
 		if (pDA_Mirror)
 			pDA_Mirror->Draw();
+		break;
+	case DA_ENEMY_ONI:
+		if (pDA_Enemy)
+			pDA_Enemy->Draw();
 		break;
 	default:
 		break;

@@ -107,7 +107,13 @@ typedef struct MirrorContainer {
 	XMFLOAT3 MoveStartPos;
 	XMFLOAT3 MoveEndPos;
 };
-
+typedef struct EnemyContainer {
+	XMFLOAT3 Pos;
+	int EnemyType;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
 class Go_List
 {
 private:
@@ -131,6 +137,7 @@ public:
 	GameObject3D* AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType);
 	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
+	GameObject3D* CheckCollision(Hitbox3D hb);
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);
 	void Update();
@@ -142,5 +149,6 @@ public:
 	void SaveSpikes(const char* szFilename);
 	void SaveMisc(const char* szFilename);
 	void SaveMirrors(const char* szFilename);
+	void SaveEnemies(const char* szFilename);
 	void Load(const char* szFilename, int nType);
 };

@@ -344,11 +344,6 @@ void Field3D::SetPosition(XMFLOAT3 newPos)
 	Position = newPos;
 }
 
-//Hitbox3D Field3D::GetHitBox()
-//{
-//	return { hitbox.x + Position.x,hitbox.y + Position.y, hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };
-//}
-
 void Field3D::SetScaleWithHitbox(float newScale)
 {
 	Scale = { newScale,newScale,newScale };
