@@ -31,6 +31,7 @@ void SceneGame::Init()
 	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
+	HelloEnemy = new Enemy3D(TYPE_ONI);
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();
@@ -38,7 +39,6 @@ void SceneGame::Init()
 	Spikes = new Go_List();
 	Goals = new Go_List();
 	Mirrors = new Go_List();
-	HelloEnemy = new Enemy3D(TYPE_ONI);
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	SceneCamera->Init();
 	SceneLight->Init();
@@ -90,7 +90,7 @@ int SceneGame::Update()
 	}
 	if (bGoalReached)
 	{
-		return nSceneType;//後で次のシーンで変更する
+		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
 	// デバッグ文字列表示更新
 	UpdateDebugProc();
@@ -159,12 +159,11 @@ void SceneGame::Draw()
 	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
-	if (HelloEnemy)
-		HelloEnemy->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
 	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
-
+	if (HelloEnemy)
+		HelloEnemy->Draw();
 	Goals->Draw();
 
 	SkySphere->Draw();
@@ -233,6 +232,11 @@ Go_List * SceneGame::GetMirrors()
 int SceneGame::GetScore()
 {
 	return nScore;
+}
+
+void SceneGame::RaiseScore(int rais)
+{
+	nScore += rais;
 }
 
 void SceneGame::SetGoalReached()

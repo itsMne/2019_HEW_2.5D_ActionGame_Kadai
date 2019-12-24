@@ -183,8 +183,11 @@
     <ClCompile Include="Player3D.cpp" />
     <ClCompile Include="Polygon2D.cpp" />
     <ClCompile Include="SceneBase.cpp" />
+    <ClCompile Include="SceneClear.cpp" />
     <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneRanking.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sphere3D.cpp" />
@@ -218,8 +221,12 @@
     <ClInclude Include="Player3D.h" />
     <ClInclude Include="Polygon2D.h" />
     <ClInclude Include="SceneBase.h" />
+    <ClInclude Include="SceneClear.h" />
     <ClInclude Include="SceneGame.h" />
+    <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneRanking.h" />
+    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sphere3D.h" />
     <ClInclude Include="Spike3D.h" />

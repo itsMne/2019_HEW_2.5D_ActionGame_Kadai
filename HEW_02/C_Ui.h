@@ -15,6 +15,8 @@ enum UITYPE
 	UI_LEVEL_EDITOR_DELAY,
 	UI_TITLE,
 	UI_GAMEOVER,
+	UI_CLEAR,
+	UI_RANKING,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D

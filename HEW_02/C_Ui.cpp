@@ -87,6 +87,12 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		SetPolygonPos(0, 0);
 		break;
+	case UI_CLEAR:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+	case UI_RANKING:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
 	}
 }
 
@@ -236,7 +242,12 @@ void C_Ui::Draw()
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	case UI_GAMEOVER:
-		printf("hi\n");
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_CLEAR:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_RANKING:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	default:

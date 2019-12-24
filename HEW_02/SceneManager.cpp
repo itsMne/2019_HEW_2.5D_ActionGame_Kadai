@@ -1,6 +1,9 @@
 #include "SceneManager.h"
 #include "SceneTitle.h"
 #include "SceneGame.h"
+#include "SceneGameOver.h"
+#include "SceneClear.h"
+#include "SceneRanking.h"
 
 SceneBase* Scene = nullptr;
 int nSceneType = SCENE_TITLE;
@@ -15,6 +18,15 @@ HRESULT InitScene()
 		break;
 	case SCENE_GAME:
 		Scene = new SceneGame();
+		break;
+	case SCENE_GAMEOVER:
+		Scene = new SceneGameOver();
+		break;
+	case SCENE_CLEAR:
+		Scene = new SceneClear();
+		break;
+	case SCENE_RANKING:
+		Scene = new SceneRanking();
 		break;
 	default:
 		break;

@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "SceneBase.h"
 #include "Sphere3D.h"
 #include "C_Ui.h"
@@ -48,6 +48,7 @@ public:
 	Go_List* GetGoals();
 	Go_List* GetMirrors();
 	int GetScore();
+	void RaiseScore(int rais);
 	void SetGoalReached();
 };
 SceneGame* GetCurrentGame();

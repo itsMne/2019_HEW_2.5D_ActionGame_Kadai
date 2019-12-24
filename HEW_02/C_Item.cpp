@@ -1,5 +1,6 @@
 #include "C_Item.h"
 #include "Player3D.h"
+#include "SceneGame.h"
 
 
 
@@ -63,6 +64,7 @@ void C_Item::Update()
 	if (Rotation.y > 3.14 * 2)
 		Rotation.y = 0;
 	Player3D* pPlayer = GetMainPlayer();
+	SceneGame* pGame= GetCurrentGame();
 	if (!pPlayer)
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
@@ -72,18 +74,28 @@ void C_Item::Update()
 		{
 		case TYPE_SUSHI:
 			pPlayer->RiseHP(10);
+			if (pGame)
+				pGame->RaiseScore(10);
 			break;
 		case TYPE_UDON:
 			pPlayer->RiseHP(30);
+			if (pGame)
+				pGame->RaiseScore(30);
 			break;
 		case TYPE_ODEN:
 			pPlayer->RiseHP(50);
+			if (pGame)
+				pGame->RaiseScore(50);
 			break;
 		case TYPE_DANGO:
 			pPlayer->RiseHP(70);
+			if (pGame)
+				pGame->RaiseScore(70);
 			break;
 		case TYPE_TAI:
 			pPlayer->RiseHP(20);
+			if (pGame)
+				pGame->RaiseScore(20);
 			break;
 		}
 

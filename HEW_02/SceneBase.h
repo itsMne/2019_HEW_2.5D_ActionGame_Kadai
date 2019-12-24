@@ -15,6 +15,7 @@ enum SceneType
 	SCENE_GAME,
 	SCENE_GAMEOVER,
 	SCENE_RANKING,
+	SCENE_CLEAR,
 	SCENE_MAX
 };
 class SceneBase
