@@ -17,6 +17,7 @@ private:
 	Go_List* Spikes;
 	Go_List* Goals;
 	Go_List* Mirrors;
+	Go_List* Enemies;
 	Sphere3D* SkySphere;
 	DXWindow3D* MainWindow;
 	
@@ -24,7 +25,6 @@ private:
 	C_Ui* pHP_UI_BACK;
 	C_Ui* pHP_UI_FRONT;
 	C_Ui* pMP_UI;
-	//C_Item* HelloItem;
 	C_Ui* pScore_UI;
 	C_Ui* pScore_Frame_UI;
 	C_Ui* pLevel_Editor_UI;

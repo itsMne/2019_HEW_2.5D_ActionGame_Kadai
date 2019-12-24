@@ -10,6 +10,7 @@ enum goType
 	GO_FLOOR,
 	GO_GOAL,
 	GO_MIRROR,
+	GO_ENEMY,
 	GO_DEBUG_AIM,
 	MAX_TYPE
 };
@@ -128,6 +129,8 @@ public:
 	GameObject3D* AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination);
 	GameObject3D* AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
+	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType);
+	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);
 	void Update();

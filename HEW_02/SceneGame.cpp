@@ -3,7 +3,7 @@
 #include "Mirror3D.h"
 
 SceneGame* CurrentGame = nullptr;
-Enemy3D* HelloEnemy = nullptr;
+//Enemy3D* HelloEnemy = nullptr;
 
 SceneGame::SceneGame(): SceneBase()
 {
@@ -31,7 +31,6 @@ void SceneGame::Init()
 	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
-	HelloEnemy = new Enemy3D(TYPE_ONI);
 	pPlayer = new Player3D();
 	Fields = new Go_List();
 	Walls = new Go_List();
@@ -39,9 +38,12 @@ void SceneGame::Init()
 	Spikes = new Go_List();
 	Goals = new Go_List();
 	Mirrors = new Go_List();
+	Enemies = new Go_List();
 	SkySphere = new Sphere3D("data/texture/Skybox.tga");
 	SceneCamera->Init();
 	SceneLight->Init();
+
+	Enemies->AddEnemy({ 0,0,0 }, TYPE_ONI);
 	Walls->Load("Walls_Level", GO_WALL);
 	Fields->Load("Fields_Level", GO_FLOOR);
 	Items->Load("Items_Level", GO_ITEM);
@@ -131,8 +133,7 @@ int SceneGame::Update()
 	// Score更新
 	pScore_Frame_UI->Update();
 
-	if(HelloEnemy)
-		HelloEnemy->Update();
+	Enemies->Update();
 	Goals->Update();
 	// Number更新
 	pScore_UI->Update();
@@ -162,8 +163,7 @@ void SceneGame::Draw()
 	SetCullMode(CULLMODE_CCW);
 	
 	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
-	if (HelloEnemy)
-		HelloEnemy->Draw();
+	Enemies->Draw();
 	Goals->Draw();
 
 	SkySphere->Draw();

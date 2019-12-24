@@ -137,6 +137,7 @@ public:
 	GameObject3D* GetWallCrawling();
 	void SetPlayerTeleporting(XMFLOAT3 Destination);
 	bool PlayerGameOver();
+	bool PlayerIsFalling();
 };
 
 Player3D* GetMainPlayer();

@@ -8,6 +8,7 @@
 #include "Goal3D.h"
 #include "SceneGame.h"
 #include "Mirror3D.h"
+#include "Enemy3D.h"
 #include "String.h"
 
 GameObject3D::GameObject3D()
@@ -177,6 +178,16 @@ void GameObject3D::Draw()
 {
 	Light3D* pLight = GetMainLight();
 	bool bPreviousLight;
+#if SHOW_HITBOX
+	if (!pLight)
+		return;
+	bPreviousLight = GetMainLight()->IsLightEnabled();
+	GetMainLight()->SetLightEnable(false);
+	SetCullMode(CULLMODE_NONE);
+	pVisualHitbox->Draw();
+	SetCullMode(CULLMODE_CCW);
+	GetMainLight()->SetLightEnable(bPreviousLight);
+#endif
 	if (pModel) {
 		if (!pLight)
 			return;
@@ -190,16 +201,7 @@ void GameObject3D::Draw()
 		if (bUnlit)
 			GetMainLight()->SetLightEnable(bPreviousLight);
 	}
-#if SHOW_HITBOX
-	if (!pLight)
-		return;
-	bPreviousLight = GetMainLight()->IsLightEnabled();
-	GetMainLight()->SetLightEnable(false);
-	SetCullMode(CULLMODE_NONE);
-	pVisualHitbox->Draw();
-	SetCullMode(CULLMODE_CCW);
-	GetMainLight()->SetLightEnable(bPreviousLight);
-#endif
+
 }
 
 void GameObject3D::Uninit()
@@ -538,7 +540,6 @@ GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bo
 		thisMirror->SetPosition(newPosition);
 		thisMirror->SetDestination(Destination);
 		if (Moveable) {
-			printf("\nMOVE MIRROR MOVE\n");
 			thisMirror->SetMovement(Start, End);
 		}
 		pWorkList->next = nullptr;
@@ -552,6 +553,43 @@ GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bo
 		Mirror3D* thisMirror = (Mirror3D*)(HeadNode->Object);
 		thisMirror->SetPosition(newPosition);
 		thisMirror->SetDestination(Destination);
+		if (Moveable)
+			thisMirror->SetMovement(Start, End);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+}
+
+GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType)
+{
+	return AddEnemy(newPosition, EnemyType, false, { 0,0,0 }, {0,0,0});
+}
+
+GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new Enemy3D(TYPE_ONI);
+		Enemy3D* thisEnemy = (Enemy3D*)(pWorkList->Object);
+		thisEnemy->SetPosition(newPosition);
+		if (Moveable) {
+			thisEnemy->SetMovement(Start, End);
+		}
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new Enemy3D(TYPE_ONI);
+		Enemy3D* thisMirror = (Enemy3D*)(HeadNode->Object);
+		thisMirror->SetPosition(newPosition);
 		if (Moveable)
 			thisMirror->SetMovement(Start, End);
 		HeadNode->next = nullptr;

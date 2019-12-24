@@ -1142,3 +1142,8 @@ bool Player3D::PlayerGameOver()
 		return true;
 	return false;
 }
+
+bool Player3D::PlayerIsFalling()
+{
+	return f_yForce>0;
+}
