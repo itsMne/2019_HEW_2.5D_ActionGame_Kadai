@@ -412,6 +412,7 @@ void Player3D::AttackingStateControl()
 		case NINJA_ATTACK_COMBO_A:
 			if (nAttackFrame > 403 && nAttackFrame < 436) {
 				bIsAttacking = true;
+				Position.x += 1 * nDirection;
 			}
 			break;
 		case NINJA_ATTACK_COMBO_B:
