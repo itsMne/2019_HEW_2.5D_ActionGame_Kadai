@@ -25,7 +25,7 @@ Sphere3D::Sphere3D(const char * szPath)
 #endif
 	bisUnlit = true;
 	bNoCull = true;
-	fRotSpeed = { 0,0.001f,0 };
+	fRotSpeed = { 0,-0.0005f,0 };
 	bIsSkybox = true;
 }
 
@@ -148,7 +148,7 @@ void Sphere3D::Update(void)
 	if (!pCam)
 		return;
 	pMesh->pos = pCam->GetCameraPos();
-	pMesh->pos.y -= 10;
+	pMesh->pos.y += 600;
 }
 
 void Sphere3D::Draw(void)
@@ -160,4 +160,11 @@ void Sphere3D::Draw(void)
 void Sphere3D::SetUnlit(bool isUnlit)
 {
 	bisUnlit = isUnlit;
+}
+
+void Sphere3D::RotateOnY(float rot)
+{
+	if (!pMesh)
+		return;
+	pMesh->rot.y += rot;
 }

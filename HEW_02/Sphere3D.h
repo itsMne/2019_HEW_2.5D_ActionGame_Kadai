@@ -16,5 +16,6 @@ public:
 	void Update(void);
 	void Draw(void);
 	void SetUnlit(bool isUnlit);
+	void RotateOnY(float rot);
 };
 

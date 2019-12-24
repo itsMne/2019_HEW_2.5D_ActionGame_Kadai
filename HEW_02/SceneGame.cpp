@@ -39,7 +39,7 @@ void SceneGame::Init()
 	Goals = new Go_List();
 	Mirrors = new Go_List();
 	Enemies = new Go_List();
-	SkySphere = new Sphere3D("data/texture/Skybox.tga");
+	SkySphere = new Sphere3D("data/texture/haikei.jpg");
 	SceneCamera->Init();
 	SceneLight->Init();
 
@@ -247,6 +247,11 @@ void SceneGame::RaiseScore(int rais)
 void SceneGame::SetGoalReached()
 {
 	bGoalReached = true;
+}
+
+Sphere3D * SceneGame::GetSkySphere()
+{
+	return SkySphere;
 }
 
 SceneGame * GetCurrentGame()

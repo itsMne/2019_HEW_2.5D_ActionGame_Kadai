@@ -2,6 +2,7 @@
 #include "debugproc.h"
 #include "InputManager.h"
 #include "input.h"
+#include "SceneGame.h"
 #include "string.h"
 #define PLAYER_SPEED	(5.0f)					// ˆÚ“®‘¬“x
 #define JUMP_FORCE 7.0f
@@ -247,7 +248,7 @@ void Player3D::Update()
 	else {
 		nFrameCountForSafePos = 0;
 	}
-	
+	SceneGame* pGame = GetCurrentGame();
 	XMFLOAT3 rotCamera;
 	if (nCurrentTransformation == MODEL_SAMURAI || nCurrentTransformation == MODEL_GEISHA)
 	{
@@ -355,7 +356,10 @@ void Player3D::Update()
 			Position.x += PLAYER_SPEED * 0.15f * nDirection*LockMovementRight*LockMovementLeft;
 		else if (nCurrentTransformation == MODEL_GEISHA)
 			Position.x += PLAYER_SPEED * 0.35f * nDirection*LockMovementRight*LockMovementLeft;
-	
+		if (!LeftWall && !RightWall && pGame)
+		{
+			pGame->GetSkySphere()->RotateOnY(0.00075f*(-nDirection));
+		}
 		break;
 	case PLAYER_TRANSFORMING:
 		TransformingStateControl();

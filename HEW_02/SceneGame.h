@@ -51,5 +51,6 @@ public:
 	int GetScore();
 	void RaiseScore(int rais);
 	void SetGoalReached();
+	Sphere3D* GetSkySphere();
 };
 SceneGame* GetCurrentGame();

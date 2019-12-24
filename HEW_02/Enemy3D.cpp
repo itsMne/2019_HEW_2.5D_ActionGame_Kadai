@@ -3,6 +3,11 @@
 #include "Player3D.h"
 #define ONI_MODEL_PATH "data/model/Oni.fbx"
 SceneGame* pGame;
+enum ONI_ANIMATION
+{
+	ONI_IDLE=1,
+	ONI_MAX
+};
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
 	nEnemyType = enemyType;
@@ -31,6 +36,7 @@ void Enemy3D::Init()
 		InitModel(ONI_MODEL_PATH);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(ONI_IDLE);
 		hitbox = { 0,22.5f,0,5,13,10 };
 		break;
 	default:
