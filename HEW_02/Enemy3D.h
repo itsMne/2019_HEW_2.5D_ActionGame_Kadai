@@ -17,12 +17,17 @@ private:
 	bool bUseGravity;
 	int nState;
 	void* pPlayerPointer;
+	int nCancelGravityFrames;
+	int nDirection;
+	int nLastPlayerAttack;
+	bool bUseDamageA;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
 	void Init();
 	void Update();
 	void OniStatesControl();
+	void DamageControl();
 	void RegularCollisionWithPlayer();
 	void GravityControl();
 	void Draw();

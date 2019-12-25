@@ -23,6 +23,7 @@ private:
 	int nCountLoop;
 	bool bCanLoop;
 	bool AnimationFrame;
+	int nCurrentAnimation;
 public:
 	Model3D();
 	~Model3D();
@@ -52,6 +53,7 @@ public:
 	void SetPositionZ(float newPos);
 	void SetRotation(XMFLOAT3 rot);
 	void RotateAroundY(float);
+	int GetAnimation();
 	int GetEndFrameOfCurrentAnimation();
 	int GetCurrentFrame();
 	int GetLoops();

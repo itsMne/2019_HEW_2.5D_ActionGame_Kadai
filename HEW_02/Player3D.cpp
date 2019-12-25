@@ -16,51 +16,7 @@
 #define TRANSFORM_ACCELERATION 0.075f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
 Player3D* MainPlayer;
-enum ANIMATION_NINJA
-{
-	NINJA_WALKING = 1,
-	NINJA_DEAD,
-	NINJA_DAMAGED,
-	NINJA_IDLE,
-	NINJA_ATTACK_COMBO_A,
-	NINJA_ATTACK_COMBO_B,
-	NINJA_ATTACK_COMBO_C,
-	NINJA_ATTACK_COMBO_D,
-	NINJA_ATTACK_COMBO_E,
-	NINJA_UPPER_SLASH,
-	NINJA_AIR_IDLE,
-	NINJA_ATTACK_COMBOAIR_A,
-	NINJA_ATTACK_COMBOAIR_B,
-	NINJA_ATTACK_COMBOAIR_C,
-	NINJA_ATTACK_COMBOAIR_D,
-	NINJA_AIR_DOWN_FORWARD,
-	NINJA_AIR_DASH,
-	NINJA_AIR_DOWN,
-	NINJA_DASH,
-	NINJA_SPIN_DASH,
-	NINJA_SHURIKEN,
-	NINJA_SHURIKEN_AIR,
-	NINJA_ON_WALL=23,
-	NINJA_KICKWALL,
-	NINJA_CRAWLING,
-	NINJA_DAMAGEDALT,
-};
-enum ANIMATION_GEISHA
-{
-	GEISHA_IDLE=0,
-	GEISHA_BLOCK,
-	GEISHA_DODGE_LEFT,
-	GEISHA_DODGE_RIGHT,
-	GEISHA_WALKING,
-	GEISHA_AIR_IDLE,
-};
-enum ANIMATION_SAMURAI
-{
-	SAMURAI_WALKING = 1,
-	SAMURAI_IDLE,
-	SAMURAI_COMBOA,
-	SAMURAI_COMBOB,
-};
+
 enum MOVEMENT_LOCKED
 {
 	M_LOCKED = 0,
@@ -409,7 +365,7 @@ void Player3D::AttackingStateControl()
 	bool bTwiceTheHitbox = false;
 	int nAttackFrame = pPlayerModels[nCurrentTransformation]->GetCurrentFrame();
 	int nCurrentAnim = 0;
-	printf("%d\n", nAttackFrame);
+	//printf("%d\n", nAttackFrame);
 	if (pCurrentAttackPlaying) {
 		nCurrentAnim = pCurrentAttackPlaying->Animation;
 		if (nCurrentAnim != NINJA_UPPER_SLASH && nCurrentAnim != NINJA_AIR_DOWN)
@@ -1187,4 +1143,9 @@ bool Player3D::PlayerGameOver()
 bool Player3D::PlayerIsFalling()
 {
 	return f_yForce>0;
+}
+
+PLAYER_ATTACK_MOVE * Player3D::GetPlayerAttack()
+{
+	return pCurrentAttackPlaying;
 }

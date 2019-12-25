@@ -2,10 +2,16 @@
 #include "SceneGame.h"
 #include "Player3D.h"
 #define ONI_MODEL_PATH "data/model/Oni.fbx"
+#define CANCEL_GRAVITY_FRAMES 30
 SceneGame* pGame;
 enum ONI_ANIMATION
 {
 	ONI_IDLE=1,
+	ONI_WALKING,
+	ONI_DAMAGEDA,
+	ONI_DAMAGEDB, 
+	ONI_SENDUP,
+	ONI_FALLING,
 	ONI_MAX
 };
 enum ENEMY_STATES
@@ -33,6 +39,9 @@ void Enemy3D::Init()
 {
 	nType = GO_ENEMY;
 	fYForce = 0;
+	nLastPlayerAttack = -1;
+	nDirection == RIGHT_DIR;
+	nCancelGravityFrames = 0;
 	pCurrentFloor = nullptr;
 	pPlayerPointer = nullptr;
 	pGame = nullptr;
@@ -70,19 +79,126 @@ void Enemy3D::Update()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
+	if (nDirection == LEFT_DIR)
+		pModel->SetRotationY(-90);
+	else
+		pModel->SetRotationY(90);
 	RegularCollisionWithPlayer();
 	OniStatesControl();
 }
 
 void Enemy3D::OniStatesControl()
 {
-	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+	DamageControl();
 	switch (nState)
 	{
 	case ENEMY_IDLE:
 		pModel->SwitchAnimation(ONI_IDLE);
 		break;
+	case ENEMY_DAMAGED:
+		if (pModel->GetLoops() > 0)
+			nState = ENEMY_IDLE;
+		break;
+	case ENEMY_SENDUP:
+		if (nCancelGravityFrames==0)
+			nState = ENEMY_FALLING;
+		break;
+	case ENEMY_FALLING:
+		pModel->SwitchAnimation(ONI_FALLING);
+		if(pCurrentFloor)
+			nState = ENEMY_IDLE;
+		break;
 	default:
+		break;
+	}
+}
+
+void Enemy3D::DamageControl()
+{
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+	PLAYER_ATTACK_MOVE* pPlayerAttack = nullptr;
+	SceneGame* pGame = GetCurrentGame();
+	Hitbox3D AttackHitbox;
+	int nPlayerDirection = pPlayer->GetDirection();
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetHitBox()))
+	{
+		pPlayerAttack = pPlayer->GetPlayerAttack();
+		AttackHitbox = pPlayer->GetHitBox(HB_ATTACK);
+	}
+	else {
+		return;
+	}
+	if (!pPlayerAttack)
+		return;
+	if (!pGame)
+		return;
+	nState = ENEMY_DAMAGED;
+	GameObject3D* pWall = nullptr;
+	nDirection = -1*pPlayer->GetDirection();
+	switch (pPlayerAttack->Animation)
+	{
+	case NINJA_UPPER_SLASH:
+		Position.x = AttackHitbox.x;
+		Position.y = AttackHitbox.y-20;
+		fYForce = 0;
+		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+		if (pModel->GetAnimation() == ONI_SENDUP) {
+			printf("%d\n", (int)pModel->GetCurrentFrame());
+			if (pModel->GetCurrentFrame() >= 609)
+				pModel->SetFrame(593);
+		}
+		else {
+			pModel->SwitchAnimation(ONI_SENDUP);
+		}
+		nState = ENEMY_SENDUP;
+		pCurrentFloor = nullptr;
+		break;
+	default:
+		Position.x = AttackHitbox.x;
+		GetMainCamera()->ShakeCamera({ 0.85f,0.85f,0.75f }, 25, 10);
+		if (!(pPlayer->GetFloor())) {
+			pPlayer->TranslateX(1.5f* nPlayerDirection);
+			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+			if (pWall) {
+				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+				{
+					pPlayer->TranslateX(1 * -nPlayerDirection);
+					Position.x -= 1;
+				}
+			}
+			if(!pCurrentFloor)
+				Position.y = AttackHitbox.y - 20;
+			nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+		}
+		if (nLastPlayerAttack != pPlayerAttack->Animation)
+		{
+			if (pModel->GetAnimation() == ONI_DAMAGEDA || pModel->GetAnimation() == ONI_DAMAGEDB) {
+				if (bUseDamageA && pModel->GetCurrentFrame() > 538)
+				{
+					pModel->SwitchAnimation(ONI_DAMAGEDA);
+					bUseDamageA = false;
+				}
+				else if (!bUseDamageA && pModel->GetCurrentFrame() > 382)
+				{
+					pModel->SwitchAnimation(ONI_DAMAGEDB);
+					bUseDamageA = true;
+				}
+			}
+			else {
+				if (bUseDamageA)
+				{
+					pModel->SwitchAnimation(ONI_DAMAGEDA);
+					bUseDamageA = false;
+				}
+				else if (!bUseDamageA)
+				{
+					pModel->SwitchAnimation(ONI_DAMAGEDB);
+					bUseDamageA = true;
+				}
+			}
+		}
+		
+		fYForce = 0;
 		break;
 	}
 }
@@ -113,6 +229,11 @@ void Enemy3D::RegularCollisionWithPlayer()
 
 void Enemy3D::GravityControl()
 {
+	if (nCancelGravityFrames > 0)
+	{
+		nCancelGravityFrames--;
+		return;
+	}
 	if (!pGame) {
 		pGame = GetCurrentGame();
 		return;

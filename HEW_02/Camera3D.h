@@ -20,6 +20,10 @@ private:
 	 float fAcceleration;
 	 Hitbox3D hbRenderZone;
 	 Cube3D* pRenderZone;
+	 XMFLOAT3 x3Shake;
+	 int nFrameShaking;
+	 int nFramesPerShake;
+	 int nFramesPerShakeCounter;
 public:
 	Camera3D();
 	Camera3D(bool bisMainCamera);
@@ -38,6 +42,7 @@ public:
 	void ResetZoom();
 	void DrawRenderZone();
 	bool IsOnRenderZone(Hitbox3D hb);
+	void ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake);
 };
 
 Camera3D* GetMainCamera();

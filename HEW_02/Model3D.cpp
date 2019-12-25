@@ -33,6 +33,7 @@ Model3D::~Model3D()
 HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 {
 	HRESULT hr = S_OK;
+	nCurrentAnimation = 0;
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 	pMainCamera = GetMainCamera();
@@ -83,6 +84,7 @@ void Model3D::UpdateModel(void)
 
 void Model3D::SwitchAnimation(int nNewAnimNum)
 {
+	nCurrentAnimation = nNewAnimNum;
 	if (g_pModel->GetCurrentAnimation() == nNewAnimNum)
 		return;
 	g_pModel->SetAnimStack(nNewAnimNum);
@@ -264,6 +266,11 @@ void Model3D::RotateAroundY(float y)
 	/*if (Rotation.y < -XM_PI) {
 		Rotation.y += XM_2PI;
 	}*/
+}
+
+int Model3D::GetAnimation()
+{
+	return nCurrentAnimation;
 }
 
 int Model3D::GetEndFrameOfCurrentAnimation()

@@ -43,6 +43,10 @@ HRESULT Camera3D::Init()
 	g_posCameraR = XMFLOAT3(POS_CAMERA_R_X, POS_CAMERA_R_Y, POS_CAMERA_R_Z);
 	g_vecCameraU = XMFLOAT3(0, 1, 0);
 	g_rotCamera = XMFLOAT3(0, 0, 0);
+	nFrameShaking = 0;
+	nFramesPerShakeCounter = 0;
+	nFramesPerShake = 0;
+	x3Shake= XMFLOAT3(0, 0, 0);
 	float fVecX, fVecZ;
 	fVecX = g_posCameraP.x - g_posCameraR.x;
 	fVecZ = g_posCameraP.z - g_posCameraR.z;
@@ -68,9 +72,23 @@ void Camera3D::Update()
 			hbRenderZone.SizeX,hbRenderZone.SizeY, hbRenderZone.SizeZ };
 		vEye = XMFLOAT3(0, 0, -100);//Ž‹“_
 		vLookAt = XMFLOAT3(0, 0, 0);//’Ž‹“_
-		vEye.x=vLookAt.x = FocusPoint->GetPosition().x+ Offset.x;
-		vEye.y=vLookAt.y = FocusPoint->GetPosition().y+ Offset.y;
-		vEye.z+=Offset.z;
+		XMFLOAT3 Shake = XMFLOAT3(0, 0, 0);
+		if (++nFramesPerShakeCounter > nFramesPerShake)
+		{
+			Shake = x3Shake;
+			nFramesPerShakeCounter = 0;
+		}
+		vEye.x=vLookAt.x = FocusPoint->GetPosition().x+ Offset.x+Shake.x;
+		vEye.y=vLookAt.y = FocusPoint->GetPosition().y+ Offset.y+Shake.y;
+		vEye.z+=Offset.z+ x3Shake.z;
+		x3Shake.x*=-1;
+		x3Shake.y*=-1;
+		x3Shake.z*=-1;
+		if (--nFrameShaking <= 0)
+		{
+			nFrameShaking = 0;
+			x3Shake = { 0,0,0 };
+		}
 		XMMATRIX mtxWorld = XMLoadFloat4x4(FocusPoint->GetModelWorld());
 		XMMATRIX identity = XMMatrixIdentity();
 		//Ž‹“_
@@ -170,6 +188,15 @@ void Camera3D::DrawRenderZone()
 bool Camera3D::IsOnRenderZone(Hitbox3D hb)
 {
 	return IsInCollision3D(hbRenderZone, hb);
+}
+
+void Camera3D::ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake)
+{
+	if (nFrameShaking > 0)
+		return;
+	x3Shake = ShakeForce;
+	nFrameShaking = Frames;
+	nFramesPerShake = FramesPerShake;
 }
 
 Camera3D * GetMainCamera()
