@@ -8,6 +8,10 @@ enum ONI_ANIMATION
 	ONI_IDLE=1,
 	ONI_MAX
 };
+enum ONI_STATES
+{
+
+};
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
 	nEnemyType = enemyType;

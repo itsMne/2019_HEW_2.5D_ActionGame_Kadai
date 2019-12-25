@@ -58,7 +58,7 @@ void C_Item::Update()
 	GameObject3D::Update();
 	Player3D* pPlayer = GetMainPlayer();
 #if USE_IN_RENDERZONE
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 		return;
 #endif
 	if (!bUse)
@@ -111,7 +111,7 @@ void C_Item::Draw()
 {
 	Player3D* pPlayer = GetMainPlayer();
 #if USE_IN_RENDERZONE
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 		return;
 #endif
 	GameObject3D::Draw();

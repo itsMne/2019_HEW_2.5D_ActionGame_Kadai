@@ -49,7 +49,7 @@ HRESULT Camera3D::Init()
 	g_fLengthInterval = sqrtf(fVecX * fVecX + fVecZ * fVecZ);
 	Offset = OFFSET_VALUE;
 	pRenderZone = nullptr;
-	hbRenderZone = { 0,0,0, 185,185,30 };
+	hbRenderZone = { 0,0,0, 200,200,120 };
 #if SHOW_RENDER_ZONE
 	pRenderZone = new Cube3D();
 	pRenderZone->Init("data/texture/hbox.tga");
@@ -143,10 +143,16 @@ void Camera3D::SetFocalPoint(void * newFocalPoint)
 void Camera3D::ZoomOutZ(float redZ)
 {
 	Offset.z -= redZ;
-	if (Offset.z < -612)
+	if (Offset.z < -612) {
 		Offset.z = -612;
-	if (Offset.z > 63)
+		return;
+	}
+	if (Offset.z > 63) {
 		Offset.z = 63;
+		return;
+	}
+	hbRenderZone.SizeX += redZ*2;
+	hbRenderZone.SizeY += redZ*2;
 	printf("%f\n", Offset.z);
 }
 

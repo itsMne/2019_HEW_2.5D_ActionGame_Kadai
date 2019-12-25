@@ -35,7 +35,7 @@ void Spike3D::Update()
 	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
 #if USE_IN_RENDERZONE
 	if (pPlayer) {
-		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
 	}
 #endif
@@ -62,7 +62,7 @@ void Spike3D::Draw()
 #if USE_IN_RENDERZONE
 	Player3D* pPlayer = GetMainPlayer();
 	if (pPlayer) {
-		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
 	}
 #endif

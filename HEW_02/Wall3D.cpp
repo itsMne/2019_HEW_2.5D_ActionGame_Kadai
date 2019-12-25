@@ -34,7 +34,7 @@ void Wall3D::Update()
 	Player3D* pPlayer = GetMainPlayer();
 #if USE_IN_RENDERZONE
 	if (pPlayer) {
-		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
 	}
 #endif
@@ -42,7 +42,7 @@ void Wall3D::Update()
 	if (!pPlayer)
 		return;
 
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), GetHitBox()) && pPlayer->GetYForce()<0)
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), GetHitBox()))
 	{
 		pPlayer->SetYForce(0);
 		return;
