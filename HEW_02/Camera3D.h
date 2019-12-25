@@ -2,6 +2,7 @@
 
 #include "DXWindow3D.h"
 #include "UniversalStructures.h"
+#include "Cube3D.h"
 class Camera3D
 {
 private:
@@ -17,6 +18,8 @@ private:
 	 XMFLOAT3 Offset;
 	 XMFLOAT3 vLookAt;
 	 float fAcceleration;
+	 Hitbox3D hbRenderZone;
+	 Cube3D* pRenderZone;
 public:
 	Camera3D();
 	Camera3D(bool bisMainCamera);
@@ -33,6 +36,8 @@ public:
 	void SetFocalPoint(void* newFocalPoint);
 	void ZoomOutZ(float redZ);
 	void ResetZoom();
+	void DrawRenderZone();
+	bool IsOnRenderZone(Hitbox3D hb);
 };
 
 Camera3D* GetMainCamera();

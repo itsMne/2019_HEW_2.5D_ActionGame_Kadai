@@ -18,8 +18,8 @@
 #define VALUE_MOVE_CAMERA	(2.0f)	
 #define VALUE_ROTATE_CAMERA	(XM_PI*0.01f)	
 #define OFFSET_VALUE	{0,20,-50}
+#define SHOW_RENDER_ZONE false
 Camera3D* MainCamera = nullptr;
-
 Camera3D::Camera3D(): FocalPoint(nullptr)
 {
 	MainCamera = this;
@@ -48,6 +48,13 @@ HRESULT Camera3D::Init()
 	fVecZ = g_posCameraP.z - g_posCameraR.z;
 	g_fLengthInterval = sqrtf(fVecX * fVecX + fVecZ * fVecZ);
 	Offset = OFFSET_VALUE;
+	pRenderZone = nullptr;
+	hbRenderZone = { 0,0,0, 185,185,30 };
+#if SHOW_RENDER_ZONE
+	pRenderZone = new Cube3D();
+	pRenderZone->Init("data/texture/hbox.tga");
+	
+#endif
 	return S_OK;
 }
 
@@ -57,6 +64,8 @@ void Camera3D::Update()
 	GameObject3D* FocusPoint = nullptr;
 	FocusPoint = (GameObject3D*)FocalPoint;
 	if (FocusPoint) {
+		hbRenderZone = { vEye.x, vEye.y, FocusPoint->GetPosition().z, 
+			hbRenderZone.SizeX,hbRenderZone.SizeY, hbRenderZone.SizeZ };
 		vEye = XMFLOAT3(0, 0, -100);//Ž‹“_
 		vLookAt = XMFLOAT3(0, 0, 0);//’Ž‹“_
 		vEye.x=vLookAt.x = FocusPoint->GetPosition().x+ Offset.x;
@@ -76,7 +85,11 @@ void Camera3D::Update()
 	}
 
 	SetCamera();
-
+	if (pRenderZone) {
+		pRenderZone->SetPosition({ hbRenderZone.x, hbRenderZone.y, hbRenderZone.z });
+		pRenderZone->SetScale({ hbRenderZone.SizeX , hbRenderZone.SizeY, hbRenderZone.SizeZ });
+		pRenderZone->Update();
+	}
 	//PrintDebugProc("[¶Ò× ²Á:(%f, %f, %f)]\n", g_posCameraP.x, g_posCameraP.y, g_posCameraP.z);
 }
 
@@ -140,6 +153,17 @@ void Camera3D::ZoomOutZ(float redZ)
 void Camera3D::ResetZoom()
 {
 	Offset = OFFSET_VALUE;
+}
+
+void Camera3D::DrawRenderZone()
+{
+	if(pRenderZone)
+		pRenderZone->Draw();
+}
+
+bool Camera3D::IsOnRenderZone(Hitbox3D hb)
+{
+	return IsInCollision3D(hbRenderZone, hb);
 }
 
 Camera3D * GetMainCamera()

@@ -30,8 +30,11 @@ void Mirror3D::Init(XMFLOAT3 Destination)
 void Mirror3D::Update()
 {
 	GameObject3D::Update();
-
 	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	if (!pPlayer)
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && !(pPlayer->IsDebugAimOn()))
@@ -40,6 +43,11 @@ void Mirror3D::Update()
 
 void Mirror3D::Draw()
 {
+	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	GameObject3D::Draw();
 }
 

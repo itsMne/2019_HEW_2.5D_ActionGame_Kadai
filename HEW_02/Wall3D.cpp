@@ -32,8 +32,16 @@ void Wall3D::Update()
 	GameObject3D::Update();
 	hitbox = { 0,0,0,6 * Scale.x,5.5f * Scale.y,6 * Scale.z };
 	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
+	
 	if (!pPlayer)
 		return;
+
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), GetHitBox()) && pPlayer->GetYForce()<0)
 	{
 		pPlayer->SetYForce(0);
@@ -51,6 +59,11 @@ void Wall3D::Update()
 
 void Wall3D::Draw()
 {
+#if USE_IN_RENDERZONE
+	Player3D* pPlayer = GetMainPlayer();
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(2));
 	GameObject3D::Draw();
 	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(1));

@@ -1,6 +1,7 @@
 #include "SceneGame.h"
 #include "Enemy3D.h"
 #include "Mirror3D.h"
+#include "Camera3D.h"
 
 SceneGame* CurrentGame = nullptr;
 //Enemy3D* HelloEnemy = nullptr;
@@ -175,6 +176,7 @@ void SceneGame::Draw()
 
 	Mirrors->Draw();
 	
+	SceneCamera->DrawRenderZone();
 	// Zバッファ無効
 	SetZBuffer(false);
 	// Hp描画

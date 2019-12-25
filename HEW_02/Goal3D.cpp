@@ -27,6 +27,12 @@ void Goal3D::Update()
 {
 	GameObject3D::Update();
 	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
 	if (!pPlayer)
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && !pPlayer->IsDebugAimOn())
@@ -40,6 +46,13 @@ void Goal3D::Update()
 
 void Goal3D::Draw()
 {
+	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
 	GameObject3D::Draw();
 }
 

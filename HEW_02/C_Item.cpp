@@ -56,6 +56,11 @@ void C_Item::Init()
 void C_Item::Update()
 {
 	GameObject3D::Update();
+	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	if (!bUse)
 		return;
 	bbItem->SetPosition(Position);
@@ -63,7 +68,7 @@ void C_Item::Update()
 	Rotation.y += 0.025f;
 	if (Rotation.y > 3.14 * 2)
 		Rotation.y = 0;
-	Player3D* pPlayer = GetMainPlayer();
+
 	SceneGame* pGame= GetCurrentGame();
 	if (!pPlayer)
 		return;
@@ -104,6 +109,11 @@ void C_Item::Update()
 
 void C_Item::Draw()
 {
+	Player3D* pPlayer = GetMainPlayer();
+#if USE_IN_RENDERZONE
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	GameObject3D::Draw();
 	if (!bUse)
 		return;

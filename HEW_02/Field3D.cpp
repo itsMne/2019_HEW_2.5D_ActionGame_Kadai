@@ -212,10 +212,15 @@ void Field3D::UninitTextures(void)
 //=============================================================================
 void Field3D::Update(void)
 {
+
 	GameObject3D::Update();
 	Player3D* pPlayer = GetMainPlayer();
 	if (pPlayer)
 	{
+#if USE_IN_RENDERZONE
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+#endif
 		if (pPlayer->GetFloor() == nullptr)
 		{
 			if (!IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_FEET)))
@@ -238,6 +243,13 @@ void Field3D::Update(void)
 //=============================================================================
 void Field3D::Draw(void)
 {
+#if USE_IN_RENDERZONE
+	Player3D* pPlayer = GetMainPlayer();
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
 #if SHOW_HITBOX
 	SetCullMode(CULLMODE_NONE);
 	pVisualHitbox->Draw();

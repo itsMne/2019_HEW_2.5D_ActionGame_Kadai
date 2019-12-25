@@ -31,14 +31,20 @@ void Spike3D::Init()
 void Spike3D::Update()
 {
 	GameObject3D::Update();
+	Player3D* pPlayer = GetMainPlayer();
 	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
+#if USE_IN_RENDERZONE
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
 	if (nSpikesOnX > 1 || nSpikesOnY > 1) {
 		pSpikeModel->SetPositionX(-3.75f);
 		pSpikeModel->SetPositionY(2.5f);
 	}
 	if (pSpikeModel)
 		pSpikeModel->UpdateModel();
-	Player3D* pPlayer = GetMainPlayer();
 	if (!pPlayer)
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
@@ -53,6 +59,13 @@ void Spike3D::Draw()
 {
 	if (bInvisible)
 		return;
+#if USE_IN_RENDERZONE
+	Player3D* pPlayer = GetMainPlayer();
+	if (pPlayer) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+			return;
+	}
+#endif
 	GameObject3D::Draw();
 	if (nSpikesOnX == 1 && nSpikesOnY==1)
 	{

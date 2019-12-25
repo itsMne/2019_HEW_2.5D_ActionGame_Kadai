@@ -13,6 +13,7 @@
 #define SHOW_HITBOX	false
 #define USE_CONSOLE true
 #define DEBUG_MODE true
+#define USE_IN_RENDERZONE true
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(x) {if(x){(x)->Release();x=nullptr;}}
 #endif
@@ -32,6 +33,7 @@
 #define CULLMODE_NONE	0					// カリングしない
 #define CULLMODE_CW		1					// 前面カリング
 #define CULLMODE_CCW	2					// 背面カリング
+
 using namespace DirectX;
 //*****************************************************************************
 // 構造体定義

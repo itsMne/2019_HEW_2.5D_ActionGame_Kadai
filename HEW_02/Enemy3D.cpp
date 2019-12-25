@@ -47,6 +47,10 @@ void Enemy3D::Init()
 void Enemy3D::Update()
 {
 	GameObject3D::Update();
+#if USE_IN_RENDERZONE
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+		return;
+#endif
 	Player3D* pPlayer = GetMainPlayer();
 	if (bUseGravity)
 		GravityControl();
@@ -106,6 +110,11 @@ void Enemy3D::GravityControl()
 
 void Enemy3D::Draw()
 {
+#if USE_IN_RENDERZONE
+	Player3D* pPlayer = GetMainPlayer();
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+		return;
+#endif
 	GameObject3D::Draw();
 }
 
