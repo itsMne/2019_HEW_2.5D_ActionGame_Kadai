@@ -15,11 +15,15 @@ private:
 	float fYForce;
 	Field3D* pCurrentFloor;
 	bool bUseGravity;
+	int nState;
+	void* pPlayerPointer;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
 	void Init();
 	void Update();
+	void OniStatesControl();
+	void RegularCollisionWithPlayer();
 	void GravityControl();
 	void Draw();
 	void Uninit();

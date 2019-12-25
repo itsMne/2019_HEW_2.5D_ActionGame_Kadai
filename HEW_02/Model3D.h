@@ -56,5 +56,6 @@ public:
 	int GetCurrentFrame();
 	int GetLoops();
 	void SetCanLoop(bool);
+	void SetFrame(int frame);
 };
 #endif

@@ -10,7 +10,7 @@
 #define SCALE_SAMURAI 1.0f
 #define SCALE_GEISHA 1.0f
 #define MAX_INPUT_TIMER 60
-#define MAX_ATTACKS 12
+#define MAX_ATTACKS 14
 #define INIT_HP 100
 #define INIT_STAMINA 30
 #define TRANSFORM_ACCELERATION 0.075f
@@ -79,6 +79,8 @@ PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 	{"AA",  MODEL_NINJA, NINJA_ATTACK_COMBOAIR_B, false, AIR_MOVE,		1328 },
 	{"AAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_C, false,  AIR_MOVE,		1411 },
 	{"AAAA", MODEL_NINJA, NINJA_ATTACK_COMBOAIR_D, true,  AIR_MOVE,		1480 },
+	{"UA", MODEL_NINJA, NINJA_UPPER_SLASH, true,  GROUND_MOVE,		1480 },
+	{"DA", MODEL_NINJA, NINJA_AIR_DOWN, true,  AIR_MOVE,		1480 },
 	//Ž˜
 	{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		263 },
 	{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		348 },
@@ -407,10 +409,11 @@ void Player3D::AttackingStateControl()
 	bool bTwiceTheHitbox = false;
 	int nAttackFrame = pPlayerModels[nCurrentTransformation]->GetCurrentFrame();
 	int nCurrentAnim = 0;
-	f_yForce = 0;
 	printf("%d\n", nAttackFrame);
 	if (pCurrentAttackPlaying) {
 		nCurrentAnim = pCurrentAttackPlaying->Animation;
+		if (nCurrentAnim != NINJA_UPPER_SLASH && nCurrentAnim != NINJA_AIR_DOWN)
+			f_yForce = 0;
 		switch (pCurrentAttackPlaying->Animation)
 		{
 		case NINJA_ATTACK_COMBO_A:
@@ -464,6 +467,29 @@ void Player3D::AttackingStateControl()
 			if (nAttackFrame > 1461 && nAttackFrame < 1491)
 				bIsAttacking = true;
 			break;
+		case NINJA_AIR_DOWN:
+			bIsAttacking = true;
+			if (nAttackFrame >= 1746)
+				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
+			if (!pCurrentFloor) {
+				f_yForce += GRAVITY_FORCE*1.5f;
+				Position.y -= f_yForce;
+			}
+			else {
+				pCurrentAttackPlaying = nullptr;
+			}
+			break;
+		case NINJA_UPPER_SLASH:
+			if (pCurrentFloor && nAttackFrame>997) {
+				Jump(JUMP_FORCE);
+			}
+			if(nAttackFrame > 997)
+				bIsAttacking = true;
+			f_yForce += GRAVITY_FORCE;
+			if (f_yForce > 0)
+				f_yForce = 0;
+			Position.y -= f_yForce;
+			break;
 		case SAMURAI_COMBOA:
 			if (nAttackFrame > 241 && nAttackFrame < 261)
 				bIsAttacking = true;
@@ -505,7 +531,7 @@ void Player3D::AttackingStateControl()
 		Hitboxes[HB_ATTACK].SizeZ = 0;
 	}
 
-	if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0)
+	if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0 && nCurrentAnim != NINJA_AIR_DOWN)//
 		pCurrentAttackPlaying = nullptr;
 	if (!pCurrentAttackPlaying)
 		nState = PLAYER_IDLE;
@@ -792,7 +818,10 @@ void Player3D::Jump(float fJumpForce)
 
 void Player3D::GravityControl()
 {
-	if (nState == PLAYER_TRANSFORMING || nState == PLAYER_ATTACKING)
+	if (nState == PLAYER_ATTACKING) {
+		return;
+	}
+	if (nState == PLAYER_TRANSFORMING)
 		return;
 	if (pCurrentFloor)
 	{
@@ -1022,6 +1051,10 @@ void Player3D::Attack(const char * atkInput)
 	int i = 0;
 	for (i = 0; i < MAX_PLAYER_INPUT && atkInput[i] != '*'; szAtkInput[i] = atkInput[i], i++);
 	szAtkInput[i]='\0';
+	if (GetInput(INPUT_UP) && pCurrentFloor)
+		strcpy(szAtkInput, "UA");
+	if (GetInput(INPUT_DOWN) && !pCurrentFloor)
+		strcpy(szAtkInput, "DA");
 	Attack(szAtkInput, MAX_PLAYER_INPUT);
 }
 
@@ -1029,12 +1062,14 @@ void Player3D::Attack(const char * atkInput, int recursions)
 {
 	if (recursions <= 0)
 		return;
+	char inputToCheck[MAX_PLAYER_INPUT + 1];
+	strcpy(inputToCheck, atkInput);
 	for (int i = 0; i < MAX_ATTACKS; i++)
 	{
 		if (nCurrentTransformation != stAllMoves[i].Transformation)continue;
 		if (stAllMoves[i].eAirMove == AIR_MOVE && pCurrentFloor)continue;
 		if (stAllMoves[i].eAirMove == GROUND_MOVE && !pCurrentFloor)continue;
-		if (!strcmp(stAllMoves[i].Input, atkInput))//UŒ‚“®ìŒ©‚Â‚¯‚½
+		if (!strcmp(stAllMoves[i].Input, inputToCheck))//UŒ‚“®ìŒ©‚Â‚¯‚½
 		{
 			pCurrentAttackPlaying = &stAllMoves[i];
 			SwitchAnimation(stAllMoves[i].Transformation, stAllMoves[i].Animation);
@@ -1046,7 +1081,7 @@ void Player3D::Attack(const char * atkInput, int recursions)
 	}
 	char szAtkInput[MAX_PLAYER_INPUT + 1];
 	int i = 0;
-	for (i = 1; i < MAX_PLAYER_INPUT && atkInput[i] != '\0'; szAtkInput[i-1] = atkInput[i], i++);
+	for (i = 1; i < MAX_PLAYER_INPUT && inputToCheck[i] != '\0'; szAtkInput[i-1] = inputToCheck[i], i++);
 	szAtkInput[i-1] = '\0';
 	Attack(szAtkInput, recursions - 1);
 }

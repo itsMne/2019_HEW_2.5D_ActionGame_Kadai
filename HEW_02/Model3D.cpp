@@ -289,3 +289,8 @@ void Model3D::SetCanLoop(bool loop)
 {
 	bCanLoop = loop;
 }
+
+void Model3D::SetFrame(int frame)
+{
+	fFrame = frame;
+}

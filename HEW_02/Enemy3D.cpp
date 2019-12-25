@@ -8,9 +8,13 @@ enum ONI_ANIMATION
 	ONI_IDLE=1,
 	ONI_MAX
 };
-enum ONI_STATES
+enum ENEMY_STATES
 {
-
+	ENEMY_IDLE = 0,
+	ENEMY_DAMAGED,
+	ENEMY_SENDUP,
+	ENEMY_FALLING,
+	MAX_ENEMY_STATES
 };
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
@@ -30,8 +34,10 @@ void Enemy3D::Init()
 	nType = GO_ENEMY;
 	fYForce = 0;
 	pCurrentFloor = nullptr;
+	pPlayerPointer = nullptr;
 	pGame = nullptr;
 	bUseGravity = false;
+	nState = ENEMY_IDLE;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI:
@@ -55,17 +61,39 @@ void Enemy3D::Update()
 	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 		return;
 #endif
-	Player3D* pPlayer = GetMainPlayer();
+	if(!pPlayerPointer)
+		pPlayerPointer = GetMainPlayer();
 	if (bUseGravity)
 		GravityControl();
-	if (!pPlayer)
+	if (!pPlayerPointer)
 		return;
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
+	RegularCollisionWithPlayer();
+	OniStatesControl();
+}
+
+void Enemy3D::OniStatesControl()
+{
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+	switch (nState)
+	{
+	case ENEMY_IDLE:
+		pModel->SwitchAnimation(ONI_IDLE);
+		break;
+	default:
+		break;
+	}
+}
+
+void Enemy3D::RegularCollisionWithPlayer()
+{
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	int nPlayerDirection = pPlayer->GetDirection();
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->GetFloor())
 	{
-		Position.x+=0.5f * nPlayerDirection;
+		Position.x += 0.5f * nPlayerDirection;
 		if (nPlayerDirection == LEFT_DIR) {
 			while ((pPlayer->GetState() == PLAYER_WALKING && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox())))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
 				pPlayer->TranslateX(1);
@@ -81,7 +109,6 @@ void Enemy3D::Update()
 		pPlayer->SetYForce(0);
 		Position.x += 2 * nPlayerDirection;
 	}
-
 }
 
 void Enemy3D::GravityControl()
@@ -116,7 +143,7 @@ void Enemy3D::Draw()
 {
 #if USE_IN_RENDERZONE
 	Player3D* pPlayer = GetMainPlayer();
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 		return;
 #endif
 	GameObject3D::Draw();
