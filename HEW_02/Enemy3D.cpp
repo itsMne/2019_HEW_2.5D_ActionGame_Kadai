@@ -87,7 +87,6 @@ void Enemy3D::GravityControl()
 		fYForce += GRAVITY_FORCE;
 		Position.y -= fYForce;
 
-		printf("a");
 		Go_List* Fields = pGame->GetFields();
 		if (!Fields)
 			return;
