@@ -109,10 +109,11 @@ void C_Item::Update()
 
 void C_Item::Draw()
 {
-	Player3D* pPlayer = GetMainPlayer();
 #if USE_IN_RENDERZONE
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
-		return;
+	if (!bIgnoreRenderingZone) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+			return;
+	}
 #endif
 	GameObject3D::Draw();
 	if (!bUse)

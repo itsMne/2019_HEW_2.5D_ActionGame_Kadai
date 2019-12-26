@@ -33,6 +33,7 @@ void GameObject3D::Init()
 	bMoveable = false;
 	bGoToStartPos = false;
 	bUnlit = false;
+	bIgnoreRenderingZone = false;
 	nDelayFramesBetweenStops = 0;
 	nPauseFrames = 0;
 #if SHOW_HITBOX
@@ -310,6 +311,11 @@ XMFLOAT3 GameObject3D::GetMoveEndPosition()
 void GameObject3D::PauseObject(int pauseFrames)
 {
 	nPauseFrames = pauseFrames;
+}
+
+void GameObject3D::SetIgnoreRenderingZone(bool ign)
+{
+	bIgnoreRenderingZone = ign;
 }
 
 Go_List::Go_List()

@@ -5,6 +5,9 @@
 
 SceneTitle::SceneTitle()
 {
+	MainWindow = GetMainWindow();
+	if (MainWindow)
+		MainWindow->SetWindowColor(0, 0, 0);
 	Title = new C_Ui("data/texture/haikei.png", UI_TITLE);
 	SlashEffect = new C_Ui("data/texture/Slash.tga", UI_SLASH_EFFECT);
 	Effect1 = new C_Ui("data/texture/haikei0.png", UI_TITLE);

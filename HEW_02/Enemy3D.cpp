@@ -263,9 +263,10 @@ void Enemy3D::GravityControl()
 void Enemy3D::Draw()
 {
 #if USE_IN_RENDERZONE
-	Player3D* pPlayer = GetMainPlayer();
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
-		return;
+	if (!bIgnoreRenderingZone) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+			return;
+	}
 #endif
 	GameObject3D::Draw();
 }

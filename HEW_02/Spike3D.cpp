@@ -47,7 +47,7 @@ void Spike3D::Update()
 		pSpikeModel->UpdateModel();
 	if (!pPlayer)
 		return;
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->GetState()!=PLAYER_TELEPORTING)
 	{
 		pPlayer->SetDamageTeleport(SPIKE_DAMAGE);
 	}
@@ -60,8 +60,7 @@ void Spike3D::Draw()
 	if (bInvisible)
 		return;
 #if USE_IN_RENDERZONE
-	Player3D* pPlayer = GetMainPlayer();
-	if (pPlayer) {
+	if (!bIgnoreRenderingZone) {
 		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
 	}

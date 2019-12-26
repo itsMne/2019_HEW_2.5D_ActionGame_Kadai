@@ -34,6 +34,7 @@ protected:
 	Hitbox3D hitbox;
 	Cube3D* pVisualHitbox;
 	bool bUnlit;
+	bool bIgnoreRenderingZone;
 public:
 	GameObject3D();
 	~GameObject3D();
@@ -59,6 +60,7 @@ public:
 	XMFLOAT3 GetMoveStartPosition();
 	XMFLOAT3 GetMoveEndPosition();
 	void PauseObject(int pauseFrames);
+	void SetIgnoreRenderingZone(bool ign);
 };
 
 //*****************************************************************************

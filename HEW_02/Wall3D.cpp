@@ -60,9 +60,10 @@ void Wall3D::Update()
 void Wall3D::Draw()
 {
 #if USE_IN_RENDERZONE
-	Player3D* pPlayer = GetMainPlayer();
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
-		return;
+	if (!bIgnoreRenderingZone) {
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+			return;
+	}
 #endif
 	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(2));
 	GameObject3D::Draw();

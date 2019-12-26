@@ -159,6 +159,7 @@ void DebugAim::Update()
 	case DA_FIELD:
 		if (!pDA_Field) {
 			pDA_Field = new Field3D("data/texture/field000.jpg");
+			pDA_Field->SetIgnoreRenderingZone(true);
 			Scale = { 50,50,50 };
 			pDA_Field->SetPosition({ Position.x,Position.y + 12,Position.z });
 		}
@@ -190,6 +191,7 @@ void DebugAim::Update()
 	case DA_WALL:
 		if (!pDA_Wall) {
 			pDA_Wall = new Wall3D();
+			pDA_Wall->SetIgnoreRenderingZone(true);
 			Scale = { 1,1,1 };
 			pDA_Wall->SetPosition({ Position.x,Position.y + 16, Position.z });
 		}
@@ -222,6 +224,7 @@ void DebugAim::Update()
 		nitemType = nObjectType - DA_ITEM_SUSHI;
 		if (!pDA_Item) {
 			pDA_Item = new C_Item(nitemType);
+			pDA_Item->SetIgnoreRenderingZone(true);
 			Scale = { 1,1,1 };
 			pDA_Item->SetPosition(Position);
 		}
@@ -255,6 +258,7 @@ void DebugAim::Update()
 		if (!pDA_Spike)
 		{
 			pDA_Spike = new Spike3D();
+			pDA_Spike->SetIgnoreRenderingZone(true);
 			Scale = { 1,1,1 };
 		}
 		else {
@@ -317,6 +321,7 @@ void DebugAim::Update()
 	case DA_GOAL:
 		if (!pDA_Goal) {
 			pDA_Goal = new Goal3D();
+			pDA_Goal->SetIgnoreRenderingZone(true);
 			pDA_Goal->SetPosition(Position);
 			Scale = { 1,1,1 };
 		}
@@ -348,6 +353,7 @@ void DebugAim::Update()
 		if (!pDA_Mirror)
 		{
 			pDA_Mirror = new Mirror3D();
+			pDA_Mirror->SetIgnoreRenderingZone(true);
 			pDA_Mirror->SetPosition(Position);
 			Scale = { 1,1,1 };
 		}
@@ -397,6 +403,7 @@ void DebugAim::Update()
 	case DA_ENEMY_ONI:
 		if (!pDA_Enemy) {
 			pDA_Enemy = new Enemy3D(nObjectType - DA_ENEMY_ONI);
+			pDA_Enemy->SetIgnoreRenderingZone(true);
 			Scale = { 1,1,1 };
 			pDA_Enemy->SetPosition({ Position.x,Position.y,Position.z });
 		}

@@ -4,7 +4,6 @@
 #include "Camera3D.h"
 
 SceneGame* CurrentGame = nullptr;
-//Enemy3D* HelloEnemy = nullptr;
 
 SceneGame::SceneGame(): SceneBase()
 {

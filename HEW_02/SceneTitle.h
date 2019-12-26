@@ -5,6 +5,7 @@ class SceneTitle :
 	public SceneBase
 {
 private:
+	DXWindow3D* MainWindow;
 	C_Ui* Title;
 	C_Ui* SlashEffect;
 	C_Ui* Effect1;
