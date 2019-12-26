@@ -174,9 +174,44 @@ void Camera3D::ZoomOutZ(float redZ)
 	printf("%f\n", Offset.z);
 }
 
+void Camera3D::ZoomInZ(float incZ)
+{
+	Offset.z += incZ;
+	if (Offset.z < -612) {
+		Offset.z = -612;
+		return;
+	}
+	if (Offset.z > 63) {
+		Offset.z = 63;
+		return;
+	}
+	hbRenderZone.SizeX -= incZ * 2;
+	hbRenderZone.SizeY -= incZ * 2;
+	printf("%f\n", Offset.z);
+}
+
+void Camera3D::SetZoomZ(float incZ)
+{
+	Offset.z = incZ;
+	if (Offset.z < -612) {
+		Offset.z = -612;
+		return;
+	}
+	if (Offset.z > 63) {
+		Offset.z = 63;
+		return;
+	}
+	printf("%f\n", Offset.z);
+}
+
 void Camera3D::ResetZoom()
 {
 	Offset = OFFSET_VALUE;
+}
+
+void Camera3D::SetRenderZone(Hitbox3D hb)
+{
+	hbRenderZone = hb;
 }
 
 void Camera3D::DrawRenderZone()
@@ -197,6 +232,16 @@ void Camera3D::ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake)
 	x3Shake = ShakeForce;
 	nFrameShaking = Frames;
 	nFramesPerShake = FramesPerShake;
+}
+
+float Camera3D::GetCurrentZoom()
+{
+	return Offset.z;
+}
+
+Hitbox3D Camera3D::GetRenderZone()
+{
+	return hbRenderZone;
 }
 
 Camera3D * GetMainCamera()

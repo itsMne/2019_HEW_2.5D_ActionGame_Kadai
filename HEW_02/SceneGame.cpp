@@ -24,8 +24,17 @@ void SceneGame::Init()
 {
 	g_pDevice = GetDevice();
 	nScore = 0;
+	fZoomAcc = 0;
+	fZoomPause = 0;
+	fFramesForZoomPausing = 0;
+	fZoomSpeed = 0;
+	fPreviousZoom = 0;
+	nTimeSeconds = 0;
+	nFrameCounter = 0;
+	hbPreviousRenderingBox = {0,0,0,0,0,0};
 	nSceneType = SCENE_GAME;
 	MainWindow = GetMainWindow();
+	bPauseZooming = false;
 	if (MainWindow)
 		MainWindow->SetWindowColor(231.0f / 255.0f, 182.0f / 255.0f, 128.0f / 255.0f);
 	
@@ -59,7 +68,7 @@ void SceneGame::Init()
 	// Mp
 	pMP_UI = new C_Ui("data/texture/MP000.png", UI_MP);
 	
-	pScore_UI = new C_Ui("data/texture/number.png", UI_NUMBER);
+	pScore_UI = new C_Ui("data/texture/jNum.tga", UI_NUMBER);
 	// Score
 	pScore_Frame_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
 
@@ -94,6 +103,36 @@ int SceneGame::Update()
 	{
 		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
+	if (++nFrameCounter == 60) {//タイムのカウンター
+		nTimeSeconds++;
+		nFrameCounter = 0;
+	}
+	SceneCamera->Update();
+	if (bPauseZooming)
+	{
+		fZoomAcc += fZoomSpeed;
+		if (fZoomPause > SceneCamera->GetCurrentZoom())
+		{
+			SceneCamera->ZoomInZ(fZoomAcc);
+			if (fZoomPause < SceneCamera->GetCurrentZoom())
+				SceneCamera->SetZoomZ(fZoomPause);
+		}
+		if (fZoomPause < SceneCamera->GetCurrentZoom())
+		{
+			SceneCamera->ZoomOutZ(fZoomAcc);
+			if (fZoomPause > SceneCamera->GetCurrentZoom())
+				SceneCamera->SetZoomZ(fZoomPause);
+		}
+		if(fZoomPause == SceneCamera->GetCurrentZoom())
+			fFramesForZoomPausing--;
+		if (fFramesForZoomPausing <= 0)
+		{
+			bPauseZooming = false;
+			SceneCamera->SetZoomZ(fPreviousZoom);
+			SceneCamera->SetRenderZone(hbPreviousRenderingBox);
+		}
+		return nSceneType;
+	}
 	// デバッグ文字列表示更新
 	UpdateDebugProc();
 
@@ -105,8 +144,8 @@ int SceneGame::Update()
 	SceneLight->Update();
 
 	// カメラ更新
-	SceneCamera->Update();
-
+	
+	
 	// モデル更新
 	pPlayer->Update();
 
@@ -253,6 +292,21 @@ void SceneGame::SetGoalReached()
 Sphere3D * SceneGame::GetSkySphere()
 {
 	return SkySphere;
+}
+
+void SceneGame::ZoomPause(float fDistance, int nFrames, float Speed)
+{
+	if (!SceneCamera)
+		return;
+	fZoomPause = fDistance + SceneCamera->GetCurrentZoom();
+	fZoomAcc = 0;
+	fFramesForZoomPausing = nFrames;
+	fZoomSpeed = Speed;
+	fPreviousZoom = SceneCamera->GetCurrentZoom();
+	hbPreviousRenderingBox = SceneCamera->GetRenderZone();
+	bPauseZooming = true;
+	if (fZoomSpeed <= 0)
+		fFramesForZoomPausing = 0;
 }
 
 SceneGame * GetCurrentGame()

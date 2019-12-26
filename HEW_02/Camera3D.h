@@ -39,10 +39,15 @@ public:
 	XMFLOAT3 GetForwardCameraVector();
 	void SetFocalPoint(void* newFocalPoint);
 	void ZoomOutZ(float redZ);
+	void ZoomInZ(float incZ);
+	void SetZoomZ(float incZ);
 	void ResetZoom();
+	void SetRenderZone(Hitbox3D hb);
 	void DrawRenderZone();
 	bool IsOnRenderZone(Hitbox3D hb);
 	void ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake);
+	float GetCurrentZoom();
+	Hitbox3D GetRenderZone();
 };
 
 Camera3D* GetMainCamera();

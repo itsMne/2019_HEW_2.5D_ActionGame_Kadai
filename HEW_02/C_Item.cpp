@@ -1,8 +1,18 @@
 #include "C_Item.h"
 #include "Player3D.h"
+#include "Texture.h"
 #include "SceneGame.h"
 
 
+ID3D11ShaderResourceView* pItemTextures[MAX_ITEMTYPE];
+char pItemTexturesPaths[MAX_ITEMTYPE][256] = 
+{
+	"data/texture/Sushi.png",
+	"data/texture/Udon.png",
+	"data/texture/ODen.png",
+	"data/texture/Dango.png",
+	"data/texture/Tai.png",
+};
 
 C_Item::C_Item(int Type)
 {
@@ -17,34 +27,42 @@ C_Item::~C_Item()
 void C_Item::Init()
 {
 	hitbox = { 0,5,0, 5,5,5 };
+	ID3D11Device* pDevice = GetDevice();
+	if (!pItemTextures[nItemType])
+	{
+		printf("%s\n", pItemTexturesPaths[nItemType]);
+		CreateTextureFromFile(pDevice,					// デバイスへのポインタ
+			pItemTexturesPaths[nItemType],		// ファイルの名前
+			&(pItemTextures[nItemType]));
+	}
 	switch (nItemType)
 	{
 	case TYPE_SUSHI:
-		bbItem = new Billboard2D("data/texture/Sushi.png");
+		bbItem = new Billboard2D(pItemTextures[TYPE_SUSHI]);
 		bbItem->SetVertex(590 / 40, 366 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
 	case TYPE_UDON:
-		bbItem = new Billboard2D("data/texture/Udon.png");
+		bbItem = new Billboard2D(pItemTextures[TYPE_UDON]);
 		bbItem->SetVertex(591 / 40, 513 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
 	case TYPE_ODEN:
-		bbItem = new Billboard2D("data/texture/ODen.png");
+		bbItem = new Billboard2D(pItemTextures[TYPE_ODEN]);
 		bbItem->SetVertex(589 / 40, 519 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
 	case TYPE_DANGO:
-		bbItem = new Billboard2D("data/texture/Dango.png");
+		bbItem = new Billboard2D(pItemTextures[TYPE_DANGO]);
 		bbItem->SetVertex(500 / 40, 550 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
 	case TYPE_TAI:
-		bbItem = new Billboard2D("data/texture/Tai.png");
+		bbItem = new Billboard2D(pItemTextures[TYPE_TAI]);
 		bbItem->SetVertex(550 / 40, 452 / 40);
 		nType = GO_ITEM;
 		bUse = true;
@@ -124,6 +142,7 @@ void C_Item::Draw()
 
 void C_Item::Uninit()
 {
+	SAFE_DELETE(bbItem);
 }
 
 void C_Item::SetUse(bool use)

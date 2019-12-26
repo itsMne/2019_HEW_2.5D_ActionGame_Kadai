@@ -25,9 +25,9 @@
 #define SCORE_WIDTH			8							// 表示桁数
 
 #define SCORE_SIZE_X		35							// 文字のサイズ
-#define SCORE_SIZE_Y		50							// 文字のサイズ
-#define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))	// 文字の表示位置
-#define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)	// 文字の表示位置
+#define SCORE_SIZE_Y		36							// 文字のサイズ
+#define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))+13	// 文字の表示位置
+#define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)+15	// 文字の表示位置
 
 C_Ui::C_Ui()
 {

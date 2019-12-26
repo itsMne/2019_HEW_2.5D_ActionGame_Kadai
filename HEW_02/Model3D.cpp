@@ -153,8 +153,9 @@ void Model3D::AnimationControl()
 {
 	if (++nFramCount >= AnimationFrameSlowness) {
 		nFramCount = 0;
+		//printf("%f\n",fAnimSpeed);
 		fFrame += fAnimSpeed;
-		if (++fFrame >= g_pModel->GetMaxAnimFrame()) {
+		if (fFrame >= g_pModel->GetMaxAnimFrame()) {
 			if (bCanLoop) {
 				if (++nCountLoop > MAX_LOOPS)
 					nCountLoop = MAX_LOOPS;
@@ -205,9 +206,9 @@ void Model3D::SwitchAnimationSlowness(int nFrameSpeed)
 	AnimationFrameSlowness = nFrameSpeed;
 }
 
-void Model3D::SwitchAnimationSpeed(float nFrameSpeed)
+void Model3D::SwitchAnimationSpeed(float fFrameSpeed)
 {
-	fAnimSpeed = nFrameSpeed;
+	fAnimSpeed = fFrameSpeed;
 }
 
 void Model3D::SetScale(float newScale)

@@ -158,17 +158,17 @@ void Enemy3D::DamageControl()
 		GetMainCamera()->ShakeCamera({ 0.85f,0.85f,0.75f }, 25, 10);
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
 			pPlayer->TranslateX(1.5f* nPlayerDirection);
-			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
-			if (pWall) {
-				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
-				{
-					pPlayer->TranslateX(1 * -nPlayerDirection);
-					Position.x -= 1;
-				}
-			}
 			if(!pCurrentFloor)
 				Position.y = AttackHitbox.y - 20;
 			nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+		}
+		pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+		if (pWall) {
+			while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+			{
+				pPlayer->TranslateX(1 * -nPlayerDirection);
+				Position.x -= 1;
+			}
 		}
 		if (nLastPlayerAttack != pPlayerAttack->Animation)
 		{

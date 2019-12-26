@@ -32,7 +32,16 @@ private:
 	C_Ui* pLevel_Editor_STATICMODE_UI;
 	C_Ui* pSpeed_MoveObject_UI;
 	C_Ui* pDelay_MoveObject_UI;
+	float fZoomPause;
+	float fZoomSpeed;
+	int fFramesForZoomPausing;
+	int fPreviousZoom;
+	Hitbox3D hbPreviousRenderingBox;
 	bool bGoalReached;
+	bool bPauseZooming;
+	float fZoomAcc;
+	int nTimeSeconds;
+	int nFrameCounter;
 public:
 	
 	SceneGame();
@@ -52,5 +61,6 @@ public:
 	void RaiseScore(int rais);
 	void SetGoalReached();
 	Sphere3D* GetSkySphere();
+	void ZoomPause(float fDistance, int nFrames, float Speed);
 };
 SceneGame* GetCurrentGame();

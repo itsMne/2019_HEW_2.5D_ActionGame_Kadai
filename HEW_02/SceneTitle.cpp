@@ -52,7 +52,7 @@ int SceneTitle::Update()
 			Effect2->SetPolygonAlpha(1);
 	}
 
-	if (GetInput(INPUT_JUMP)) {
+	if (GetInput(INPUT_JUMP) && SlashEffect->GetUV().V >= 7) {
 		return SCENE_GAME;
 	}
 	return SCENE_TITLE;

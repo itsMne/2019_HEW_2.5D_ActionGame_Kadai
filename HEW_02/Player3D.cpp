@@ -309,11 +309,11 @@ void Player3D::Update()
 		}
 		else {
 			SwitchAnimation(MODEL_NINJA, NINJA_WALKING);
-			pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(1);
+			pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(2);
 			SwitchAnimation(MODEL_GEISHA, GEISHA_WALKING);
-			pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(1);
+			pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(2);
 			SwitchAnimation(MODEL_SAMURAI, SAMURAI_WALKING);
-			pPlayerModels[MODEL_SAMURAI]->SwitchAnimationSpeed(0.35f);
+			pPlayerModels[MODEL_SAMURAI]->SwitchAnimationSpeed(1.35f);
 		}
 		if(nCurrentTransformation==MODEL_NINJA)
 			Position.x += PLAYER_SPEED * 0.75f * nDirection*LockMovementRight*LockMovementLeft;
@@ -334,6 +334,7 @@ void Player3D::Update()
 		break;
 	case PLAYER_KICK_WALL_STATE:
 		SwitchAnimationSlowness(0);
+		SwitchAnimationSpeed(2.0f);
 		SwitchAnimation(MODEL_NINJA, NINJA_KICKWALL);
 		Position.x += PLAYER_SPEED * 0.75f * -nDirection;
 		if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0 ||
@@ -365,7 +366,7 @@ void Player3D::Update()
 
 void Player3D::AttackingStateControl()
 {
-	SwitchAnimationSpeed(1.5f);
+	SwitchAnimationSpeed(2.5f);
 	Hitboxes[HB_ATTACK].x = 7.5f*nDirection;
 	XMFLOAT3 hbAttackScale = ATTACK_HITBOX_SCALE;
 	bool bIsAttacking = false;
@@ -614,7 +615,7 @@ void Player3D::DamagedTeleportingControl()
 	TransformingStateControl();
 	if (nCurrentTransformation != MODEL_NINJA)
 		return;
-
+	pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(0.01f);
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
 	pPlayerModels[MODEL_NINJA]->UpdateModel();
 	static int fAcceleration = 0;
@@ -1099,6 +1100,9 @@ void Player3D::SetDamageTeleport(int Damage)
 	nHP -= Damage;
 	if (nHP < 0)
 		nHP = 0;
+	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
+	GetCurrentGame()->ZoomPause(80, 30, 3);
+	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
 }
 
 float Player3D::GetYForce()
