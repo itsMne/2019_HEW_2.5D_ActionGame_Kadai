@@ -156,7 +156,7 @@ void Enemy3D::DamageControl()
 	default:
 		Position.x = AttackHitbox.x;
 		GetMainCamera()->ShakeCamera({ 0.85f,0.85f,0.75f }, 25, 10);
-		if (!(pPlayer->GetFloor())) {
+		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
 			pPlayer->TranslateX(1.5f* nPlayerDirection);
 			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
 			if (pWall) {

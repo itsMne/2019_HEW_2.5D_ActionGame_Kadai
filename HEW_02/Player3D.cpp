@@ -243,6 +243,12 @@ void Player3D::Update()
 	
 	if (nState != PLAYER_KICK_WALL_STATE) 
 		nKickWallFrameCounter = 0;
+	if (nState != PLAYER_ATTACKING)
+	{
+		Hitboxes[HB_ATTACK].SizeX = 0;
+		Hitboxes[HB_ATTACK].SizeY = 0;
+		Hitboxes[HB_ATTACK].SizeZ = 0;
+	}
 	switch (nState)
 	{
 	case PLAYER_IDLE:
@@ -268,6 +274,7 @@ void Player3D::Update()
 		}
 		if (GetInput(INPUT_RIGHT) || GetInput(INPUT_LEFT))
 			nState = PLAYER_WALKING;
+		pCurrentAttackPlaying = nullptr;
 		break;
 	case PLAYER_WALKING:
 		SwitchAnimationSlowness(0);
