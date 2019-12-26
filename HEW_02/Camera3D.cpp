@@ -64,7 +64,6 @@ HRESULT Camera3D::Init()
 
 void Camera3D::Update()
 {
-
 	GameObject3D* FocusPoint = nullptr;
 	FocusPoint = (GameObject3D*)FocalPoint;
 	if (FocusPoint) {
@@ -201,7 +200,6 @@ void Camera3D::SetZoomZ(float incZ)
 		Offset.z = 63;
 		return;
 	}
-	printf("%f\n", Offset.z);
 }
 
 void Camera3D::ResetZoom()

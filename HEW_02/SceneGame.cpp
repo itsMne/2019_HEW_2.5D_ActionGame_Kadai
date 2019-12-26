@@ -2,7 +2,7 @@
 #include "Enemy3D.h"
 #include "Mirror3D.h"
 #include "Camera3D.h"
-
+#define RENDER_BOX_CAMERA { 0,0,0, 200,200,120 };
 SceneGame* CurrentGame = nullptr;
 
 SceneGame::SceneGame(): SceneBase()
@@ -26,15 +26,15 @@ void SceneGame::Init()
 	nScore = 0;
 	fZoomAcc = 0;
 	fZoomPause = 0;
-	fFramesForZoomPausing = 0;
+	nFramesForZoomPausing = 0;
 	fZoomSpeed = 0;
-	fPreviousZoom = 0;
 	nTimeSeconds = 0;
 	nFrameCounter = 0;
-	hbPreviousRenderingBox = {0,0,0,0,0,0};
 	nSceneType = SCENE_GAME;
 	MainWindow = GetMainWindow();
 	bPauseZooming = false;
+	bCancelZoom = false;
+	bZoomBack = false;
 	if (MainWindow)
 		MainWindow->SetWindowColor(231.0f / 255.0f, 182.0f / 255.0f, 128.0f / 255.0f);
 	
@@ -108,8 +108,38 @@ int SceneGame::Update()
 		nFrameCounter = 0;
 	}
 	SceneCamera->Update();
+	
 	if (bPauseZooming)
 	{
+		if (nFramesForZoomPausing <= 0)
+		{
+			
+			if (bZoomBack && !bCancelZoom)
+			{
+				fZoomAcc += fZoomSpeed;
+				if (fCurrentInGameZoom > SceneCamera->GetCurrentZoom())
+				{
+					SceneCamera->ZoomInZ(fZoomAcc);
+					if (fCurrentInGameZoom < SceneCamera->GetCurrentZoom())
+						SceneCamera->SetZoomZ(fCurrentInGameZoom);
+				}
+				if (fCurrentInGameZoom < SceneCamera->GetCurrentZoom())
+				{
+					SceneCamera->ZoomOutZ(fZoomAcc);
+					if (fCurrentInGameZoom > SceneCamera->GetCurrentZoom())
+						SceneCamera->SetZoomZ(fCurrentInGameZoom);
+				}
+				if (fCurrentInGameZoom != SceneCamera->GetCurrentZoom())
+					return nSceneType;
+			}
+			
+			bPauseZooming = false;
+			bZoomBack = false;
+			SceneCamera->SetZoomZ(fCurrentInGameZoom);
+			Hitbox3D render = RENDER_BOX_CAMERA;
+			SceneCamera->SetRenderZone(render);
+			return nSceneType;
+		}
 		fZoomAcc += fZoomSpeed;
 		if (fZoomPause > SceneCamera->GetCurrentZoom())
 		{
@@ -123,15 +153,13 @@ int SceneGame::Update()
 			if (fZoomPause > SceneCamera->GetCurrentZoom())
 				SceneCamera->SetZoomZ(fZoomPause);
 		}
-		if(fZoomPause == SceneCamera->GetCurrentZoom())
-			fFramesForZoomPausing--;
-		if (fFramesForZoomPausing <= 0)
-		{
-			bPauseZooming = false;
-			SceneCamera->SetZoomZ(fPreviousZoom);
-			SceneCamera->SetRenderZone(hbPreviousRenderingBox);
+		if (fZoomPause == SceneCamera->GetCurrentZoom()) {
+			nFramesForZoomPausing--;
+			fZoomAcc = 0;
 		}
-		return nSceneType;
+		
+		if(bPauseFramesWhenZoom)
+			return nSceneType;
 	}
 	// デバッグ文字列表示更新
 	UpdateDebugProc();
@@ -193,24 +221,27 @@ void SceneGame::Draw()
 
 	// 前面カリング (FBXは表裏が反転するため)
 	ID3D11DeviceContext* pDeviceContext = pMainWindow->GetDeviceContext();
-	pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(1));
+	
 
 	// モデル描画
 	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
+	pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(1));
+	Enemies->Draw();
 	SetCullMode(CULLMODE_CCW);
 	
 	//pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(2));
-	Enemies->Draw();
+	
 	Goals->Draw();
 
 	SkySphere->Draw();
 	// フィールド描画
 	Walls->Draw();
+	Spikes->Draw();
 	Fields->Draw();
 	
-	Spikes->Draw();
+	
 
 	Mirrors->Draw();
 	
@@ -294,19 +325,27 @@ Sphere3D * SceneGame::GetSkySphere()
 	return SkySphere;
 }
 
-void SceneGame::ZoomPause(float fDistance, int nFrames, float Speed)
+void SceneGame::ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack)
 {
 	if (!SceneCamera)
 		return;
+	if (bPauseZooming || bZoomBack)
+	{
+		if(nFramesForZoomPausing>0)
+			nFramesForZoomPausing = nFrames;
+		return;
+	}
 	fZoomPause = fDistance + SceneCamera->GetCurrentZoom();
+	bCancelZoom = false;
 	fZoomAcc = 0;
-	fFramesForZoomPausing = nFrames;
+	nFramesForZoomPausing = nFrames;
 	fZoomSpeed = Speed;
-	fPreviousZoom = SceneCamera->GetCurrentZoom();
-	hbPreviousRenderingBox = SceneCamera->GetRenderZone();
+	fCurrentInGameZoom = SceneCamera->GetCurrentZoom();
 	bPauseZooming = true;
+	bPauseFramesWhenZoom = PauseFramesWhenZoom;
+	bZoomBack = ZoomBack;
 	if (fZoomSpeed <= 0)
-		fFramesForZoomPausing = 0;
+		nFramesForZoomPausing = 0;
 }
 
 SceneGame * GetCurrentGame()

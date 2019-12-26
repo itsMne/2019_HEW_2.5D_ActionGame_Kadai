@@ -34,14 +34,17 @@ private:
 	C_Ui* pDelay_MoveObject_UI;
 	float fZoomPause;
 	float fZoomSpeed;
-	int fFramesForZoomPausing;
-	int fPreviousZoom;
+	int nFramesForZoomPausing;
+	float fCurrentInGameZoom;
 	Hitbox3D hbPreviousRenderingBox;
 	bool bGoalReached;
 	bool bPauseZooming;
 	float fZoomAcc;
 	int nTimeSeconds;
 	int nFrameCounter;
+	bool bPauseFramesWhenZoom;
+	bool bZoomBack;
+	bool bCancelZoom;
 public:
 	
 	SceneGame();
@@ -61,6 +64,6 @@ public:
 	void RaiseScore(int rais);
 	void SetGoalReached();
 	Sphere3D* GetSkySphere();
-	void ZoomPause(float fDistance, int nFrames, float Speed);
+	void ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack);
 };
 SceneGame* GetCurrentGame();

@@ -433,10 +433,11 @@ void Player3D::AttackingStateControl()
 			break;
 		case NINJA_AIR_DOWN:
 			bIsAttacking = true;
+			printf("THE FORCE %f\n", f_yForce);
 			if (nAttackFrame >= 1746)
 				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
 			if (!pCurrentFloor) {
-				f_yForce += GRAVITY_FORCE*1.5f;
+				f_yForce += GRAVITY_FORCE*2.0f;
 				Position.y -= f_yForce;
 			}
 			else {
@@ -1101,7 +1102,7 @@ void Player3D::SetDamageTeleport(int Damage)
 	if (nHP < 0)
 		nHP = 0;
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
-	GetCurrentGame()->ZoomPause(80, 30, 3);
+	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);
 	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
 }
 

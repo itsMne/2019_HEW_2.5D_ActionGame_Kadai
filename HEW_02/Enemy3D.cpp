@@ -135,17 +135,20 @@ void Enemy3D::DamageControl()
 	nState = ENEMY_DAMAGED;
 	GameObject3D* pWall = nullptr;
 	nDirection = -1*pPlayer->GetDirection();
+	pGame->ZoomPause(60, 30, 3, false, true);
 	switch (pPlayerAttack->Animation)
 	{
 	case NINJA_UPPER_SLASH:
+		pModel->SwitchAnimationSpeed(2);
 		Position.x = AttackHitbox.x;
 		Position.y = AttackHitbox.y-20;
 		fYForce = 0;
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
 		if (pModel->GetAnimation() == ONI_SENDUP) {
-			printf("%d\n", (int)pModel->GetCurrentFrame());
-			if (pModel->GetCurrentFrame() >= 609)
+			if (pModel->GetCurrentFrame() >= 609) {
 				pModel->SetFrame(593);
+				pModel->SwitchAnimationSpeed(0.5f);
+			}
 		}
 		else {
 			pModel->SwitchAnimation(ONI_SENDUP);
@@ -153,7 +156,14 @@ void Enemy3D::DamageControl()
 		nState = ENEMY_SENDUP;
 		pCurrentFloor = nullptr;
 		break;
+	case NINJA_AIR_DOWN:
+		Position.x = pPlayer->GetPosition().x+(-5* nDirection);
+		Position.y = pPlayer->GetPosition().y;
+		GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
+		nState = ENEMY_FALLING;
+		break;
 	default:
+		pModel->SwitchAnimationSpeed(5);
 		Position.x = AttackHitbox.x;
 		GetMainCamera()->ShakeCamera({ 0.85f,0.85f,0.75f }, 25, 10);
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
@@ -219,7 +229,7 @@ void Enemy3D::RegularCollisionWithPlayer()
 				pPlayer->TranslateX(-1);
 		}
 	}
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->PlayerIsFalling())
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->PlayerIsFalling() && nState!=ENEMY_FALLING)
 	{
 		pPlayer->TranslateX((-0.05f * nPlayerDirection));
 		pPlayer->SetYForce(0);
