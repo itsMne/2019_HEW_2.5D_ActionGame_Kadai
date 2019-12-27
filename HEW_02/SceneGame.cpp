@@ -351,6 +351,15 @@ void SceneGame::ZoomPause(float fDistance, int nFrames, float Speed, bool PauseF
 		nFramesForZoomPausing = 0;
 }
 
+void SceneGame::CancelZoom()
+{
+	bPauseZooming = false;
+	bZoomBack = false;
+	SceneCamera->SetZoomZ(fCurrentInGameZoom);
+	Hitbox3D render = RENDER_BOX_CAMERA;
+	SceneCamera->SetRenderZone(render);
+}
+
 SceneGame * GetCurrentGame()
 {
 	return CurrentGame;

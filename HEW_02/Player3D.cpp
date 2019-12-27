@@ -433,7 +433,6 @@ void Player3D::AttackingStateControl()
 			break;
 		case NINJA_AIR_DOWN:
 			bIsAttacking = true;
-			printf("THE FORCE %f\n", f_yForce);
 			if (nAttackFrame >= 1746)
 				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
 			if (!pCurrentFloor) {
@@ -1160,7 +1159,7 @@ void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
 
 bool Player3D::PlayerGameOver()
 {
-	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() >= 266 && nState == PLAYER_DEAD && bDeadAnimation)
+	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() >= 226 && nState == PLAYER_DEAD && bDeadAnimation)
 		return true;
 	return false;
 }

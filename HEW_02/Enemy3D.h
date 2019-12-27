@@ -4,7 +4,7 @@
 //#include "SceneGame.h"
 enum EnemyType
 {
-	TYPE_ONI,
+	TYPE_ONI_A,
 	MAX_ENEMY_TYPE
 };
 enum ENEMY_STATES
@@ -17,6 +17,7 @@ enum ENEMY_STATES
 	ENEMY_MOVING,
 	ENEMY_ATTACKING,
 	ENEMY_SENDOFF,
+	ENEMY_DEAD,
 	MAX_ENEMY_STATES
 };
 class Enemy3D :
@@ -26,7 +27,8 @@ private:
 	int nEnemyType;
 	float fYForce;
 	Field3D* pCurrentFloor;
-	bool bUseGravity;
+	bool bUseGravity; 
+	bool bUse;
 	int nState;
 	void* pPlayerPointer;
 	int nCancelGravityFrames;
@@ -38,12 +40,14 @@ private:
 	int nDelayFramesBeforeAttack;
 	int nDelayCounter;
 	Hitbox3D hbAttack;
+	int nPlayerAttackName;
 	int nAnimations[MAX_ENEMY_STATES];
 	int nFramesSendOff;
 	float fSendOffAcceleration;
 	int nMinAttackFrame;
 	int nMaxAttackFrame;
 	int nDamageAgainstPlayer;
+	int nHP;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

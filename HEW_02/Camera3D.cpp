@@ -232,6 +232,11 @@ void Camera3D::ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake)
 	nFramesPerShake = FramesPerShake;
 }
 
+void Camera3D::CancelShake()
+{
+	nFrameShaking = 0;
+}
+
 float Camera3D::GetCurrentZoom()
 {
 	return Offset.z;

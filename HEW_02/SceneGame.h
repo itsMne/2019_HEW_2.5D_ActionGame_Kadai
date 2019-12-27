@@ -66,5 +66,6 @@ public:
 	void SetGoalReached();
 	Sphere3D* GetSkySphere();
 	void ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack);
+	void CancelZoom();
 };
 SceneGame* GetCurrentGame();

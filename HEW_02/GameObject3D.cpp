@@ -27,6 +27,7 @@ void GameObject3D::Init()
 {
 	Rotation = { 0,0,0 };
 	Position = { 0,0,0 };
+	x3InitialPosition = { 0,0,0 };
 	Scale = { 1,1,1 };
 	hitbox = { 0,0,0,0,0,0 };
 	pModel = nullptr;
@@ -219,6 +220,11 @@ XMFLOAT3 GameObject3D::GetPosition()
 	return Position;
 }
 
+XMFLOAT3 GameObject3D::GetInitialPosition()
+{
+	return x3InitialPosition;
+}
+
 XMFLOAT3 GameObject3D::GetRotation()
 {
 	return Rotation;
@@ -251,6 +257,13 @@ XMFLOAT4X4 * GameObject3D::GetModelWorld()
 void GameObject3D::SetPosition(XMFLOAT3 pos)
 {
 	Position = pos;
+}
+
+void GameObject3D::SetPosition(XMFLOAT3 pos, bool isinitial)
+{
+	Position = pos;
+	if (isinitial)
+		x3InitialPosition = pos;
 }
 
 void GameObject3D::SetRotation(XMFLOAT3 rot)
@@ -584,9 +597,9 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 			pPositionList = pPositionList->next;
 		}
 		go_node* pWorkList = new go_node();
-		pWorkList->Object = new Enemy3D(TYPE_ONI);
+		pWorkList->Object = new Enemy3D(TYPE_ONI_A);
 		Enemy3D* thisEnemy = (Enemy3D*)(pWorkList->Object);
-		thisEnemy->SetPosition(newPosition);
+		thisEnemy->SetPosition(newPosition, true);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		if (Moveable) {
 			thisEnemy->SetMovement(Start, End);
@@ -598,9 +611,9 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 	}
 	else {
 		HeadNode = new go_node();
-		HeadNode->Object = new Enemy3D(TYPE_ONI);
+		HeadNode->Object = new Enemy3D(TYPE_ONI_A);
 		Enemy3D* thisMirror = (Enemy3D*)(HeadNode->Object);
-		thisMirror->SetPosition(newPosition);
+		thisMirror->SetPosition(newPosition, true);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		if (Moveable)
 			thisMirror->SetMovement(Start, End);
@@ -1020,7 +1033,7 @@ void Go_List::SaveEnemies(const char * szFilename)
 			{
 				EnemyContainer thisMirror;
 				Enemy3D* thisObject = (Enemy3D*)pPositionList->Object;
-				thisMirror.Pos = thisObject->GetPosition();
+				thisMirror.Pos = thisObject->GetInitialPosition();
 				thisMirror.bMoveable = thisObject->IsMoveableObject();
 				thisMirror.MoveStartPos = thisObject->GetMoveStartPosition();
 				thisMirror.MoveEndPos = thisObject->GetMoveEndPosition();

@@ -35,6 +35,7 @@ protected:
 	Cube3D* pVisualHitbox;
 	bool bUnlit;
 	bool bIgnoreRenderingZone;
+	XMFLOAT3 x3InitialPosition;
 public:
 	GameObject3D();
 	~GameObject3D();
@@ -44,10 +45,12 @@ public:
 	virtual void Draw();
 	virtual void Uninit();
 	XMFLOAT3 GetPosition();
+	XMFLOAT3 GetInitialPosition();
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
 	XMFLOAT4X4* GetModelWorld();
 	void SetPosition(XMFLOAT3);
+	void SetPosition(XMFLOAT3, bool);
 	void SetRotation(XMFLOAT3);
 	void SetScale(XMFLOAT3);
 	void InitModel(const char* szPath);

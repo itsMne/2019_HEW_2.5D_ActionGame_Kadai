@@ -46,6 +46,7 @@ public:
 	void DrawRenderZone();
 	bool IsOnRenderZone(Hitbox3D hb);
 	void ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake);
+	void CancelShake();
 	float GetCurrentZoom();
 	Hitbox3D GetRenderZone();
 };
