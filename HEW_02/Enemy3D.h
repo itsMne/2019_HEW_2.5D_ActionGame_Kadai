@@ -21,12 +21,15 @@ private:
 	int nDirection;
 	int nLastPlayerAttack;
 	bool bUseDamageA;
+	float fSpeed;
+	int nDetectedFrames;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
 	void Init();
 	void Update();
-	void OniStatesControl();
+	void EnemyStatesControl();
+	void EnemyMovingControl();
 	void DamageControl();
 	void RegularCollisionWithPlayer();
 	void GravityControl();

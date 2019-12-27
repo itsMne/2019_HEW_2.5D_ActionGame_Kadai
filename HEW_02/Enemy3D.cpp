@@ -3,6 +3,7 @@
 #include "Player3D.h"
 #define ONI_MODEL_PATH "data/model/Oni.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
+#define DETECTED_SECONDS 16
 SceneGame* pGame;
 enum ONI_ANIMATION
 {
@@ -20,6 +21,8 @@ enum ENEMY_STATES
 	ENEMY_DAMAGED,
 	ENEMY_SENDUP,
 	ENEMY_FALLING,
+	ENEMY_MOVING,
+	ENEMY_ATTACKING,
 	MAX_ENEMY_STATES
 };
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
@@ -47,6 +50,8 @@ void Enemy3D::Init()
 	pGame = nullptr;
 	bUseGravity = false;
 	nState = ENEMY_IDLE;
+	fSpeed = 1;
+	nDetectedFrames = 0;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI:
@@ -56,6 +61,7 @@ void Enemy3D::Init()
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
+		fSpeed = 0.5f;
 		hitbox = { 0,22.5f,0,5,13,10 };
 		break;
 	default:
@@ -67,8 +73,10 @@ void Enemy3D::Update()
 {
 	GameObject3D::Update();
 #if USE_IN_RENDERZONE
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox()))) {
+		nState = ENEMY_IDLE;
 		return;
+	}
 #endif
 	if(!pPlayerPointer)
 		pPlayerPointer = GetMainPlayer();
@@ -84,16 +92,21 @@ void Enemy3D::Update()
 	else
 		pModel->SetRotationY(90);
 	RegularCollisionWithPlayer();
-	OniStatesControl();
+	EnemyStatesControl();
 }
 
-void Enemy3D::OniStatesControl()
+void Enemy3D::EnemyStatesControl()
 {
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	DamageControl();
 	switch (nState)
 	{
 	case ENEMY_IDLE:
 		pModel->SwitchAnimation(ONI_IDLE);
+		if (pPlayer->GetFloor() == pCurrentFloor && pPlayer->GetFloor()!=nullptr) {
+			nState = ENEMY_MOVING;
+			nDetectedFrames = 60 * DETECTED_SECONDS;
+		}
 		break;
 	case ENEMY_DAMAGED:
 		if (pModel->GetLoops() > 0)
@@ -108,9 +121,44 @@ void Enemy3D::OniStatesControl()
 		if(pCurrentFloor)
 			nState = ENEMY_IDLE;
 		break;
+	case ENEMY_MOVING:
+		EnemyMovingControl();
+		break;
+	case ENEMY_ATTACKING:
+		//printf("a");
+		break;
 	default:
 		break;
 	}
+}
+
+void Enemy3D::EnemyMovingControl()
+{
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+
+	if (!pPlayer) {
+		nState = ENEMY_IDLE;
+		return;
+	}
+	if (IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_LEFT)) || IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_RIGHT))) {
+		nState = ENEMY_ATTACKING;
+		return;
+	}
+	if(--nDetectedFrames<=0 && pPlayer->GetFloor() != pCurrentFloor){
+		nState = ENEMY_IDLE;
+		return;
+	}
+	if(pPlayer->GetFloor() == pCurrentFloor)
+		nDetectedFrames = DETECTED_SECONDS * 5;
+	pModel->SwitchAnimation(ONI_WALKING);
+	XMFLOAT3 PlayerPos = pPlayer->GetPosition();
+	if (PlayerPos.x < Position.x)
+		nDirection = LEFT_DIR;
+	else if (PlayerPos.x > Position.x)
+		nDirection = RIGHT_DIR;
+	Position.x += nDirection * fSpeed;
+	pModel->SwitchAnimationSpeed(fSpeed*4);
+
 }
 
 void Enemy3D::DamageControl()
