@@ -13,6 +13,8 @@ enum ONI_ANIMATION
 	ONI_DAMAGEDB, 
 	ONI_SENDUP,
 	ONI_FALLING,
+	ONI_STANDINGUP,
+	ONI_PUNCHA,
 	ONI_MAX
 };
 enum ENEMY_STATES
@@ -125,6 +127,9 @@ void Enemy3D::EnemyStatesControl()
 		EnemyMovingControl();
 		break;
 	case ENEMY_ATTACKING:
+		pModel->SwitchAnimation(ONI_PUNCHA);
+		if (pModel->GetLoops() > 0)
+			nState = ENEMY_IDLE;
 		//printf("a");
 		break;
 	default:
