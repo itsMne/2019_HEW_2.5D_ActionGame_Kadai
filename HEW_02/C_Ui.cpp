@@ -29,6 +29,8 @@
 #define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))+13	// 文字の表示位置
 #define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)+15	// 文字の表示位置
 
+C_Ui* pZoomEffect = nullptr;
+
 C_Ui::C_Ui()
 {
 }
@@ -40,6 +42,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	nHP = nMaxHP = 0;
 	nMP = nMaxMP = 0;
 	nScore = 0;
+	nFramesToUseZoom = 0;
 	vScorePos = XMFLOAT2(SCORE_POS_X, SCORE_POS_Y);
 	switch (Type)
 	{
@@ -101,7 +104,13 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonFrameSize(1.0f/4.0f, 1.0f/8.0f);
 		SetPolygonPos(0, 0);
 		break;
+	case UI_ZOOM_ATTACK:
+		pZoomEffect = this;
+		SetPolygonSize(1280, 1280);
+		SetPolygonPos(0, 0);
+		break;
 	}
+
 }
 
 
@@ -115,7 +124,8 @@ void C_Ui::Init()
 
 void C_Ui::Uninit()
 {
-
+	if (nType == UI_ZOOM_ATTACK)
+		pZoomEffect = nullptr;
 }
 
 void C_Ui::Update()
@@ -185,7 +195,17 @@ void C_Ui::Update()
 				uv.U = 0;
 			}
 		}
-		
+		break;
+	case UI_ZOOM_ATTACK:
+		if (--nFramesToUseZoom <= 0)
+			nFramesToUseZoom = 0;
+		SetPolygonAlpha(0.6f);
+		if (++nFrameCounter >= 8) {
+			nFrameCounter = 0;
+			g_rotPolygon.z += 90;
+			if (g_rotPolygon.z == 360)
+				g_rotPolygon.z = 0;
+		}
 		break;
 	}
 
@@ -194,6 +214,8 @@ void C_Ui::Update()
 
 void C_Ui::Draw()
 {
+	if (nType == UI_ZOOM_ATTACK && nFramesToUseZoom <= 0)
+		return;
 	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(2));
 	switch (nType)
 	{
@@ -300,4 +322,16 @@ void C_Ui::Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 		Polygon2D::DrawPolygon(GetDeviceContext());
 	}
 
+}
+
+void C_Ui::SetFramesForZoomUse(int frames)
+{
+	nFramesToUseZoom = frames;
+}
+
+void SetFramesForZoomUse(int frames)
+{
+	if (!pZoomEffect)
+		return;
+	pZoomEffect->SetFramesForZoomUse(frames);
 }

@@ -1,6 +1,7 @@
 #include "Enemy3D.h"
 #include "SceneGame.h"
 #include "Player3D.h"
+#include "C_Ui.h"
 #define ONI_MODEL_PATH "data/model/Oni.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
@@ -15,18 +16,10 @@ enum ONI_ANIMATION
 	ONI_FALLING,
 	ONI_STANDINGUP,
 	ONI_PUNCHA,
+	ONI_SENDOFF,
 	ONI_MAX
 };
-enum ENEMY_STATES
-{
-	ENEMY_IDLE = 0,
-	ENEMY_DAMAGED,
-	ENEMY_SENDUP,
-	ENEMY_FALLING,
-	ENEMY_MOVING,
-	ENEMY_ATTACKING,
-	MAX_ENEMY_STATES
-};
+
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
 	nEnemyType = enemyType;
@@ -44,6 +37,8 @@ void Enemy3D::Init()
 {
 	nType = GO_ENEMY;
 	fYForce = 0;
+	fSendOffAcceleration = 0;
+	nFramesSendOff = 0;
 	nLastPlayerAttack = -1;
 	nDirection == RIGHT_DIR;
 	nCancelGravityFrames = 0;
@@ -67,6 +62,13 @@ void Enemy3D::Init()
 		fSpeed = 0.5f;
 		hitbox = { 0,22.5f,0,5,13,10 };
 		nDelayFramesBeforeAttack = 20;
+		nAnimations[ENEMY_IDLE] = ONI_IDLE;
+		nAnimations[ENEMY_DAMAGED] = ONI_DAMAGEDA;
+		nAnimations[ENEMY_DAMAGEDALT] = ONI_DAMAGEDB;
+		nAnimations[ENEMY_FALLING] = ONI_FALLING;
+		nAnimations[ENEMY_MOVING] = ONI_WALKING;
+		nAnimations[ENEMY_ATTACKING] = ONI_PUNCHA;
+		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
 		break;
 	default:
 		break;
@@ -102,12 +104,13 @@ void Enemy3D::Update()
 void Enemy3D::EnemyStatesControl()
 {
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+	GameObject3D* pWall = nullptr;
 	DamageControl();
 	switch (nState)
 	{
 	case ENEMY_IDLE:
 		pModel->SwitchAnimationSpeed(2);
-		pModel->SwitchAnimation(ONI_IDLE);
+		pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 		if (pPlayer->GetFloor() == pCurrentFloor && pPlayer->GetFloor()!=nullptr) {
 			nState = ENEMY_MOVING;
 			nDetectedFrames = 60 * DETECTED_SECONDS;
@@ -122,7 +125,7 @@ void Enemy3D::EnemyStatesControl()
 			nState = ENEMY_FALLING;
 		break;
 	case ENEMY_FALLING:
-		pModel->SwitchAnimation(ONI_FALLING);
+		pModel->SwitchAnimation(nAnimations[ENEMY_FALLING]);
 		if(pCurrentFloor)
 			nState = ENEMY_IDLE;
 		break;
@@ -132,14 +135,35 @@ void Enemy3D::EnemyStatesControl()
 	case ENEMY_ATTACKING:
 		if (++nDelayCounter < nDelayFramesBeforeAttack) {
 			pModel->SwitchAnimationSpeed(2);
-			pModel->SwitchAnimation(ONI_IDLE);
+			pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 			return;
 		}
 		pModel->SwitchAnimationSpeed(2);
-		pModel->SwitchAnimation(ONI_PUNCHA);
+		pModel->SwitchAnimation(nAnimations[ENEMY_ATTACKING]);
 		if (pModel->GetLoops() > 0)
 			nState = ENEMY_IDLE;
 		//printf("a");
+		break;
+	case ENEMY_SENDOFF:
+		if (pGame)
+			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+		if (--nFramesSendOff<=0 || pWall)
+		{
+			if (pWall)
+			{
+				if (fSendOffAcceleration == 0)
+					fSendOffAcceleration = 1.0f;
+				while(IsInCollision3D(pWall->GetHitBox(), GetHitBox()))
+					Position.x += fSendOffAcceleration * nDirection;
+			}
+			nState = ENEMY_IDLE;
+			fSendOffAcceleration = 0.0f;
+			break;
+		}
+		pModel->SwitchAnimationSpeed(3);
+		pModel->SwitchAnimation(ONI_SENDOFF);
+		fSendOffAcceleration += 1.0f;
+		Position.x -= fSendOffAcceleration * nDirection;
 		break;
 	default:
 		break;
@@ -149,7 +173,9 @@ void Enemy3D::EnemyStatesControl()
 void Enemy3D::EnemyMovingControl()
 {
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
-
+	GameObject3D* pWall = nullptr;
+	if (pGame)
+		pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
 	if (!pPlayer) {
 		nState = ENEMY_IDLE;
 		return;
@@ -165,13 +191,23 @@ void Enemy3D::EnemyMovingControl()
 	}
 	if(pPlayer->GetFloor() == pCurrentFloor)
 		nDetectedFrames = DETECTED_SECONDS * 5;
-	pModel->SwitchAnimation(ONI_WALKING);
+	pModel->SwitchAnimation(nAnimations[ENEMY_MOVING]);
 	XMFLOAT3 PlayerPos = pPlayer->GetPosition();
-	if (PlayerPos.x < Position.x)
-		nDirection = LEFT_DIR;
-	else if (PlayerPos.x > Position.x)
-		nDirection = RIGHT_DIR;
+	if (!pWall) {
+		if (PlayerPos.x < Position.x)
+			nDirection = LEFT_DIR;
+		else if (PlayerPos.x > Position.x)
+			nDirection = RIGHT_DIR;
+	}
+
+
 	Position.x += nDirection * fSpeed;
+	if (pWall) {
+		if(!((pPlayer->GetPosition().x < pWall->GetHitBox().x && nDirection == LEFT_DIR)
+			|| (pPlayer->GetPosition().x > pWall->GetHitBox().x+ pWall->GetHitBox().SizeX && nDirection == RIGHT_DIR)))
+			Position.x -= nDirection * fSpeed;
+		pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
+	}
 	pModel->SwitchAnimationSpeed(fSpeed*4);
 }
 
@@ -198,6 +234,7 @@ void Enemy3D::DamageControl()
 	GameObject3D* pWall = nullptr;
 	nDirection = -1*pPlayer->GetDirection();
 	pGame->ZoomPause(60, 30, 3, false, true);
+	SetFramesForZoomUse(35);
 	switch (pPlayerAttack->Animation)
 	{
 	case NINJA_UPPER_SLASH:
@@ -206,17 +243,24 @@ void Enemy3D::DamageControl()
 		Position.y = AttackHitbox.y-20;
 		fYForce = 0;
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
-		if (pModel->GetAnimation() == ONI_SENDUP) {
+		if (pModel->GetAnimation() == nAnimations[ENEMY_SENDUP]) {
 			if (pModel->GetCurrentFrame() >= 609) {
 				pModel->SetFrame(593);
 				pModel->SwitchAnimationSpeed(0.5f);
 			}
 		}
 		else {
-			pModel->SwitchAnimation(ONI_SENDUP);
+			pModel->SwitchAnimation(nAnimations[ENEMY_SENDUP]);
 		}
 		nState = ENEMY_SENDUP;
 		pCurrentFloor = nullptr;
+		break;
+	case NINJA_ATTACK_COMBOAIR_D: case NINJA_ATTACK_COMBO_E:
+		GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
+		nState = ENEMY_SENDOFF;
+		if(!pCurrentFloor)
+			nState = ENEMY_FALLING;
+		nFramesSendOff = 5;
 		break;
 	case NINJA_AIR_DOWN:
 		Position.x = pPlayer->GetPosition().x+(-5* nDirection);
@@ -244,27 +288,27 @@ void Enemy3D::DamageControl()
 		}
 		if (nLastPlayerAttack != pPlayerAttack->Animation)
 		{
-			if (pModel->GetAnimation() == ONI_DAMAGEDA || pModel->GetAnimation() == ONI_DAMAGEDB) {
+			if (pModel->GetAnimation() == nAnimations[ENEMY_DAMAGED] || pModel->GetAnimation() == nAnimations[ENEMY_DAMAGEDALT]) {
 				if (bUseDamageA && pModel->GetCurrentFrame() > 538)
 				{
-					pModel->SwitchAnimation(ONI_DAMAGEDA);
+					pModel->SwitchAnimation(nAnimations[ENEMY_DAMAGED]);
 					bUseDamageA = false;
 				}
 				else if (!bUseDamageA && pModel->GetCurrentFrame() > 382)
 				{
-					pModel->SwitchAnimation(ONI_DAMAGEDB);
+					pModel->SwitchAnimation(nAnimations[ENEMY_DAMAGEDALT]);
 					bUseDamageA = true;
 				}
 			}
 			else {
 				if (bUseDamageA)
 				{
-					pModel->SwitchAnimation(ONI_DAMAGEDA);
+					pModel->SwitchAnimation(nAnimations[ENEMY_DAMAGED]);
 					bUseDamageA = false;
 				}
 				else if (!bUseDamageA)
 				{
-					pModel->SwitchAnimation(ONI_DAMAGEDB);
+					pModel->SwitchAnimation(nAnimations[ENEMY_DAMAGEDALT]);
 					bUseDamageA = true;
 				}
 			}

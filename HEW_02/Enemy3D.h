@@ -7,6 +7,18 @@ enum EnemyType
 	TYPE_ONI,
 	MAX_ENEMY_TYPE
 };
+enum ENEMY_STATES
+{
+	ENEMY_IDLE = 0,
+	ENEMY_DAMAGED,
+	ENEMY_DAMAGEDALT,
+	ENEMY_SENDUP,
+	ENEMY_FALLING,
+	ENEMY_MOVING,
+	ENEMY_ATTACKING,
+	ENEMY_SENDOFF,
+	MAX_ENEMY_STATES
+};
 class Enemy3D :
 	public GameObject3D
 {
@@ -25,6 +37,10 @@ private:
 	int nDetectedFrames;
 	int nDelayFramesBeforeAttack;
 	int nDelayCounter;
+	Hitbox3D hbAttack;
+	int nAnimations[MAX_ENEMY_STATES];
+	int nFramesSendOff;
+	float fSendOffAcceleration;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

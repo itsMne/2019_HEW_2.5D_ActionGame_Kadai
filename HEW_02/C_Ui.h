@@ -18,6 +18,7 @@ enum UITYPE
 	UI_CLEAR,
 	UI_RANKING,
 	UI_SLASH_EFFECT,
+	UI_ZOOM_ATTACK,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -30,6 +31,7 @@ private:
 	int nMP, nMaxMP;
 	int nScore;
 	XMFLOAT2 vScorePos;
+	int nFramesToUseZoom;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
@@ -41,5 +43,7 @@ public:
 	void Draw();
 	void Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 		float fSizeX, float fSizeY);
+	void SetFramesForZoomUse(int frames);
 };
 
+void SetFramesForZoomUse(int frames);
