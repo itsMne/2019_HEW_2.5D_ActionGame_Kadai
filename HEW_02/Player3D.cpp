@@ -1093,6 +1093,19 @@ bool Player3D::IsStaminaCooldownOn()
 	return bStaminaCoolDown;
 }
 
+void Player3D::SetDamage(int Damage)
+{
+	if (nHP == 0)
+		return;
+	nHP -= Damage;
+	if (nHP < 0)
+		nHP = 0;
+	SwitchAnimationSpeed(1);
+	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGED);
+	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);
+	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
+}
+
 void Player3D::SetDamageTeleport(int Damage)
 {
 	if (nState == PLAYER_TELEPORTING_DAMAGED)
@@ -1147,7 +1160,7 @@ void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
 
 bool Player3D::PlayerGameOver()
 {
-	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() > 300 && nState == PLAYER_DEAD && bDeadAnimation)
+	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() >= 266 && nState == PLAYER_DEAD && bDeadAnimation)
 		return true;
 	return false;
 }

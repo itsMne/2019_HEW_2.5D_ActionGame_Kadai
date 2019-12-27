@@ -37,6 +37,7 @@ void Enemy3D::Init()
 {
 	nType = GO_ENEMY;
 	fYForce = 0;
+	nDamageAgainstPlayer = 0;
 	fSendOffAcceleration = 0;
 	nFramesSendOff = 0;
 	nLastPlayerAttack = -1;
@@ -61,7 +62,11 @@ void Enemy3D::Init()
 		pModel->SwitchAnimation(ONI_IDLE);
 		fSpeed = 0.5f;
 		hitbox = { 0,22.5f,0,5,13,10 };
+		hbAttack = { 10,22.5f,0,10,13,10 };
 		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 917;
+		nMaxAttackFrame = 939;
+		nDamageAgainstPlayer = 10;
 		nAnimations[ENEMY_IDLE] = ONI_IDLE;
 		nAnimations[ENEMY_DAMAGED] = ONI_DAMAGEDA;
 		nAnimations[ENEMY_DAMAGEDALT] = ONI_DAMAGEDB;
@@ -97,7 +102,8 @@ void Enemy3D::Update()
 		pModel->SetRotationY(-90);
 	else
 		pModel->SetRotationY(90);
-	RegularCollisionWithPlayer();
+	
+;	RegularCollisionWithPlayer();
 	EnemyStatesControl();
 }
 
@@ -138,6 +144,12 @@ void Enemy3D::EnemyStatesControl()
 			pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 			return;
 		}
+		if (pModel->GetCurrentFrame() > nMinAttackFrame && pModel->GetCurrentFrame() < nMaxAttackFrame) {
+			if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetAttackHitbox()))
+			{
+				pPlayer->SetDamage(nDamageAgainstPlayer);
+			}
+		}
 		pModel->SwitchAnimationSpeed(2);
 		pModel->SwitchAnimation(nAnimations[ENEMY_ATTACKING]);
 		if (pModel->GetLoops() > 0)
@@ -161,7 +173,7 @@ void Enemy3D::EnemyStatesControl()
 			break;
 		}
 		pModel->SwitchAnimationSpeed(3);
-		pModel->SwitchAnimation(ONI_SENDOFF);
+		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
 		fSendOffAcceleration += 1.0f;
 		Position.x -= fSendOffAcceleration * nDirection;
 		break;
@@ -395,4 +407,10 @@ void Enemy3D::Uninit()
 int Enemy3D::GetEnemyType()
 {
 	return nEnemyType;
+}
+
+Hitbox3D Enemy3D::GetAttackHitbox()
+{
+	return { (hbAttack.x*nDirection) + Position.x, hbAttack.y + Position.y, hbAttack.z + Position.z, 
+		hbAttack.SizeX, hbAttack.SizeY, hbAttack.SizeZ };
 }

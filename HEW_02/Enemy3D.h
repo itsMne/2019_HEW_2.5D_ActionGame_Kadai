@@ -41,6 +41,9 @@ private:
 	int nAnimations[MAX_ENEMY_STATES];
 	int nFramesSendOff;
 	float fSendOffAcceleration;
+	int nMinAttackFrame;
+	int nMaxAttackFrame;
+	int nDamageAgainstPlayer;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
@@ -54,5 +57,6 @@ public:
 	void Draw();
 	void Uninit();
 	int GetEnemyType();
+	Hitbox3D GetAttackHitbox();
 };
 
