@@ -23,6 +23,8 @@ private:
 	bool bUseDamageA;
 	float fSpeed;
 	int nDetectedFrames;
+	int nDelayFramesBeforeAttack;
+	int nDelayCounter;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

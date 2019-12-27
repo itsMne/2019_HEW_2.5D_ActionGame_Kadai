@@ -53,7 +53,8 @@ void Enemy3D::Init()
 	bUseGravity = false;
 	nState = ENEMY_IDLE;
 	fSpeed = 1;
-	nDetectedFrames = 0;
+	nDelayCounter = nDetectedFrames = 0;
+	nDelayFramesBeforeAttack = 0;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI:
@@ -65,6 +66,7 @@ void Enemy3D::Init()
 		pModel->SwitchAnimation(ONI_IDLE);
 		fSpeed = 0.5f;
 		hitbox = { 0,22.5f,0,5,13,10 };
+		nDelayFramesBeforeAttack = 20;
 		break;
 	default:
 		break;
@@ -104,6 +106,7 @@ void Enemy3D::EnemyStatesControl()
 	switch (nState)
 	{
 	case ENEMY_IDLE:
+		pModel->SwitchAnimationSpeed(2);
 		pModel->SwitchAnimation(ONI_IDLE);
 		if (pPlayer->GetFloor() == pCurrentFloor && pPlayer->GetFloor()!=nullptr) {
 			nState = ENEMY_MOVING;
@@ -127,6 +130,12 @@ void Enemy3D::EnemyStatesControl()
 		EnemyMovingControl();
 		break;
 	case ENEMY_ATTACKING:
+		if (++nDelayCounter < nDelayFramesBeforeAttack) {
+			pModel->SwitchAnimationSpeed(2);
+			pModel->SwitchAnimation(ONI_IDLE);
+			return;
+		}
+		pModel->SwitchAnimationSpeed(2);
 		pModel->SwitchAnimation(ONI_PUNCHA);
 		if (pModel->GetLoops() > 0)
 			nState = ENEMY_IDLE;
@@ -147,6 +156,7 @@ void Enemy3D::EnemyMovingControl()
 	}
 	if (IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_LEFT)) || IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_RIGHT))) {
 		nState = ENEMY_ATTACKING;
+		nDelayCounter = 0;
 		return;
 	}
 	if(--nDetectedFrames<=0 && pPlayer->GetFloor() != pCurrentFloor){
@@ -163,7 +173,6 @@ void Enemy3D::EnemyMovingControl()
 		nDirection = RIGHT_DIR;
 	Position.x += nDirection * fSpeed;
 	pModel->SwitchAnimationSpeed(fSpeed*4);
-
 }
 
 void Enemy3D::DamageControl()
