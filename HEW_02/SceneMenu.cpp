@@ -16,8 +16,8 @@ SceneMenu::SceneMenu()
 	pMenuBg = new C_Ui("data/texture/haikei1.png", UI_MENU);
 	pMenuFrame = new C_Ui("data/texture/MenuFrame.png", UI_MENUFRAME);
 	pStart = new C_Ui("data/texture/Menu00.png", UI_MSTART);
-	pRanking = new C_Ui("data/texture/Menu01.png", UI_MRANKING);
-	pEnd = new C_Ui("data/texture/Menu02.png", UI_MEND);
+	pRanking = new C_Ui("data/texture/Menu02.png", UI_MEND);
+	pEnd = new C_Ui("data/texture/Menu01.png", UI_MRANKING);
 }
 
 
