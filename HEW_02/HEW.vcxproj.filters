@@ -127,6 +127,7 @@
     <ClCompile Include="Mirror3D.cpp">
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
+    <ClCompile Include="SceneMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -235,6 +236,7 @@
     <ClInclude Include="Mirror3D.h">
       <Filter>H\ゲームH\ゲームオブジェクト</Filter>
     </ClInclude>
+    <ClInclude Include="SceneMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

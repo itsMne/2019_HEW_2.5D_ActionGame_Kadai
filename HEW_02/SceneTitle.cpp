@@ -53,7 +53,7 @@ int SceneTitle::Update()
 	}
 
 	if (GetInput(INPUT_JUMP) && SlashEffect->GetUV().V >= 7) {
-		return SCENE_GAME;
+		return SCENE_MENU;
 	}
 	return SCENE_TITLE;
 }

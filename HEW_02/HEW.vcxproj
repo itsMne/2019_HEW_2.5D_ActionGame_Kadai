@@ -187,6 +187,7 @@
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneMenu.cpp" />
     <ClCompile Include="SceneRanking.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneMenu.h" />
     <ClInclude Include="SceneRanking.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Shader.h" />

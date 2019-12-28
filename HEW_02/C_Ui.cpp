@@ -78,13 +78,33 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		break;
 	case UI_LEVEL_EDITOR_OBJSPEED:
 		vScorePos = { -30,-222 };
-		break;	
+		break;
 	case UI_LEVEL_EDITOR_DELAY:
-		vScorePos = { -30,-220-45 };
+		vScorePos = { -30,-220 - 45 };
 		break;
 	case UI_TITLE:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		SetPolygonPos(0, 0);
+		break;
+	case UI_MENU:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+		break;
+	case UI_MENUFRAME:
+		SetPolygonSize(980, 620);
+		SetPolygonPos(0, 0);
+		break;
+	case UI_MSTART:
+		SetPolygonSize(MSTART_SIZE_X, MSTART_SIZE_Y);
+		SetPolygonPos(MSTART_POS_X, MSTART_POS_Y);
+		break;
+	case UI_MRANKING:
+		SetPolygonSize(MRANKING_SIZE_X, MRANKING_SIZE_Y);
+		SetPolygonPos(MRANKING_POS_X, MRANKING_POS_Y);
+		break;
+	case UI_MEND:
+		SetPolygonSize(MEND_SIZE_X, MEND_SIZE_Y);
+		SetPolygonPos(MEND_POS_X, MEND_POS_Y);
 		break;
 	case UI_GAMEOVER:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -101,7 +121,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	case UI_SLASH_EFFECT:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		uv = { 0,0 };
-		SetPolygonFrameSize(1.0f/4.0f, 1.0f/8.0f);
+		SetPolygonFrameSize(1.0f / 4.0f, 1.0f / 8.0f);
 		SetPolygonPos(0, 0);
 		break;
 	case UI_ZOOM_ATTACK:
@@ -132,9 +152,9 @@ void C_Ui::Update()
 {
 	//if (GetKeyPress(VK_Z))
 	SceneGame* pCurrentGame = GetCurrentGame();
-	if (!pCurrentGame && nType!= UI_SLASH_EFFECT)
+	if (!pCurrentGame && nType != UI_SLASH_EFFECT)
 		return;
-	if(pCurrentGame)
+	if (pCurrentGame)
 		nScore = pCurrentGame->GetScore();
 
 	switch (nType)
@@ -145,7 +165,7 @@ void C_Ui::Update()
 			return;
 		nHP = pPlayer->GetPlayerHp();
 		nMaxHP = pPlayer->GetPlayerMaxHp();
-		if(nHP>0)
+		if (nHP > 0)
 			SetPolygonColor(1, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
 		else
 			SetPolygonColor(0.25f, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
@@ -176,10 +196,10 @@ void C_Ui::Update()
 		SetPolygonPos(MP_POS_X - ((nMaxMP - nMP)*4.25f), MP_POS_Y);
 		nHP = pPlayer->GetPlayerHp();
 		if (nHP > 0)
-			SetPolygonColor(1, (nMP/ (float)nMaxMP), (nMP / (float)nMaxMP));
+			SetPolygonColor(1, (nMP / (float)nMaxMP), (nMP / (float)nMaxMP));
 		else
 			SetPolygonColor(0.25f, 0.25f, 0.25f);
-		if(pPlayer->IsStaminaCooldownOn())
+		if (pPlayer->IsStaminaCooldownOn())
 			SetPolygonColor(1, 0, 0);
 		break;
 	case UI_NUMBER:
@@ -246,7 +266,7 @@ void C_Ui::Draw()
 			return;
 		if (!(pPlayer->IsDebugAimOn()))
 			return;
-		if(!(pPlayer->GetDebugAim()->IsStaticMode()))
+		if (!(pPlayer->GetDebugAim()->IsStaticMode()))
 			DrawPolygon(GetDeviceContext());
 		break;
 	case UI_LEVEL_EDITOR_STATICMODE:
@@ -268,7 +288,7 @@ void C_Ui::Draw()
 			return;
 		Draw(&vScorePos, pPlayer->GetDebugAim()->GetMoveSpeedInt(), 5,
 			25, 25);
-		break;	
+		break;
 	case UI_LEVEL_EDITOR_DELAY:
 		pPlayer = GetMainPlayer();
 		if (!pPlayer)
@@ -281,6 +301,21 @@ void C_Ui::Draw()
 			25, 25);
 		break;
 	case UI_TITLE:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_MENU:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_MENUFRAME:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_MSTART:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_MRANKING:
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_MEND:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	case UI_GAMEOVER:

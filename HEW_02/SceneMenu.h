@@ -1,0 +1,35 @@
+#pragma once
+#include "SceneBase.h"
+#include "C_Ui.h"
+
+enum MENU {
+	START = 0,			// スタート
+	RANKING,			// ランキング
+	END,				// エンド
+	MENU_MAX
+};
+class SceneMenu :
+	public SceneBase
+{
+private:
+	C_Ui* pMenuBg;
+	C_Ui* pMenuFrame;
+	C_Ui* pStart;
+	C_Ui* pRanking;
+	C_Ui* pEnd;
+
+	MENU g_nSelectMenu;
+public:
+	SceneMenu();
+	~SceneMenu();
+	void Init();
+	void Uninit();
+	int Update();
+	void Draw();
+
+	MENU GetPauseMenu();
+	void ResetPauseMenu();
+};
+
+SceneMenu* GetMenu();
+

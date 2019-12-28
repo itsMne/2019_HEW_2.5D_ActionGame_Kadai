@@ -1,6 +1,22 @@
 #pragma once
 #include "Polygon2D.h"
 #include "Player3D.h"
+
+#define MSTART_SIZE_X	 	 60		// メニュー文字のサイズ
+#define MSTART_SIZE_Y		320		// メニュー文字のサイズ
+#define MSTART_POS_X		160		// メニュー文字の表示位置
+#define MSTART_POS_Y		  0		// メニュー文字の表示位置
+
+#define MRANKING_SIZE_X		 60		// メニュー文字のサイズ
+#define MRANKING_SIZE_Y		320		// メニュー文字のサイズ
+#define MRANKING_POS_X		  0		// メニュー文字の表示位置
+#define MRANKING_POS_Y		  0		// メニュー文字の表示位置
+
+#define MEND_SIZE_X			 60		// メニュー文字のサイズ
+#define MEND_SIZE_Y			320		// メニュー文字のサイズ
+#define MEND_POS_X		   -160		// メニュー文字の表示位置
+#define MEND_POS_Y			  0		// メニュー文字の表示位置
+
 enum UITYPE
 {
 	UI_HP00 = 0,
@@ -14,6 +30,11 @@ enum UITYPE
 	UI_LEVEL_EDITOR_OBJSPEED,
 	UI_LEVEL_EDITOR_DELAY,
 	UI_TITLE,
+	UI_MENU,
+	UI_MENUFRAME,
+	UI_MSTART,
+	UI_MRANKING,
+	UI_MEND,
 	UI_GAMEOVER,
 	UI_CLEAR,
 	UI_RANKING,

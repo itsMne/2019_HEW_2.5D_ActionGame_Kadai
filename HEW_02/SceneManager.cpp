@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "SceneTitle.h"
+#include "SceneMenu.h"
 #include "SceneGame.h"
 #include "SceneGameOver.h"
 #include "SceneClear.h"
@@ -16,6 +17,9 @@ HRESULT InitScene()
 	case SCENE_TITLE:
 		Scene = new SceneTitle();
 		break;
+	case SCENE_MENU:
+		Scene = new SceneMenu();
+		break;
 	case SCENE_GAME:
 		Scene = new SceneGame();
 		break;
@@ -31,7 +35,7 @@ HRESULT InitScene()
 	default:
 		break;
 	}
-	
+
 	return S_OK;
 }
 
@@ -42,7 +46,7 @@ void UpdateScene()
 	int SceneResult = Scene->Update();
 	if (SceneResult != nSceneType)
 		SwitchScene(SceneResult);
-	
+
 }
 
 void SwitchScene(int SceneResult)
