@@ -42,12 +42,15 @@ private:
 	Hitbox3D hbAttack;
 	int nPlayerAttackName;
 	int nAnimations[MAX_ENEMY_STATES];
+	float fAnimationSpeeds[MAX_ENEMY_STATES];
 	int nFramesSendOff;
 	float fSendOffAcceleration;
 	int nMinAttackFrame;
 	int nMaxAttackFrame;
 	int nDamageAgainstPlayer;
 	int nHP;
+	int nTopSendOffFrame;
+	int nMidSendOffFrame;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

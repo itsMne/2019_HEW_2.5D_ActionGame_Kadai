@@ -78,6 +78,18 @@ void Enemy3D::Init()
 		nAnimations[ENEMY_ATTACKING] = ONI_PUNCHA;
 		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
 		nAnimations[ENEMY_SENDOFF] = ONI_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE]		= 2;
+		fAnimationSpeeds[ENEMY_DAMAGED]		= 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT]	= 5;
+		fAnimationSpeeds[ENEMY_FALLING]		= 2;
+		fAnimationSpeeds[ENEMY_MOVING]		= 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING]	= 2;
+		fAnimationSpeeds[ENEMY_SENDUP]		= 2;
+		fAnimationSpeeds[ENEMY_SENDOFF]		= 3;
+
+		nTopSendOffFrame = 609;
+		nMidSendOffFrame = 593;
 		break;
 	default:
 		break;
@@ -95,7 +107,6 @@ void Enemy3D::Update()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
-	printf("State: %f\n", fSendOffAcceleration);
 	if (nState == ENEMY_DEAD)
 	{
 		GetMainCamera()->SetFocalPoint(GetMainPlayer());
@@ -159,7 +170,7 @@ void Enemy3D::EnemyStatesControl()
 	switch (nState)
 	{
 	case ENEMY_IDLE:
-		pModel->SwitchAnimationSpeed(2);
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_IDLE]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 		if (pPlayer->GetFloor() == pCurrentFloor && pPlayer->GetFloor()!=nullptr) {
 			nState = ENEMY_MOVING;
@@ -175,6 +186,7 @@ void Enemy3D::EnemyStatesControl()
 			nState = ENEMY_FALLING;
 		break;
 	case ENEMY_FALLING:
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_FALLING]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_FALLING]);
 		if(pCurrentFloor)
 			nState = ENEMY_IDLE;
@@ -184,7 +196,7 @@ void Enemy3D::EnemyStatesControl()
 		break;
 	case ENEMY_ATTACKING:
 		if (++nDelayCounter < nDelayFramesBeforeAttack) {
-			pModel->SwitchAnimationSpeed(2);
+			pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_ATTACKING]);
 			pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 			return;
 		}
@@ -194,7 +206,7 @@ void Enemy3D::EnemyStatesControl()
 				pPlayer->SetDamage(nDamageAgainstPlayer);
 			}
 		}
-		pModel->SwitchAnimationSpeed(2);
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_ATTACKING]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_ATTACKING]);
 		if (pModel->GetLoops() > 0)
 			nState = ENEMY_IDLE;
@@ -216,7 +228,7 @@ void Enemy3D::EnemyStatesControl()
 			fSendOffAcceleration = 0.0f;
 			break;
 		}
-		pModel->SwitchAnimationSpeed(3);
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDOFF]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
 		fSendOffAcceleration += 1.0f;
 		Position.x -= fSendOffAcceleration * nDirection;
@@ -264,7 +276,7 @@ void Enemy3D::EnemyMovingControl()
 			Position.x -= nDirection * fSpeed;
 		pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 	}
-	pModel->SwitchAnimationSpeed(fSpeed*4);
+	pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_MOVING]);
 }
 
 void Enemy3D::DamageControl()
@@ -301,7 +313,7 @@ void Enemy3D::DamageControl()
 	switch (pPlayerAttack->Animation)
 	{
 	case NINJA_UPPER_SLASH:
-		pModel->SwitchAnimationSpeed(2);
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
 		Position.x = AttackHitbox.x;
 		Position.y = AttackHitbox.y-20;
 		fYForce = 0;
@@ -309,8 +321,8 @@ void Enemy3D::DamageControl()
 			nHP -= 10;
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
 		if (pModel->GetAnimation() == nAnimations[ENEMY_SENDUP]) {
-			if (pModel->GetCurrentFrame() >= 609) {
-				pModel->SetFrame(593);
+			if (pModel->GetCurrentFrame() >= nTopSendOffFrame) {
+				pModel->SetFrame(nMidSendOffFrame);
 				pModel->SwitchAnimationSpeed(0.5f);
 			}
 		}
@@ -338,7 +350,7 @@ void Enemy3D::DamageControl()
 			nHP -= 10;
 		break;
 	default:
-		pModel->SwitchAnimationSpeed(5);
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
 		if (bDoDamage)
 			nHP -= 5;
 		Position.x = AttackHitbox.x;
