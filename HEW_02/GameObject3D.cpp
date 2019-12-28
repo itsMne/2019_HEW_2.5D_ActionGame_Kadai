@@ -597,7 +597,7 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 			pPositionList = pPositionList->next;
 		}
 		go_node* pWorkList = new go_node();
-		pWorkList->Object = new Enemy3D(TYPE_ONI_A);
+		pWorkList->Object = new Enemy3D(EnemyType);
 		Enemy3D* thisEnemy = (Enemy3D*)(pWorkList->Object);
 		thisEnemy->SetPosition(newPosition, true);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
@@ -611,7 +611,7 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 	}
 	else {
 		HeadNode = new go_node();
-		HeadNode->Object = new Enemy3D(TYPE_ONI_A);
+		HeadNode->Object = new Enemy3D(EnemyType);
 		Enemy3D* thisMirror = (Enemy3D*)(HeadNode->Object);
 		thisMirror->SetPosition(newPosition, true);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);

@@ -2,7 +2,10 @@
 #include "SceneGame.h"
 #include "Player3D.h"
 #include "C_Ui.h"
-#define ONI_MODEL_PATH "data/model/Oni.fbx"
+#define RED_ONI_MODEL_PATH "data/model/RedOni.fbx"
+#define GREEN_ONI_MODEL_PATH "data/model/GreenOni.fbx"
+#define BLUE_ONI_MODEL_PATH "data/model/BlueOni.fbx"
+#define YELLOW_ONI_MODEL_PATH "data/model/YellowOni.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
 SceneGame* pGame;
@@ -17,6 +20,9 @@ enum ONI_ANIMATION
 	ONI_STANDINGUP,
 	ONI_PUNCHA,
 	ONI_SENDOFF,
+	ONI_KICK,
+	ONI_KICKJUMP,
+	ONI_PUNCHB,
 	ONI_MAX
 };
 
@@ -59,11 +65,11 @@ void Enemy3D::Init()
 		bUnlit = true;
 		bUseGravity = true;
 		nHP = 100;
-		InitModel(ONI_MODEL_PATH);
+		InitModel(YELLOW_ONI_MODEL_PATH);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
-		fSpeed = 0.5f;
+		fSpeed = 0.4f;
 		hitbox = { 0,22.5f,0,5,13,10 };
 		hbAttack = { 10,22.5f,0,10,13,10 };
 		nDelayFramesBeforeAttack = 20;
@@ -79,14 +85,122 @@ void Enemy3D::Init()
 		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
 		nAnimations[ENEMY_SENDOFF] = ONI_SENDOFF;
 
-		fAnimationSpeeds[ENEMY_IDLE]		= 2;
-		fAnimationSpeeds[ENEMY_DAMAGED]		= 5;
-		fAnimationSpeeds[ENEMY_DAMAGEDALT]	= 5;
-		fAnimationSpeeds[ENEMY_FALLING]		= 2;
-		fAnimationSpeeds[ENEMY_MOVING]		= 0.5f * 4;
-		fAnimationSpeeds[ENEMY_ATTACKING]	= 2;
-		fAnimationSpeeds[ENEMY_SENDUP]		= 2;
-		fAnimationSpeeds[ENEMY_SENDOFF]		= 3;
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 2;
+		fAnimationSpeeds[ENEMY_SENDUP] = 2;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
+
+		nTopSendOffFrame = 609;
+		nMidSendOffFrame = 593;
+		break;
+	case TYPE_ONI_B:
+		bUnlit = true;
+		bUseGravity = true;
+		nHP = 135;
+		InitModel(BLUE_ONI_MODEL_PATH);
+		pModel->SetScale({ 0.75f,0.75f,0.75f });
+		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(ONI_IDLE);
+		fSpeed = 0.6f;
+		hitbox = { 0,22.5f,0,5,13,10 };
+		hbAttack = { 10,22.5f,0,10,13,10 };
+		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 1502;
+		nMaxAttackFrame = 1527;
+		nDamageAgainstPlayer = 17;
+		nAnimations[ENEMY_IDLE] = ONI_IDLE;
+		nAnimations[ENEMY_DAMAGED] = ONI_DAMAGEDA;
+		nAnimations[ENEMY_DAMAGEDALT] = ONI_DAMAGEDB;
+		nAnimations[ENEMY_FALLING] = ONI_FALLING;
+		nAnimations[ENEMY_MOVING] = ONI_WALKING;
+		nAnimations[ENEMY_ATTACKING] = ONI_PUNCHB;
+		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
+		nAnimations[ENEMY_SENDOFF] = ONI_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 2;
+		fAnimationSpeeds[ENEMY_SENDUP] = 2;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
+
+		nTopSendOffFrame = 609;
+		nMidSendOffFrame = 593;
+		break;
+	case TYPE_ONI_C:
+		bUnlit = true;
+		bUseGravity = true;
+		nHP = 170;
+		InitModel(GREEN_ONI_MODEL_PATH);
+		pModel->SetScale({ 0.75f,0.75f,0.75f });
+		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(ONI_IDLE);
+		fSpeed = 0.8f;
+		hitbox = { 0,22.5f,0,5,13,10 };
+		hbAttack = { 10,22.5f,0,10,13,10 };
+		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 1214;
+		nMaxAttackFrame = 1232;
+		nDamageAgainstPlayer = 25;
+		nAnimations[ENEMY_IDLE] = ONI_IDLE;
+		nAnimations[ENEMY_DAMAGED] = ONI_DAMAGEDA;
+		nAnimations[ENEMY_DAMAGEDALT] = ONI_DAMAGEDB;
+		nAnimations[ENEMY_FALLING] = ONI_FALLING;
+		nAnimations[ENEMY_MOVING] = ONI_WALKING;
+		nAnimations[ENEMY_ATTACKING] = ONI_KICK;
+		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
+		nAnimations[ENEMY_SENDOFF] = ONI_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 2;
+		fAnimationSpeeds[ENEMY_SENDUP] = 2;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
+
+		nTopSendOffFrame = 609;
+		nMidSendOffFrame = 593;
+		break;
+	case TYPE_ONI_D:
+		bUnlit = true;
+		bUseGravity = true;
+		nHP = 200;
+		InitModel(RED_ONI_MODEL_PATH);
+		pModel->SetScale({ 0.75f,0.75f,0.75f });
+		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(ONI_IDLE);
+		fSpeed = 1.0f;
+		hitbox = { 0,22.5f,0,5,13,10 };
+		hbAttack = { 10,22.5f,0,10,13,10 };
+		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 1369;
+		nMaxAttackFrame = 1384;
+		nDamageAgainstPlayer = 30;
+		nAnimations[ENEMY_IDLE] = ONI_IDLE;
+		nAnimations[ENEMY_DAMAGED] = ONI_DAMAGEDA;
+		nAnimations[ENEMY_DAMAGEDALT] = ONI_DAMAGEDB;
+		nAnimations[ENEMY_FALLING] = ONI_FALLING;
+		nAnimations[ENEMY_MOVING] = ONI_WALKING;
+		nAnimations[ENEMY_ATTACKING] = ONI_KICKJUMP;
+		nAnimations[ENEMY_SENDUP] = ONI_SENDUP;
+		nAnimations[ENEMY_SENDOFF] = ONI_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 2;
+		fAnimationSpeeds[ENEMY_SENDUP] = 2;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
 
 		nTopSendOffFrame = 609;
 		nMidSendOffFrame = 593;

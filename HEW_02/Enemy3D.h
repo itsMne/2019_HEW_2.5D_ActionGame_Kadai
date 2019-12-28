@@ -4,7 +4,10 @@
 //#include "SceneGame.h"
 enum EnemyType
 {
-	TYPE_ONI_A,
+	TYPE_ONI_A = 0,
+	TYPE_ONI_B,
+	TYPE_ONI_C,
+	TYPE_ONI_D,
 	MAX_ENEMY_TYPE
 };
 enum ENEMY_STATES
