@@ -54,6 +54,7 @@ private:
 	int nHP;
 	int nTopSendOffFrame;
 	int nMidSendOffFrame;
+	int nUnlitFrames;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
@@ -67,6 +68,7 @@ public:
 	void Draw();
 	void Uninit();
 	int GetEnemyType();
+	void SetUnlitForFrames(int frames);
 	Hitbox3D GetAttackHitbox();
 };
 

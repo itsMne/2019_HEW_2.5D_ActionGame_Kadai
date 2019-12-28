@@ -8,6 +8,8 @@
 #define YELLOW_ONI_MODEL_PATH "data/model/YellowOni.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
+#define PAUSE_FRAMES_PER_ATTACK 4
+#define UNLIT_FRAMES_PER_ATTACK 9
 SceneGame* pGame;
 enum ONI_ANIMATION
 {
@@ -43,6 +45,7 @@ void Enemy3D::Init()
 {
 	nType = GO_ENEMY;
 	fYForce = 0;
+	nUnlitFrames = 0;
 	nDamageAgainstPlayer = 0;
 	fSendOffAcceleration = 0;
 	nFramesSendOff = 0;
@@ -59,10 +62,10 @@ void Enemy3D::Init()
 	fSpeed = 1;
 	nDelayCounter = nDetectedFrames = 0;
 	nDelayFramesBeforeAttack = 0;
+	bUnlit = false;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI_A:
-		bUnlit = true;
 		bUseGravity = true;
 		nHP = 100;
 		InitModel(YELLOW_ONI_MODEL_PATH);
@@ -98,7 +101,6 @@ void Enemy3D::Init()
 		nMidSendOffFrame = 593;
 		break;
 	case TYPE_ONI_B:
-		bUnlit = true;
 		bUseGravity = true;
 		nHP = 135;
 		InitModel(BLUE_ONI_MODEL_PATH);
@@ -134,7 +136,6 @@ void Enemy3D::Init()
 		nMidSendOffFrame = 593;
 		break;
 	case TYPE_ONI_C:
-		bUnlit = true;
 		bUseGravity = true;
 		nHP = 170;
 		InitModel(GREEN_ONI_MODEL_PATH);
@@ -170,7 +171,6 @@ void Enemy3D::Init()
 		nMidSendOffFrame = 593;
 		break;
 	case TYPE_ONI_D:
-		bUnlit = true;
 		bUseGravity = true;
 		nHP = 200;
 		InitModel(RED_ONI_MODEL_PATH);
@@ -212,6 +212,15 @@ void Enemy3D::Init()
 
 void Enemy3D::Update()
 {
+	if (nUnlitFrames > 0) {
+		bUnlit = true;
+		nUnlitFrames--;
+	}
+	else
+	{
+		nUnlitFrames = 0;
+		bUnlit = false;
+	}
 	if (!bUse)
 		return;
 	if (!pPlayerPointer)
@@ -431,8 +440,12 @@ void Enemy3D::DamageControl()
 		Position.x = AttackHitbox.x;
 		Position.y = AttackHitbox.y-20;
 		fYForce = 0;
-		if (bDoDamage)
+		if (bDoDamage) {
+			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
+			pGame->SetPauseFrames(4);
+			SetUnlitForFrames(12);
 			nHP -= 10;
+		}
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
 		if (pModel->GetAnimation() == nAnimations[ENEMY_SENDUP]) {
 			if (pModel->GetCurrentFrame() >= nTopSendOffFrame) {
@@ -447,28 +460,37 @@ void Enemy3D::DamageControl()
 		pCurrentFloor = nullptr;
 		break;
 	case NINJA_ATTACK_COMBOAIR_D: case NINJA_ATTACK_COMBO_E:
-		GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 		nState = ENEMY_SENDOFF;
 		if(!pCurrentFloor)
 			nState = ENEMY_FALLING;
 		nFramesSendOff = 5;
-		if (bDoDamage)
+		if (bDoDamage) {
 			nHP -= 10;
+			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
+			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
+			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
+		}
 		break;
 	case NINJA_AIR_DOWN:
 		Position.x = pPlayer->GetPosition().x+(-5* nDirection);
 		Position.y = pPlayer->GetPosition().y;
-		GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 		nState = ENEMY_FALLING;
-		if (bDoDamage)
+		if (bDoDamage) {
+			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
+			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
+			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
 			nHP -= 10;
+		}
 		break;
 	default:
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
-		if (bDoDamage)
+		if (bDoDamage) {
+			GetMainCamera()->ShakeCamera({ 1.85f,1.85f,0.75f }, 25, 15);
+			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
+			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
 			nHP -= 5;
+		}
 		Position.x = AttackHitbox.x;
-		GetMainCamera()->ShakeCamera({ 0.85f,0.85f,0.75f }, 25, 10);
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
 			pPlayer->TranslateX(1.5f* nPlayerDirection);
 			if(!pCurrentFloor)
@@ -607,6 +629,12 @@ void Enemy3D::Uninit()
 int Enemy3D::GetEnemyType()
 {
 	return nEnemyType;
+}
+
+void Enemy3D::SetUnlitForFrames(int frames)
+{
+	bUnlit = true;
+	nUnlitFrames = frames;
 }
 
 Hitbox3D Enemy3D::GetAttackHitbox()

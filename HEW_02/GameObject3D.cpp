@@ -204,8 +204,10 @@ void GameObject3D::Draw()
 		}
 		if (pModel)
 			pModel->DrawModel();
-		if (bUnlit)
+		if (bUnlit) {
 			GetMainLight()->SetLightEnable(bPreviousLight);
+			pModel->SetLight(GetMainLight());
+		}
 	}
 
 }

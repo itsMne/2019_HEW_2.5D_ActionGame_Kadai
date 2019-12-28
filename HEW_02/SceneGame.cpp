@@ -98,14 +98,33 @@ int SceneGame::Update()
 {
 	if (pPlayer->PlayerGameOver())
 	{
-		return SCENE_GAMEOVER;
+		return SCENE_GAMEOVER;//ゲームオーバーなら
 	}
 	if (bGoalReached)
 	{
 		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
-	SkySphere->Update();
-	SceneCamera->Update();
+
+	//UIに関する
+	pScore_UI->Update();// Number更新
+	pLevel_Editor_UI->Update();//レベルエディター更新
+	pLevel_Editor_MOVEMODE_UI->Update();
+	pLevel_Editor_STATICMODE_UI->Update();
+	pSpeed_MoveObject_UI->Update();
+	pDelay_MoveObject_UI->Update();
+	pZoomAttack_UI->Update();
+	pHP_UI_BACK->Update();// Hp更新
+	pHP_UI_FRONT->Update();
+	pMP_UI->Update();// Mp更新
+	pScore_Frame_UI->Update();// Score更新
+	
+	//背景にかんする
+	SkySphere->Update();//スカイスフィア
+	SceneCamera->Update();//カメラ
+
+	//フレームとズームに関してエフェクト
+
+	
 	if (++nFrameCounter == 60) {//タイムのカウンター
 		nTimeSeconds++;
 		nFrameCounter = 0;
@@ -113,8 +132,9 @@ int SceneGame::Update()
 	if (bPauseZooming)
 	{
 		if (nFramesForZoomPausing <= 0)
-		{
-			
+		{	
+			if (--nPauseFrames > 0)
+				return nSceneType;
 			if (bZoomBack && !bCancelZoom)
 			{
 				fZoomAcc += fZoomSpeed;
@@ -162,54 +182,25 @@ int SceneGame::Update()
 		if(bPauseFramesWhenZoom)
 			return nSceneType;
 	}
-	// デバッグ文字列表示更新
-	UpdateDebugProc();
+	if (--nPauseFrames > 0)
+		return nSceneType;
+	nPauseFrames = 0;
 
-	// デバッグ文字列設定
-	StartDebugProc();
-	PrintDebugProc("FPS:%d\n\n", GetMainWindowFPS());
+	UpdateDebugProc();// デバッグ文字列表示更新
+	StartDebugProc();// デバッグ文字列設定
+	PrintDebugProc("FPS:%d\n\n", GetMainWindowFPS());// デバッグ文字列設定
+	SceneLight->Update();// 光源更新
 
-	// 光源更新
-	SceneLight->Update();
+	// ゲームのオブジェクト
+	pPlayer->Update();//プレイヤー
+	Fields->Update();//床
+	Walls->Update();//壁
+	Items->Update();//アイテム
+	Spikes->Update();//スパイク
+	Mirrors->Update();//鏡（テレポート）
+	Enemies->Update();//敵
+	Goals->Update();//ゴール
 
-	// カメラ更新
-	
-	
-	// モデル更新
-	pPlayer->Update();
-
-	// フィールド更新
-	Fields->Update();
-
-	Walls->Update();
-	
-	Items->Update();
-
-	Spikes->Update();
-
-	Mirrors->Update();
-
-	// Hp更新
-	pHP_UI_BACK->Update();
-	pHP_UI_FRONT->Update();
-
-	// Mp更新
-	pMP_UI->Update();
-
-	// Score更新
-	pScore_Frame_UI->Update();
-
-	Enemies->Update();
-	Goals->Update();
-	// Number更新
-	pScore_UI->Update();
-	//レベルエディター更新
-	pLevel_Editor_UI->Update();
-	pLevel_Editor_MOVEMODE_UI->Update();
-	pLevel_Editor_STATICMODE_UI->Update();
-	pSpeed_MoveObject_UI->Update();
-	pDelay_MoveObject_UI->Update();
-	pZoomAttack_UI->Update();
 	return nSceneType;
 }
 
@@ -359,6 +350,16 @@ void SceneGame::CancelZoom()
 	SceneCamera->SetZoomZ(fCurrentInGameZoom);
 	Hitbox3D render = RENDER_BOX_CAMERA;
 	SceneCamera->SetRenderZone(render);
+}
+
+void SceneGame::SetPauseFrames(int nPauseF)
+{
+	nPauseFrames = nPauseF;
+}
+
+bool SceneGame::IsGamePaused()
+{
+	return nPauseFrames>0;
 }
 
 SceneGame * GetCurrentGame()

@@ -43,6 +43,7 @@ private:
 	float fZoomAcc;
 	int nTimeSeconds;
 	int nFrameCounter;
+	int nPauseFrames;
 	bool bPauseFramesWhenZoom;
 	bool bZoomBack;
 	bool bCancelZoom;
@@ -67,5 +68,7 @@ public:
 	Sphere3D* GetSkySphere();
 	void ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack);
 	void CancelZoom();
+	void SetPauseFrames(int nPauseF);
+	bool IsGamePaused();
 };
 SceneGame* GetCurrentGame();

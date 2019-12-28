@@ -385,31 +385,31 @@ void Player3D::AttackingStateControl()
 		switch (pCurrentAttackPlaying->Animation)
 		{
 		case NINJA_ATTACK_COMBO_A:
-			if (nAttackFrame > 403 && nAttackFrame < 436) {
+			if (nAttackFrame > 415 && nAttackFrame < 436) {
 				bIsAttacking = true;
 				Position.x += 1 * nDirection;
 			}
 			break;
 		case NINJA_ATTACK_COMBO_B:
-			if (nAttackFrame > 501 && nAttackFrame < 546) {
+			if (nAttackFrame > 521 && nAttackFrame < 546) {
 				bIsAttacking = true;
 				Position.x += 1 * nDirection;
 			}
 			break;
 		case NINJA_ATTACK_COMBO_C:
-			if (nAttackFrame > 648 && nAttackFrame < 688) {
+			if (nAttackFrame > 673 && nAttackFrame < 688) {
 				Position.x += 1 * nDirection;
 				bIsAttacking = true;
 			}
 			break;
 		case NINJA_ATTACK_COMBO_D:
-			if (nAttackFrame > 808 && nAttackFrame < 826) {
+			if (nAttackFrame > 820 && nAttackFrame < 826) {
 				Position.x += 1 * nDirection;
 				bIsAttacking = true;
 			}
 			break;
 		case NINJA_ATTACK_COMBO_E:
-			if (nAttackFrame > 906 && nAttackFrame < 931) {
+			if (nAttackFrame > 920 && nAttackFrame < 931) {
 				Position.x += 3 * nDirection;
 				bIsAttacking = true;
 				bTwiceTheHitbox = true;
@@ -417,22 +417,22 @@ void Player3D::AttackingStateControl()
 			break;
 		case NINJA_ATTACK_COMBOAIR_A:
 			bTwiceTheHitbox = true;
-			if (nAttackFrame > 1201 && nAttackFrame < 1233)
+			if (nAttackFrame > 1222 && nAttackFrame < 1233)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_B:
 			bTwiceTheHitbox = true;
-			if (nAttackFrame > 1306 && nAttackFrame < 1331)
+			if (nAttackFrame > 1311 && nAttackFrame < 1331)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_C:
 			bTwiceTheHitbox = true;
-			if (nAttackFrame > 1383 && nAttackFrame < 1408)
+			if (nAttackFrame > 1394 && nAttackFrame < 1408)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_D:
 			bTwiceTheHitbox = true;
-			if (nAttackFrame > 1461 && nAttackFrame < 1491)
+			if (nAttackFrame > 1473 && nAttackFrame < 1491)
 				bIsAttacking = true;
 			break;
 		case NINJA_AIR_DOWN:

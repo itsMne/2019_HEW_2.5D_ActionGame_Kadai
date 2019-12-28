@@ -7,6 +7,7 @@
 #include "GameObject3D.h"
 #include "UniversalStructures.h"
 #include "debugproc.h"
+#include "SceneGame.h"
 
 #define MAX_LOOPS	9000
 
@@ -151,6 +152,11 @@ void Model3D::DrawModel(void)
 
 void Model3D::AnimationControl()
 {
+	SceneGame* pGame = GetCurrentGame();
+	if (pGame->IsGamePaused()) {
+		g_pModel->SetAnimFrame((int)fFrame);
+		return;
+	}
 	if (++nFramCount >= AnimationFrameSlowness) {
 		nFramCount = 0;
 		//printf("%f\n",fAnimSpeed);
