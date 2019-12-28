@@ -37,6 +37,8 @@ void Spike3D::Update()
 	if (pPlayer) {
 		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
+		if (pPlayer->IsDebugAimOn())
+			return;
 	}
 #endif
 	if (nSpikesOnX > 1 || nSpikesOnY > 1) {
@@ -98,6 +100,7 @@ void Spike3D::RaiseSpikesX(int rise)
 	nSpikesOnX += rise;
 	if (nSpikesOnX < 1)
 		nSpikesOnX = 1;
+	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
 }
 
 void Spike3D::RaiseSpikesY(int rise)
@@ -105,12 +108,14 @@ void Spike3D::RaiseSpikesY(int rise)
 	nSpikesOnY += rise;
 	if (nSpikesOnY < 1)
 		nSpikesOnY = 1;
+	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
 }
 
 void Spike3D::SetSpikesNum(int x, int y)
 {
 	nSpikesOnX = x;
 	nSpikesOnY = y;
+	hitbox = { 0,13.5f,0,4.8f * (float)nSpikesOnX,6.5f* (float)nSpikesOnY,5 };
 }
 
 void Spike3D::SetInvisibility(bool invisible)

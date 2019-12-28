@@ -118,6 +118,10 @@ void Player3D::Init()
 
 void Player3D::Update()
 {
+	if (pMainCamera && !IsDebugAimOn()) {
+		if (pMainCamera->GetFocalPoint() != this)
+			return;
+	}
 	GameObject3D::Update();
 	if (DebugAimControl()) 
 		return;//g‚Á‚Ä‚¢‚éê‡‚ÉAŠÖ”‚ªI‚í‚è

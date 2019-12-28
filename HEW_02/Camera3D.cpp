@@ -247,6 +247,11 @@ Hitbox3D Camera3D::GetRenderZone()
 	return hbRenderZone;
 }
 
+void * Camera3D::GetFocalPoint()
+{
+	return FocalPoint;
+}
+
 Camera3D * GetMainCamera()
 {
 	return MainCamera;

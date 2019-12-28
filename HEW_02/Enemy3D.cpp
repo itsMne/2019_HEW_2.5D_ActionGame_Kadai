@@ -88,10 +88,19 @@ void Enemy3D::Update()
 {
 	if (!bUse)
 		return;
+	if (!pPlayerPointer)
+		pPlayerPointer = GetMainPlayer();
+	if (!pPlayerPointer)
+		return;
+	Player3D* pPlayer = (Player3D*)pPlayerPointer;
+	if (pPlayer->IsDebugAimOn())
+		return;
+	printf("State: %f\n", fSendOffAcceleration);
 	if (nState == ENEMY_DEAD)
 	{
+		GetMainCamera()->SetFocalPoint(GetMainPlayer());
 		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
-		fSendOffAcceleration += 1.0f;
+		fSendOffAcceleration += 2.0f;
 		Position.x -= fSendOffAcceleration * nDirection;
 		Position.y += fSendOffAcceleration;
 		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox()))) {
@@ -101,20 +110,31 @@ void Enemy3D::Update()
 		}
 		return;
 	}
+	if (bUseGravity)
+		GravityControl();
+	Go_List* Spikes = GetCurrentGame()->GetSpikes();
+	if (!Spikes)
+		return;
+	GameObject3D* spikeCol = Spikes->CheckCollision(GetHitBox());
+	if (spikeCol && nState != ENEMY_DEAD)
+	{
+		pGame->CancelZoom();
+		pModel->SwitchAnimationSpeed(0.25f);
+		pPlayer->SwitchAnimationSpeed(0.25f);
+		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
+		pGame->ZoomPause(70, 60, 3, true, true);
+		GetMainCamera()->SetFocalPoint(this);
+		nState = ENEMY_DEAD;
+		bUseGravity = false;
+		return;
+	}
 	GameObject3D::Update();
 #if USE_IN_RENDERZONE
-	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox()))) {
+	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && nState != ENEMY_DEAD) {
 		nState = ENEMY_IDLE;
 		return;
 	}
 #endif
-	if(!pPlayerPointer)
-		pPlayerPointer = GetMainPlayer();
-	if (bUseGravity)
-		GravityControl();
-	if (!pPlayerPointer)
-		return;
-	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
 	if (nDirection == LEFT_DIR)
@@ -128,6 +148,7 @@ void Enemy3D::Update()
 	}
 ;	RegularCollisionWithPlayer();
 	EnemyStatesControl();
+
 }
 
 void Enemy3D::EnemyStatesControl()
@@ -333,7 +354,7 @@ void Enemy3D::DamageControl()
 			while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
 			{
 				pPlayer->TranslateX(1 * -nPlayerDirection);
-				Position.x -= 1;
+				Position.x += 1*nDirection;
 			}
 		}
 		if (nLastPlayerAttack != pPlayerAttack->Animation)
@@ -374,7 +395,9 @@ void Enemy3D::DamageControl()
 		pPlayer->SwitchAnimationSpeed(0.25f);
 		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
 		pGame->ZoomPause(70, 60, 3, true, true);
+		GetMainCamera()->SetFocalPoint(this);
 		nState = ENEMY_DEAD;
+		bUseGravity = false;
 	}
 }
 
@@ -416,6 +439,8 @@ void Enemy3D::GravityControl()
 	if (!pCurrentFloor)
 	{
 		fYForce += GRAVITY_FORCE;
+		if (fYForce > 7)
+			fYForce = 7;
 		Position.y -= fYForce;
 
 		Go_List* Fields = pGame->GetFields();

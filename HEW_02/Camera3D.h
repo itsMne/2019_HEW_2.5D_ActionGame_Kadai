@@ -49,6 +49,7 @@ public:
 	void CancelShake();
 	float GetCurrentZoom();
 	Hitbox3D GetRenderZone();
+	void* GetFocalPoint();
 };
 
 Camera3D* GetMainCamera();

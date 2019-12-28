@@ -31,6 +31,8 @@ void Goal3D::Update()
 	if (pPlayer) {
 		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
 			return;
+		if (pPlayer->IsDebugAimOn())
+			return;
 	}
 #endif
 	if (!pPlayer)

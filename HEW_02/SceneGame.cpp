@@ -79,7 +79,7 @@ void SceneGame::Init()
 	pSpeed_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_OBJSPEED);
 	pDelay_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_DELAY);
 	pZoomAttack_UI = new C_Ui("data/texture/ZoomEffect.tga", UI_ZOOM_ATTACK);
-
+	fCurrentInGameZoom = SceneCamera->GetCurrentZoom();
 }
 
 void SceneGame::Uninit()
@@ -104,12 +104,12 @@ int SceneGame::Update()
 	{
 		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
+	SkySphere->Update();
+	SceneCamera->Update();
 	if (++nFrameCounter == 60) {//タイムのカウンター
 		nTimeSeconds++;
 		nFrameCounter = 0;
 	}
-	SceneCamera->Update();
-	
 	if (bPauseZooming)
 	{
 		if (nFramesForZoomPausing <= 0)
@@ -180,8 +180,6 @@ int SceneGame::Update()
 
 	// フィールド更新
 	Fields->Update();
-
-	SkySphere->Update();
 
 	Walls->Update();
 	
@@ -353,7 +351,10 @@ void SceneGame::ZoomPause(float fDistance, int nFrames, float Speed, bool PauseF
 
 void SceneGame::CancelZoom()
 {
+	if (nFramesForZoomPausing <= 0)
+		return;
 	bPauseZooming = false;
+	nFramesForZoomPausing = 0;
 	bZoomBack = false;
 	SceneCamera->SetZoomZ(fCurrentInGameZoom);
 	Hitbox3D render = RENDER_BOX_CAMERA;

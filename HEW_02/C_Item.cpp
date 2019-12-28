@@ -90,6 +90,10 @@ void C_Item::Update()
 	SceneGame* pGame= GetCurrentGame();
 	if (!pPlayer)
 		return;
+	if (pPlayer) {
+		if (pPlayer->IsDebugAimOn())
+			return;
+	}
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
 	{
 		bUse = false;
