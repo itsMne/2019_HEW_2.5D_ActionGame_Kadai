@@ -29,6 +29,8 @@
 #define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))+13	// 文字の表示位置
 #define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)+15	// 文字の表示位置
 
+#define MAIN_POS_DOOR_RIGHT 40
+#define MAIN_POS_DOOR_LEFT -20
 C_Ui* pZoomEffect = nullptr;
 
 C_Ui::C_Ui()
@@ -129,8 +131,18 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(1280, 1280);
 		SetPolygonPos(0, 0);
 		break;
+	case UI_DOOR_RIGHT:
+		SetPolygonSize(2048/1.65f, 1447/1.65f);
+		SetPolygonPos(840, 25);
+		break;
+	case UI_DOOR_LEFT:
+		SetPolygonSize(2048 / 1.65f, 1447 / 1.65f);
+		SetPolygonPos(-820, 25);
+		break;
 	}
-
+	fAcceleration = 0;
+	bDoorInPos = false;
+	bDoorOpen = true;
 }
 
 
@@ -152,7 +164,9 @@ void C_Ui::Update()
 {
 	//if (GetKeyPress(VK_Z))
 	SceneGame* pCurrentGame = GetCurrentGame();
-	if (!pCurrentGame && nType != UI_SLASH_EFFECT)
+	if (!pCurrentGame && 
+		nType != UI_SLASH_EFFECT && nType != UI_DOOR_LEFT
+			&& nType != UI_DOOR_RIGHT)
 		return;
 	if (pCurrentGame)
 		nScore = pCurrentGame->GetScore();
@@ -226,6 +240,68 @@ void C_Ui::Update()
 			if (g_rotPolygon.z == 360)
 				g_rotPolygon.z = 0;
 		}
+		break;
+	case UI_DOOR_LEFT:
+		if ((bDoorOpen && Position.x == -820) ||
+			(!bDoorOpen && Position.x == MAIN_POS_DOOR_LEFT)) {
+			bDoorInPos = true;
+			fAcceleration = 0;
+		}
+		else
+			bDoorInPos = false;
+		if (!bDoorOpen)
+		{
+
+			fAcceleration += 2;
+			if (Position.x < MAIN_POS_DOOR_LEFT)
+			{
+				Position.x += fAcceleration;
+				if (Position.x > MAIN_POS_DOOR_LEFT)
+					Position.x = MAIN_POS_DOOR_LEFT;
+			}
+		}
+		else {
+			fAcceleration += 2;
+			if (Position.x > -820)
+			{
+				Position.x -= fAcceleration;
+				if (Position.x < -820)
+					Position.x = -820;
+			}
+		}
+
+		break;
+	case UI_DOOR_RIGHT:
+		if ((bDoorOpen && Position.x == 840) ||
+			(!bDoorOpen && Position.x == MAIN_POS_DOOR_RIGHT))
+		{
+			fAcceleration = 0;
+			bDoorInPos = true;
+		}
+		else
+			bDoorInPos = false;
+
+		if (!bDoorOpen)
+		{
+
+			fAcceleration += 2;
+			if (Position.x > MAIN_POS_DOOR_RIGHT)
+			{
+				Position.x -= fAcceleration;
+				if (Position.x < MAIN_POS_DOOR_RIGHT)
+					Position.x = MAIN_POS_DOOR_RIGHT;
+			}
+		}
+		else {
+			fAcceleration += 2;
+			if (Position.x < 840)
+			{
+				Position.x += fAcceleration;
+				if (Position.x > 840)
+					Position.x = 840;
+			}
+		}
+
 		break;
 	}
 
@@ -362,6 +438,17 @@ void C_Ui::Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 void C_Ui::SetFramesForZoomUse(int frames)
 {
 	nFramesToUseZoom = frames;
+}
+
+bool C_Ui::IsDoorInPosition()
+{
+	return bDoorInPos;
+}
+
+void C_Ui::SetDoorOpen(bool bset)
+{
+	bDoorOpen = bset;
+	fAcceleration = 0;
 }
 
 void SetFramesForZoomUse(int frames)

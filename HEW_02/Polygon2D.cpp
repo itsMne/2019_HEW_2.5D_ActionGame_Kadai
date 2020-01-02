@@ -93,7 +93,7 @@ HRESULT Polygon2D::InitPolygon(ID3D11Device* pDevice)
 	XMStoreFloat4x4(&g_mTex, XMMatrixIdentity());
 	g_mTex._44 = 0.0f;
 
-	g_posPolygon = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_rotPolygon = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_sizPolygon = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	g_colPolygon = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -146,7 +146,7 @@ void Polygon2D::DrawPolygon(ID3D11DeviceContext* pDeviceContext)
 	mWorld *= XMMatrixRotationRollPitchYaw(XMConvertToRadians(g_rotPolygon.x),
 		XMConvertToRadians(g_rotPolygon.y), XMConvertToRadians(g_rotPolygon.z));
 	// 移動
-	mWorld *= XMMatrixTranslation(g_posPolygon.x, g_posPolygon.y, g_posPolygon.z);
+	mWorld *= XMMatrixTranslation(Position.x, Position.y, Position.z);
 	// ワールド マトリックスに設定
 	XMStoreFloat4x4(&g_mWorld, mWorld);
 
@@ -276,8 +276,8 @@ void Polygon2D::SetPolygonTexture(ID3D11ShaderResourceView* pTexture)
 //=============================================================================
 void Polygon2D::SetPolygonPos(float fX, float fY)
 {
-	g_posPolygon.x = fX;
-	g_posPolygon.y = fY;
+	Position.x = fX;
+	Position.y = fY;
 }
 
 //=============================================================================

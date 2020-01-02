@@ -607,7 +607,9 @@ void Player3D::DeadStateControl()
 	TransformingStateControl();
 	if (nCurrentTransformation != MODEL_NINJA)
 		return;
+	
 	SwitchAnimation(MODEL_NINJA, NINJA_DEAD);
+	pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(1);
 	pPlayerModels[MODEL_NINJA]->UpdateModel();
 	bDeadAnimation = true;
 	printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());

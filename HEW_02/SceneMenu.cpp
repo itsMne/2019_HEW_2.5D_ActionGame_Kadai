@@ -84,7 +84,7 @@ int SceneMenu::Update()
 void SceneMenu::Draw()
 {
 	SetZBuffer(false);
-	pMenuBg->Draw();
+	//pMenuBg->Draw();
 	pMenuFrame->Draw();
 	pStart->Draw();
 	pRanking->Draw();

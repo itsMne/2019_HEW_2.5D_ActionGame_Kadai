@@ -40,6 +40,8 @@ enum UITYPE
 	UI_RANKING,
 	UI_SLASH_EFFECT,
 	UI_ZOOM_ATTACK,
+	UI_DOOR_RIGHT,
+	UI_DOOR_LEFT,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -53,6 +55,9 @@ private:
 	int nScore;
 	XMFLOAT2 vScorePos;
 	int nFramesToUseZoom;
+	//フェードに関する
+	bool bDoorOpen, bDoorInPos;
+	float fAcceleration;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
@@ -65,6 +70,8 @@ public:
 	void Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 		float fSizeX, float fSizeY);
 	void SetFramesForZoomUse(int frames);
+	bool IsDoorInPosition();
+	void SetDoorOpen(bool bset);
 };
 
 void SetFramesForZoomUse(int frames);
