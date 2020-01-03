@@ -6,6 +6,7 @@
 #define GREEN_ONI_MODEL_PATH "data/model/GreenOni.fbx"
 #define BLUE_ONI_MODEL_PATH "data/model/BlueOni.fbx"
 #define YELLOW_ONI_MODEL_PATH "data/model/YellowOni.fbx"
+#define WARRIOR_MODEL_PATH "data/model/Warrior.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
 #define PAUSE_FRAMES_PER_ATTACK 4
@@ -28,6 +29,18 @@ enum ONI_ANIMATION
 	ONI_MAX
 };
 
+enum WARRIOR_ANIMATION
+{
+	WARRIOR_WALK,
+	WARRIOR_IDLE,
+	WARRIOR_ATTACK,
+	WARRIOR_DAMAGEDA,
+	WARRIOR_DAMAGEDB,
+	WARRIOR_SENDUP,
+	WARRIOR_SENDOFF,
+	WARRIOR_FALLING,
+	WARRIOR_MAX
+};
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
 	nEnemyType = enemyType;
@@ -45,6 +58,7 @@ void Enemy3D::Init()
 {
 	nType = GO_ENEMY;
 	fYForce = 0;
+	nEnragedMeter = nEnragedFrames = nEnragedCounter = 0;
 	nUnlitFrames = 0;
 	nDamageAgainstPlayer = 0;
 	fSendOffAcceleration = 0;
@@ -205,6 +219,41 @@ void Enemy3D::Init()
 		nTopSendOffFrame = 609;
 		nMidSendOffFrame = 593;
 		break;
+	case TYPE_WARRIOR:
+		bUseGravity = true;
+		nHP = 150;
+		InitModel(WARRIOR_MODEL_PATH);
+		pModel->SetScale({ 1.25f,1.25f,1.25f });
+		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(WARRIOR_IDLE);
+		fSpeed = 1.0f;
+		hitbox = { 0,22.5f,0,5,13,10 };
+		hbAttack = { 10,22.5f,0,10,13,10 };
+		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 350;
+		nMaxAttackFrame = 395;
+		nDamageAgainstPlayer = 30;
+		nAnimations[ENEMY_IDLE] = WARRIOR_IDLE;
+		nAnimations[ENEMY_DAMAGED] = WARRIOR_DAMAGEDA;
+		nAnimations[ENEMY_DAMAGEDALT] = WARRIOR_DAMAGEDB;
+		nAnimations[ENEMY_FALLING] = WARRIOR_FALLING;
+		nAnimations[ENEMY_MOVING] = WARRIOR_WALK;
+		nAnimations[ENEMY_ATTACKING] = WARRIOR_ATTACK;
+		nAnimations[ENEMY_SENDUP] = WARRIOR_SENDUP;
+		nAnimations[ENEMY_SENDOFF] = WARRIOR_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 2;
+		fAnimationSpeeds[ENEMY_SENDUP] = 4;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
+		nEnragedFrames = 10;
+		nTopSendOffFrame = 828;
+		nMidSendOffFrame = 897;
+		break;
 	default:
 		break;
 	}
@@ -227,6 +276,11 @@ void Enemy3D::Update()
 		pPlayerPointer = GetMainPlayer();
 	if (!pPlayerPointer)
 		return;
+	if (nEnragedCounter > 0) {
+		nEnragedCounter--;
+		if (nEnragedCounter < 0)
+			nEnragedCounter = 0;
+	}
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
@@ -428,17 +482,45 @@ void Enemy3D::DamageControl()
 		return;
 	if (!pGame)
 		return;
-	nState = ENEMY_DAMAGED;
+	if(nEnragedCounter == 0)
+		nState = ENEMY_DAMAGED;
 	GameObject3D* pWall = nullptr;
 	nDirection = -1*pPlayer->GetDirection();
 	pGame->ZoomPause(60, 30, 3, false, true);
 	SetFramesForZoomUse(35);
+	if (pCurrentFloor && nEnragedCounter != 0 && pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH)
+	{
+		if (bDoDamage) {
+			GetMainCamera()->ShakeCamera({ 1.85f,1.85f,0.75f }, 25, 15);
+			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK*1.5f);
+			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
+			nHP -= 5;
+		}
+		Position.x = AttackHitbox.x;
+		if (!(pPlayer->GetFloor()) && pPlayer->GetState() != PLAYER_TELEPORTING) {
+			pPlayer->TranslateX(1.5f* nPlayerDirection);
+			if (!pCurrentFloor)
+				Position.y = AttackHitbox.y - 20;
+			nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+		}
+		pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+		if (pWall) {
+			while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+			{
+				pPlayer->TranslateX(1 * -nPlayerDirection);
+				Position.x += 1 * nDirection;
+			}
+		}
+		return;
+	}
 	switch (pPlayerAttack->Animation)
 	{
 	case NINJA_UPPER_SLASH:
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
 		Position.x = AttackHitbox.x;
 		Position.y = AttackHitbox.y-20;
+		if(nEnragedMeter>0)
+			nEnragedMeter = 0;
 		fYForce = 0;
 		if (bDoDamage) {
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
@@ -469,17 +551,23 @@ void Enemy3D::DamageControl()
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
+			if (nEnragedFrames > 0 && nEnragedCounter == 0)
+				nEnragedMeter++;
 		}
 		break;
 	case NINJA_AIR_DOWN:
 		Position.x = pPlayer->GetPosition().x+(-5* nDirection);
 		Position.y = pPlayer->GetPosition().y;
+		if (nEnragedMeter > 0)
+			nEnragedMeter = 0;
 		nState = ENEMY_FALLING;
 		if (bDoDamage) {
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
 			nHP -= 10;
+			if (nEnragedFrames > 0 && nEnragedCounter==0)
+				nEnragedMeter++;
 		}
 		break;
 	default:
@@ -489,6 +577,8 @@ void Enemy3D::DamageControl()
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
 			nHP -= 5;
+			if (nEnragedFrames > 0 && nEnragedCounter == 0)
+				nEnragedMeter++;
 		}
 		Position.x = AttackHitbox.x;
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
@@ -505,7 +595,7 @@ void Enemy3D::DamageControl()
 				Position.x += 1*nDirection;
 			}
 		}
-		if (nLastPlayerAttack != pPlayerAttack->Animation)
+		if (nLastPlayerAttack != pPlayerAttack->Animation && nEnragedCounter==0)
 		{
 			if (pModel->GetAnimation() == nAnimations[ENEMY_DAMAGED] || pModel->GetAnimation() == nAnimations[ENEMY_DAMAGEDALT]) {
 				if (bUseDamageA && pModel->GetCurrentFrame() > 538)
@@ -535,6 +625,10 @@ void Enemy3D::DamageControl()
 		
 		fYForce = 0;
 		break;
+	}
+	if (nEnragedFrames >= nEnragedMeter) {
+		nEnragedCounter += 180;
+		nEnragedMeter = 0;
 	}
 	if (nHP <= 0)
 	{

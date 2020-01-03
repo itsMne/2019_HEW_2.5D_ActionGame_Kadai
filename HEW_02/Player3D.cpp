@@ -104,6 +104,7 @@ void Player3D::Init()
 	bStaminaCoolDown = false;
 	Position = { 0,0,0 };
 	nDirection = RIGHT_DIR;
+	nRecoveryFrames = 0;
 	nHP /= 2;//DEL
 	
 #if SHOW_HITBOX
@@ -143,9 +144,13 @@ void Player3D::Update()
 	}
 	if (nHP <= 0) {//HP‚Í‚O‚É‚È‚Á‚½‚çƒvƒŒƒCƒ„[‚Ìó‘Ô‚ª•Ï‚í‚é
 		nState = PLAYER_DEAD;
+		nRecoveryFrames = 0;
 		return;
 	}
-	
+	if (nRecoveryFrames > 0)
+		nRecoveryFrames--;
+	if (nRecoveryFrames < 0)
+		nRecoveryFrames = 0;
 	WallAttachedTo = nullptr;
 	bool bIsLocked = pCurrentAttackPlaying;
 	if (pCurrentAttackPlaying)
@@ -856,6 +861,8 @@ void Player3D::HitboxControl()
 
 void Player3D::Draw()
 {
+	if (nRecoveryFrames % 2 == 0 && nRecoveryFrames > 0)
+		return;
 	if (bUsingDebugAim && pDebugAim)
 	{
 		pDebugAim->Draw();
@@ -1100,11 +1107,14 @@ bool Player3D::IsStaminaCooldownOn()
 
 void Player3D::SetDamage(int Damage)
 {
+	if (nRecoveryFrames > 0)
+		return;
 	if (nHP == 0)
 		return;
 	nHP -= Damage;
 	if (nHP < 0)
 		nHP = 0;
+	nRecoveryFrames = 60;
 	SwitchAnimationSpeed(1);
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGED);
 	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);

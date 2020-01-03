@@ -8,6 +8,7 @@ enum EnemyType
 	TYPE_ONI_B,
 	TYPE_ONI_C,
 	TYPE_ONI_D,
+	TYPE_WARRIOR,
 	MAX_ENEMY_TYPE
 };
 enum ENEMY_STATES
@@ -55,6 +56,9 @@ private:
 	int nTopSendOffFrame;
 	int nMidSendOffFrame;
 	int nUnlitFrames;
+	int nEnragedFrames;
+	int nEnragedCounter;
+	int nEnragedMeter;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();
