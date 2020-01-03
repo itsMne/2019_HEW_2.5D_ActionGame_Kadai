@@ -100,7 +100,7 @@ void UpdateScene()
 				InitScene();
 				bDoorTransition = false;
 				nWaitFrames = 60;
-				Scene->Update();
+				//Scene->Update();
 			}
 		}
 		return;

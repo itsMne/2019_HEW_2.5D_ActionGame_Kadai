@@ -13,16 +13,25 @@ SceneMenu::SceneMenu()
 
 	g_nSelectMenu = START;
 
-	pMenuBg = new C_Ui("data/texture/haikei1.png", UI_MENU);
-	pMenuFrame = new C_Ui("data/texture/MenuFrame.png", UI_MENUFRAME);
-	pStart = new C_Ui("data/texture/Menu00.png", UI_MSTART);
-	pRanking = new C_Ui("data/texture/Menu02.png", UI_MEND);
-	pEnd = new C_Ui("data/texture/Menu01.png", UI_MRANKING);
+
+	pStart = new C_Ui("data/texture/Menu00.png", UI_MENU_OPTION);
+	pRanking = new C_Ui("data/texture/Menu02.png", UI_MENU_OPTION);
+	pEnd = new C_Ui("data/texture/Menu01.png", UI_MENU_OPTION);
+
+	pStart->SetPolygonPos(500, 0);
+	pRanking->SetPolygonPos(-500, 0);
+
+	pStart->SetRotationY(90);
+	pRanking->SetRotationY(90);
+	pEnd->SetRotationY(90);
+	bOptionSelected = false;
+	nNextScene = 0;
 }
 
 
 SceneMenu::~SceneMenu()
 {
+
 }
 
 void SceneMenu::Init()
@@ -32,47 +41,117 @@ void SceneMenu::Init()
 
 void SceneMenu::Uninit()
 {
+	SAFE_DELETE(pStart);
+	SAFE_DELETE(pRanking);
+	SAFE_DELETE(pEnd);
 }
 
 int SceneMenu::Update()
 {
-	if (GetKeyRepeat(VK_D) || GetKeyRepeat(VK_RIGHT)) {
-		g_nSelectMenu = (MENU)((g_nSelectMenu + NUM_PAUSE_MENU - 1) % NUM_PAUSE_MENU);
+	static float fAcceleration = 0;
+	if (bOptionSelected)
+	{
+		if (pStart->GetRotationY() != 90 || pRanking->GetRotationY() != 90 || pEnd->GetRotationY() != 90)
+		{
+			fAcceleration -= 1;
+			if (pStart->GetRotationY() < 90)
+				pStart->RotateAroundY(-fAcceleration);
+			if (pStart->GetRotationY() > 90) {
+				pStart->SetRotationY(90);
+				fAcceleration = 0;
+			}
+			if (pStart->GetRotationY() == 90)
+			{
+				if (pEnd->GetRotationY() < 90)
+					pEnd->RotateAroundY(-fAcceleration);
+				if (pEnd->GetRotationY() > 90) {
+					pEnd->SetRotationY(90);
+					fAcceleration = 0;
+				}
+			}
+			if (pEnd->GetRotationY() == 90)
+			{
+				if (pRanking->GetRotationY() < 90)
+					pRanking->RotateAroundY(-fAcceleration);
+				if (pRanking->GetRotationY() > 90) {
+					pRanking->SetRotationY(90);
+					fAcceleration = 0;
+				}
+			}
+			return SCENE_MENU;
+		}
+		fAcceleration = 0;
+		return nNextScene;
 	}
-	else if (GetKeyRepeat(VK_A) || GetKeyRepeat(VK_LEFT)) {
+	if (GetInput(INPUT_TRIGGER_RIGHT)) {
 		g_nSelectMenu = (MENU)((g_nSelectMenu + 1) % NUM_PAUSE_MENU);
 	}
+	else if (GetInput(INPUT_TRIGGER_LEFT)) {
+		g_nSelectMenu = (MENU)((g_nSelectMenu + NUM_PAUSE_MENU - 1) % NUM_PAUSE_MENU);
+	}
 
-	pMenuBg->Update();
-	pMenuFrame->Update();
 	pStart->Update();
 	pRanking->Update();
 	pEnd->Update();
 
-
+	
+	if (pStart->GetRotationY() != 0 || pRanking->GetRotationY() != 0 || pEnd->GetRotationY() != 0) 
+	{
+		fAcceleration += 1;
+		if (pStart->GetRotationY() > 0)
+			pStart->RotateAroundY(-fAcceleration);
+		if (pStart->GetRotationY() < 0) {
+			pStart->SetRotationY(0);
+			fAcceleration = 0;
+		}
+		if (pStart->GetRotationY() == 0)
+		{
+			if (pEnd->GetRotationY() > 0)
+				pEnd->RotateAroundY(-fAcceleration);
+			if (pEnd->GetRotationY() < 0) {
+				pEnd->SetRotationY(0);
+				fAcceleration = 0;
+			}
+		}
+		if (pEnd->GetRotationY() == 0)
+		{
+			if (pRanking->GetRotationY() > 0)
+				pRanking->RotateAroundY(-fAcceleration);
+			if (pRanking->GetRotationY() < 0) {
+				pRanking->SetRotationY(0);
+				fAcceleration = 0;
+				
+			}
+		}
+		return SCENE_MENU;
+	}
+	fAcceleration = 0;
 	switch (g_nSelectMenu) {
 	case START:
-		pStart->SetPolygonSize(MSTART_SIZE_X + 100, MSTART_SIZE_Y + 50);
-		pRanking->SetPolygonSize(MRANKING_SIZE_X, MRANKING_SIZE_Y);
-		pEnd->SetPolygonSize(MEND_SIZE_X, MEND_SIZE_Y);
+		pStart->SetAsSelectedOption(true);
+		pRanking->SetAsSelectedOption(false);
+		pEnd->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
-			return SCENE_GAME;
+			nNextScene = SCENE_GAME;
+			bOptionSelected = true;
 		}
 		break;
 	case RANKING:
-		pStart->SetPolygonSize(MSTART_SIZE_X, MSTART_SIZE_Y);
-		pRanking->SetPolygonSize(MRANKING_SIZE_X + 100, MRANKING_SIZE_Y + 50);
-		pEnd->SetPolygonSize(MEND_SIZE_X, MEND_SIZE_Y);
+		pStart->SetAsSelectedOption(false);
+		pRanking->SetAsSelectedOption(true);
+		pEnd->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
-			return SCENE_RANKING;
+			nNextScene = SCENE_RANKING;
+			bOptionSelected = true;
 		}
 		break;
 	case END:
-		pStart->SetPolygonSize(MSTART_SIZE_X, MSTART_SIZE_Y);
-		pRanking->SetPolygonSize(MRANKING_SIZE_X, MRANKING_SIZE_Y);
-		pEnd->SetPolygonSize(MEND_SIZE_X + 100, MEND_SIZE_Y + 50);
+		pStart->SetAsSelectedOption(false);
+		pRanking->SetAsSelectedOption(false);
+		pEnd->SetAsSelectedOption(true);
 		if (GetInput(INPUT_JUMP)) {
-			return SCENE_TITLE;
+			nNextScene = SCENE_TITLE;
+			bOptionSelected = true;
 		}
 		break;
 
@@ -84,8 +163,6 @@ int SceneMenu::Update()
 void SceneMenu::Draw()
 {
 	SetZBuffer(false);
-	//pMenuBg->Draw();
-	pMenuFrame->Draw();
 	pStart->Draw();
 	pRanking->Draw();
 	pEnd->Draw();

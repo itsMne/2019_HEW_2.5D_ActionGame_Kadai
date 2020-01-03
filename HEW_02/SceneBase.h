@@ -24,7 +24,7 @@ protected:
 	int nSceneType;
 public:
 	SceneBase();
-	~SceneBase();
+	virtual ~SceneBase();
 	virtual void Init()=0;
 	virtual void Draw()=0;
 	virtual int Update()=0;

@@ -31,6 +31,7 @@ void GameObject3D::Init()
 	Scale = { 1,1,1 };
 	hitbox = { 0,0,0,0,0,0 };
 	pModel = nullptr;
+	pVisualHitbox = nullptr;
 	bMoveable = false;
 	bGoToStartPos = false;
 	bUnlit = false;
@@ -215,6 +216,7 @@ void GameObject3D::Draw()
 void GameObject3D::Uninit()
 {
 	SAFE_DELETE(pModel);
+	SAFE_DELETE(pVisualHitbox);
 }
 
 XMFLOAT3 GameObject3D::GetPosition()

@@ -6,33 +6,40 @@ class SceneGame :
 	public SceneBase
 {
 private:
-	int nScore;
-	ID3D11Device* g_pDevice;
-	Camera3D* SceneCamera;
-	Light3D* SceneLight;
-	Player3D* pPlayer;
-	Go_List* Fields;
-	Go_List* Walls;
-	Go_List* Items;
-	Go_List* Spikes;
-	Go_List* Goals;
-	Go_List* Mirrors;
-	Go_List* Enemies;
-	Sphere3D* SkySphere;
-	DXWindow3D* MainWindow;
+	int				nScore;
+	ID3D11Device*	g_pDevice;
+	Camera3D*		SceneCamera;
+	Light3D*		SceneLight;
+	Player3D*		pPlayer;
+	Go_List*		Fields;
+	Go_List*		Walls;
+	Go_List*		Items;
+	Go_List*		Spikes;
+	Go_List*		Goals;
+	Go_List*		Mirrors;
+	Go_List*		Enemies;
+	Sphere3D*		SkySphere;
+	DXWindow3D*		MainWindow;
 	
 	//UIÇÃïœêî
-	C_Ui* pHP_UI_BACK;
-	C_Ui* pHP_UI_FRONT;
-	C_Ui* pMP_UI;
-	C_Ui* pScore_UI;
-	C_Ui* pScore_Frame_UI;
-	C_Ui* pLevel_Editor_UI;
-	C_Ui* pLevel_Editor_MOVEMODE_UI;
-	C_Ui* pLevel_Editor_STATICMODE_UI;
-	C_Ui* pSpeed_MoveObject_UI;
-	C_Ui* pDelay_MoveObject_UI;
-	C_Ui* pZoomAttack_UI;
+	C_Ui*			pHP_UI_BACK;
+	C_Ui*			pHP_UI_FRONT;
+	C_Ui*			pMP_UI;
+	C_Ui*			pScore_UI;
+	C_Ui*			pScore_Frame_UI;
+	C_Ui*			pLevel_Editor_UI;
+	C_Ui*			pLevel_Editor_MOVEMODE_UI;
+	C_Ui*			pLevel_Editor_STATICMODE_UI;
+	C_Ui*			pSpeed_MoveObject_UI;
+	C_Ui*			pDelay_MoveObject_UI;
+	C_Ui*			pZoomAttack_UI;
+	//É|Å[ÉXÇÃUI
+	C_Ui*			pBG_UI;
+	C_Ui*			pContinue_UI;
+	C_Ui*			pGiveUp_UI;
+	float			fPauseOptionsAcceleration;
+	int				nCurrentPauseSelection;
+	bool			bGameIsPaused;
 	float fZoomPause;
 	float fZoomSpeed;
 	int nFramesForZoomPausing;

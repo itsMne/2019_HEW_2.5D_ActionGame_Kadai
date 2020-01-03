@@ -22,6 +22,7 @@ C_Item::C_Item(int Type)
 
 C_Item::~C_Item()
 {
+	SAFE_DELETE(bbItem);
 }
 
 void C_Item::Init()

@@ -2,8 +2,18 @@
 #include "Enemy3D.h"
 #include "Mirror3D.h"
 #include "Camera3D.h"
+#include "InputManager.h"
 #define RENDER_BOX_CAMERA { 0,0,0, 200,200,120 };
+
+enum PAUSE_OPTION
+{
+	PAUSE_CONTINUE=0,
+	PAUSE_GIVEUP,
+	PAUSE_MAX
+};
+
 SceneGame* CurrentGame = nullptr;
+
 
 SceneGame::SceneGame(): SceneBase()
 {
@@ -30,6 +40,7 @@ void SceneGame::Init()
 	fZoomSpeed = 0;
 	nTimeSeconds = 0;
 	nFrameCounter = 0;
+	nPauseFrames = 0;
 	nSceneType = SCENE_GAME;
 	MainWindow = GetMainWindow();
 	bPauseZooming = false;
@@ -79,16 +90,45 @@ void SceneGame::Init()
 	pSpeed_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_OBJSPEED);
 	pDelay_MoveObject_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_DELAY);
 	pZoomAttack_UI = new C_Ui("data/texture/ZoomEffect.tga", UI_ZOOM_ATTACK);
+
+	pBG_UI = new C_Ui("data/texture/PauseMenu/PauseMenuBackground.png", UI_PAUSE_BG);
+	pContinue_UI = new C_Ui("data/texture/PauseMenu/Continue.png", UI_MENU_OPTION);
+	pContinue_UI->SetPolygonPos(250, 0);
+	pGiveUp_UI = new C_Ui("data/texture/PauseMenu/GiveUp.png", UI_MENU_OPTION);
+	pGiveUp_UI->SetPolygonPos(-250, 0);
+	pGiveUp_UI->SetRotationY(90);
+	pContinue_UI->SetRotationY(90);
+	fPauseOptionsAcceleration = 0;
 	fCurrentInGameZoom = SceneCamera->GetCurrentZoom();
+	bGameIsPaused = false;
+	nCurrentPauseSelection = PAUSE_CONTINUE;
 }
 
 void SceneGame::Uninit()
 {
-	SAFE_DELETE(Fields);//床終了処理
-	SAFE_DELETE(pPlayer);//プレイヤー終了処理
-	SAFE_DELETE(SkySphere);//スカイスフィア終了処理
-	SAFE_DELETE(SceneLight);// 光終了処理
-	SAFE_DELETE(SceneCamera);// カメラ終了処理
+	SAFE_DELETE(SceneCamera);
+	SAFE_DELETE(SceneLight);
+	SAFE_DELETE(pPlayer);
+	SAFE_DELETE(Fields);
+	SAFE_DELETE(Walls);
+	SAFE_DELETE(Items);
+	SAFE_DELETE(Spikes);
+	SAFE_DELETE(Goals);
+	SAFE_DELETE(Mirrors);
+	SAFE_DELETE(Enemies);
+	SAFE_DELETE(SkySphere);
+	SAFE_DELETE(pHP_UI_BACK);
+	SAFE_DELETE(pHP_UI_FRONT);
+	SAFE_DELETE(pMP_UI);
+	SAFE_DELETE(pScore_UI);
+	SAFE_DELETE(pScore_Frame_UI);
+	SAFE_DELETE(pLevel_Editor_UI);
+	SAFE_DELETE(pLevel_Editor_MOVEMODE_UI);
+	SAFE_DELETE(pLevel_Editor_STATICMODE_UI);
+	SAFE_DELETE(pSpeed_MoveObject_UI);
+	SAFE_DELETE(pDelay_MoveObject_UI);
+	SAFE_DELETE(pZoomAttack_UI);
+
 
 	// デバッグ文字列表示終了処理
 	UninitDebugProc();
@@ -104,6 +144,56 @@ int SceneGame::Update()
 	{
 		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
+	if (bGameIsPaused)
+	{
+		pContinue_UI->Update();
+		pGiveUp_UI->Update();
+		fPauseOptionsAcceleration += 1;
+		if (pContinue_UI->GetRotationY() > 0)
+			pContinue_UI->RotateAroundY(-fPauseOptionsAcceleration);
+		if (pContinue_UI->GetRotationY() < 0)
+			pContinue_UI->SetRotationY(0);
+		if (pContinue_UI->GetRotationY() == 0) {
+			if (pGiveUp_UI->GetRotationY() > 0)
+				pGiveUp_UI->RotateAroundY(-fPauseOptionsAcceleration);
+			if (pGiveUp_UI->GetRotationY() < 0)
+				pGiveUp_UI->SetRotationY(0);
+		}
+		if (GetInput(INPUT_TRIGGER_LEFT))
+			nCurrentPauseSelection++;
+
+		if (GetInput(INPUT_TRIGGER_RIGHT))
+			nCurrentPauseSelection--;
+		if (nCurrentPauseSelection == PAUSE_MAX)
+			nCurrentPauseSelection = 0;
+		if (nCurrentPauseSelection < 0)
+			nCurrentPauseSelection = PAUSE_MAX - 1;
+		if (GetInput(INPUT_PAUSE) && pContinue_UI->GetRotationY() == 0 && pGiveUp_UI->GetRotationY() == 0)
+			bGameIsPaused = false;
+
+		switch (nCurrentPauseSelection)
+		{
+		case PAUSE_CONTINUE:
+			pContinue_UI->SetAsSelectedOption(true);
+			pGiveUp_UI->SetAsSelectedOption(false);
+			if (GetInput(INPUT_JUMP))
+				bGameIsPaused = false;
+			break;
+		case PAUSE_GIVEUP:
+			pContinue_UI->SetAsSelectedOption(false);
+			pGiveUp_UI->SetAsSelectedOption(true);
+			if (GetInput(INPUT_JUMP))
+				return SCENE_TITLE;
+			break;
+		default:
+			break;
+		}
+
+		return nSceneType;
+	}
+	fPauseOptionsAcceleration = 0;
+	pGiveUp_UI->SetRotationY(90);
+	pContinue_UI->SetRotationY(90);
 
 	//UIに関する
 	pScore_UI->Update();// Number更新
@@ -117,7 +207,9 @@ int SceneGame::Update()
 	pHP_UI_FRONT->Update();
 	pMP_UI->Update();// Mp更新
 	pScore_Frame_UI->Update();// Score更新
-	
+	pBG_UI->Update();
+
+
 	//背景にかんする
 	SkySphere->Update();//スカイスフィア
 	SceneCamera->Update();//カメラ
@@ -182,10 +274,11 @@ int SceneGame::Update()
 		if(bPauseFramesWhenZoom)
 			return nSceneType;
 	}
+	if (GetInput(INPUT_PAUSE))
+		bGameIsPaused = true;
 	if (--nPauseFrames > 0)
 		return nSceneType;
 	nPauseFrames = 0;
-
 	UpdateDebugProc();// デバッグ文字列表示更新
 	StartDebugProc();// デバッグ文字列設定
 	PrintDebugProc("FPS:%d\n\n", GetMainWindowFPS());// デバッグ文字列設定
@@ -249,8 +342,9 @@ void SceneGame::Draw()
 	// Number描画
 	pScore_UI->Draw();
 
-	// Score描画
+	 //Score描画
 	pScore_Frame_UI->Draw();
+
 	//レベルエディター更新
 	pLevel_Editor_UI->Draw();
 	pLevel_Editor_MOVEMODE_UI->Draw();
@@ -258,6 +352,13 @@ void SceneGame::Draw()
 	pSpeed_MoveObject_UI->Draw();
 	pDelay_MoveObject_UI->Draw();
 	pZoomAttack_UI->Draw();
+
+	if (bGameIsPaused)
+	{
+		pBG_UI->Draw();
+		pGiveUp_UI->Draw();
+		pContinue_UI->Draw();
+	}
 	// デバッグ文字列表示
 	DrawDebugProc();
 }

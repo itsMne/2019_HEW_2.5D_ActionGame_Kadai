@@ -47,7 +47,7 @@ public:
 	ID3D11ShaderResourceView * gpTexture;
 	Polygon2D();
 	Polygon2D(const char * TexturePath);
-	~Polygon2D();
+	virtual ~Polygon2D();
 	HRESULT InitPolygon(ID3D11Device* pDevice);
 
 	void UninitPolygon();
@@ -62,6 +62,9 @@ public:
 	void SetPolygonColor(float fRed, float fGreen, float fBlue);
 	void SetPolygonAlpha(float fAlpha);
 	void ReduceAlpha(float fAlpha);
+	void RotateAroundY(float rot);
+	void SetRotationY(float rot);
+	float GetRotationY();
 	float GetAlpha();
 	UV GetUV();
 	HRESULT MakeVertexPolygon(ID3D11Device* pDevice);

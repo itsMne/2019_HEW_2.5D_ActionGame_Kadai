@@ -22,9 +22,12 @@ void UpdateInputManager()
 	XinputTriggerControl(true);
 	bXinputConnected = Player1->IsConnected();
 
+	bInputs[INPUT_PAUSE] = GetKeyTrigger(VK_RETURN) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_START && !bHoldingXinput[INPUT_PAUSE]));
 	bInputs[INPUT_LEFT] = GetKeyPress(VK_A) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+	bInputs[INPUT_TRIGGER_LEFT] = GetKeyTrigger(VK_A) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) && !bHoldingXinput[INPUT_TRIGGER_LEFT]);
 	bInputs[INPUT_DOWN] = (GetKeyPress(VK_S) && !GetKeyPress(VK_LCONTROL)) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
 	bInputs[INPUT_RIGHT] = GetKeyPress(VK_D) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+	bInputs[INPUT_TRIGGER_RIGHT] = GetKeyTrigger(VK_D) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) && !bHoldingXinput[INPUT_TRIGGER_LEFT]);
 	bInputs[INPUT_DEBUGAIM] = GetKeyTrigger(VK_1) || ((Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) && !bHoldingXinput[INPUT_DEBUGAIM]);
 	bInputs[INPUT_NINJACRAWL_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
 	bInputs[INPUT_UP] = GetKeyPress(VK_W) || (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
@@ -72,6 +75,7 @@ void XinputTriggerControl(bool BeforeInputs)
 		if (bHoldingXinput[INPUT_JUMP] && !(Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A)) bHoldingXinput[INPUT_JUMP] = false;
 		if (bHoldingXinput[INPUT_DEBUGAIM_ACCEPT] && !(Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A)) bHoldingXinput[INPUT_DEBUGAIM_ACCEPT] = false;
 		if (bHoldingXinput[INPUT_JUMP] && !(Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A)) bHoldingXinput[INPUT_DEBUGAIM] = false;
+		if (bHoldingXinput[INPUT_PAUSE] && !(Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_START)) bHoldingXinput[INPUT_PAUSE] = false;
 
 	}
 	else {
@@ -79,5 +83,6 @@ void XinputTriggerControl(bool BeforeInputs)
 		if (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A) bHoldingXinput[INPUT_JUMP] = true;
 		if (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A) bHoldingXinput[INPUT_DEBUGAIM_ACCEPT] = true;
 		if (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_A) bHoldingXinput[INPUT_DEBUGAIM] = true;
+		if (Player1->GetState().Gamepad.wButtons & XINPUT_GAMEPAD_START) bHoldingXinput[INPUT_PAUSE] = true;
 	}
 }

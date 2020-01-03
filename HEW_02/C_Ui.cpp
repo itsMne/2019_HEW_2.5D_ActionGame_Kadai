@@ -31,6 +31,9 @@
 
 #define MAIN_POS_DOOR_RIGHT 40
 #define MAIN_POS_DOOR_LEFT -20
+
+#define OPTION_SIZE_X 743/4
+#define OPTION_SIZE_Y 1433/4
 C_Ui* pZoomEffect = nullptr;
 
 C_Ui::C_Ui()
@@ -45,7 +48,9 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	nMP = nMaxMP = 0;
 	nScore = 0;
 	nFramesToUseZoom = 0;
+	fScaleOffset = 0;
 	vScorePos = XMFLOAT2(SCORE_POS_X, SCORE_POS_Y);
+	bSelected = false;
 	switch (Type)
 	{
 	case UI_HP00:
@@ -96,18 +101,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(980, 620);
 		SetPolygonPos(0, 0);
 		break;
-	case UI_MSTART:
-		SetPolygonSize(MSTART_SIZE_X, MSTART_SIZE_Y);
-		SetPolygonPos(MSTART_POS_X, MSTART_POS_Y);
-		break;
-	case UI_MRANKING:
-		SetPolygonSize(MRANKING_SIZE_X, MRANKING_SIZE_Y);
-		SetPolygonPos(MRANKING_POS_X, MRANKING_POS_Y);
-		break;
-	case UI_MEND:
-		SetPolygonSize(MEND_SIZE_X, MEND_SIZE_Y);
-		SetPolygonPos(MEND_POS_X, MEND_POS_Y);
-		break;
+
 	case UI_GAMEOVER:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		SetPolygonPos(0, 0);
@@ -139,15 +133,26 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(2048 / 1.65f, 1447 / 1.65f);
 		SetPolygonPos(-820, 25);
 		break;
+	case UI_PAUSE_BG:
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0, 0);
+		SetPolygonAlpha(0.5f);
+		break;
+	case UI_MENU_OPTION:
+		SetPolygonSize(OPTION_SIZE_X, OPTION_SIZE_Y);
+		SetPolygonPos(0, 0);
+		break;
 	}
 	fAcceleration = 0;
 	bDoorInPos = false;
 	bDoorOpen = true;
+	bIsInUse = true;
 }
 
 
 C_Ui::~C_Ui()
 {
+	Polygon2D::~Polygon2D();
 }
 
 void C_Ui::Init()
@@ -166,7 +171,7 @@ void C_Ui::Update()
 	SceneGame* pCurrentGame = GetCurrentGame();
 	if (!pCurrentGame && 
 		nType != UI_SLASH_EFFECT && nType != UI_DOOR_LEFT
-			&& nType != UI_DOOR_RIGHT)
+			&& nType != UI_DOOR_RIGHT && nType != UI_MENU_OPTION)
 		return;
 	if (pCurrentGame)
 		nScore = pCurrentGame->GetScore();
@@ -301,7 +306,26 @@ void C_Ui::Update()
 					Position.x = 840;
 			}
 		}
-
+		break;
+	case UI_PAUSE_BG:
+		break;
+	case UI_MENU_OPTION:
+		if (bScalingUP)
+		{
+			fScaleOffset+=1.0f;
+			if (fScaleOffset >= 20)
+				bScalingUP = false;
+		}
+		else 
+		{
+			fScaleOffset-=1.0f;
+			if (fScaleOffset <= -20)
+				bScalingUP = true;
+		}
+		if(bSelected)
+			SetPolygonSize(OPTION_SIZE_X+ fScaleOffset, OPTION_SIZE_Y+ fScaleOffset);
+		else
+			SetPolygonSize(OPTION_SIZE_X, OPTION_SIZE_Y);
 		break;
 	}
 
@@ -385,15 +409,6 @@ void C_Ui::Draw()
 	case UI_MENUFRAME:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
-	case UI_MSTART:
-		Polygon2D::DrawPolygon(GetDeviceContext());
-		break;
-	case UI_MRANKING:
-		Polygon2D::DrawPolygon(GetDeviceContext());
-		break;
-	case UI_MEND:
-		Polygon2D::DrawPolygon(GetDeviceContext());
-		break;
 	case UI_GAMEOVER:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -449,6 +464,11 @@ void C_Ui::SetDoorOpen(bool bset)
 {
 	bDoorOpen = bset;
 	fAcceleration = 0;
+}
+
+void C_Ui::SetAsSelectedOption(bool sel)
+{
+	bSelected = sel;
 }
 
 void SetFramesForZoomUse(int frames)

@@ -31,6 +31,7 @@ Polygon2D::Polygon2D()
 
 Polygon2D::Polygon2D(const char * TexturePath)
 {
+	printf("%s\n", TexturePath);
 	InitPolygon(GetDevice());
 	CreateTextureFromFile(GetDevice(), TexturePath, &gpTexture);
 	SetPolygonTexture(gpTexture);
@@ -242,7 +243,6 @@ void Polygon2D::SetVertexPolygon(void)
 		//頂点バッファの中身を埋める
 		ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 		HRESULT hr = S_OK;
-
 		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
 		D3D11_MAPPED_SUBRESOURCE msr;
 		hr = pDeviceContext->Map(g_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
@@ -342,6 +342,21 @@ void Polygon2D::ReduceAlpha(float fAlpha)
 		g_colPolygon.w -= fAlpha;
 		g_bInvalidate = true;
 	}
+}
+
+void Polygon2D::RotateAroundY(float rot)
+{
+	g_rotPolygon.y += rot;
+}
+
+void Polygon2D::SetRotationY(float rot)
+{
+	g_rotPolygon.y = rot;
+}
+
+float Polygon2D::GetRotationY()
+{
+	return g_rotPolygon.y;
 }
 
 float Polygon2D::GetAlpha()

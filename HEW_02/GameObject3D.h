@@ -38,7 +38,7 @@ protected:
 	XMFLOAT3 x3InitialPosition;
 public:
 	GameObject3D();
-	~GameObject3D();
+	virtual ~GameObject3D();
 	virtual void Init();
 	virtual void Update();
 	void AutomaticMovementControl();

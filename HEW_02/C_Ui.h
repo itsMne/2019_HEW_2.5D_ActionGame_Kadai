@@ -32,9 +32,6 @@ enum UITYPE
 	UI_TITLE,
 	UI_MENU,
 	UI_MENUFRAME,
-	UI_MSTART,
-	UI_MRANKING,
-	UI_MEND,
 	UI_GAMEOVER,
 	UI_CLEAR,
 	UI_RANKING,
@@ -42,6 +39,8 @@ enum UITYPE
 	UI_ZOOM_ATTACK,
 	UI_DOOR_RIGHT,
 	UI_DOOR_LEFT,
+	UI_PAUSE_BG,
+	UI_MENU_OPTION,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -58,6 +57,10 @@ private:
 	//フェードに関する
 	bool bDoorOpen, bDoorInPos;
 	float fAcceleration;
+	bool bSelected;
+	bool bScalingUP;
+	float fScaleOffset;
+	bool bIsInUse;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
@@ -72,6 +75,7 @@ public:
 	void SetFramesForZoomUse(int frames);
 	bool IsDoorInPosition();
 	void SetDoorOpen(bool bset);
+	void SetAsSelectedOption(bool sel);
 };
 
 void SetFramesForZoomUse(int frames);

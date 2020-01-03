@@ -12,13 +12,12 @@ class SceneMenu :
 	public SceneBase
 {
 private:
-	C_Ui* pMenuBg;
-	C_Ui* pMenuFrame;
 	C_Ui* pStart;
 	C_Ui* pRanking;
 	C_Ui* pEnd;
-
+	bool bOptionSelected;
 	MENU g_nSelectMenu;
+	int nNextScene;
 public:
 	SceneMenu();
 	~SceneMenu();
