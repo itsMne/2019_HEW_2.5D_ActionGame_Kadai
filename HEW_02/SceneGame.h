@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include "Sphere3D.h"
 #include "C_Ui.h"
+#define MAX_HIT_EFFECT 10
 class SceneGame :
 	public SceneBase
 {
@@ -37,6 +38,7 @@ private:
 	C_Ui*			pBG_UI;
 	C_Ui*			pContinue_UI;
 	C_Ui*			pGiveUp_UI;
+	C_Ui*			HitEffect_UI[MAX_HIT_EFFECT];
 	float			fPauseOptionsAcceleration;
 	int				nCurrentPauseSelection;
 	bool			bGameIsPaused;
@@ -77,5 +79,6 @@ public:
 	void CancelZoom();
 	void SetPauseFrames(int nPauseF);
 	bool IsGamePaused();
+	void SetHitEffect();
 };
 SceneGame* GetCurrentGame();

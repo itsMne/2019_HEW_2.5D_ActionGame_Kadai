@@ -96,7 +96,7 @@ HRESULT Polygon2D::InitPolygon(ID3D11Device* pDevice)
 
 	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_rotPolygon = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	g_sizPolygon = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	g_colPolygon = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	g_bInvalidate = false;
 
@@ -142,7 +142,7 @@ void Polygon2D::UpdatePolygon(void)
 void Polygon2D::DrawPolygon(ID3D11DeviceContext* pDeviceContext)
 {
 	// ägèk
-	XMMATRIX mWorld = XMMatrixScaling(g_sizPolygon.x, g_sizPolygon.y, g_sizPolygon.z);
+	XMMATRIX mWorld = XMMatrixScaling(Scale.x, Scale.y, Scale.z);
 	// âÒì]
 	mWorld *= XMMatrixRotationRollPitchYaw(XMConvertToRadians(g_rotPolygon.x),
 		XMConvertToRadians(g_rotPolygon.y), XMConvertToRadians(g_rotPolygon.z));
@@ -285,8 +285,8 @@ void Polygon2D::SetPolygonPos(float fX, float fY)
 //=============================================================================
 void Polygon2D::SetPolygonSize(float fScaleX, float fScaleY)
 {
-	g_sizPolygon.x = fScaleX;
-	g_sizPolygon.y = fScaleY;
+	Scale.x = fScaleX;
+	Scale.y = fScaleY;
 }
 
 //=============================================================================

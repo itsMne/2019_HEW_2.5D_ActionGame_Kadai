@@ -41,6 +41,7 @@ enum UITYPE
 	UI_DOOR_LEFT,
 	UI_PAUSE_BG,
 	UI_MENU_OPTION,
+	UI_HIT_EFFECT,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -76,6 +77,8 @@ public:
 	bool IsDoorInPosition();
 	void SetDoorOpen(bool bset);
 	void SetAsSelectedOption(bool sel);
+	void SetHitEffectUse();
+	bool GetUse();
 };
 
 void SetFramesForZoomUse(int frames);

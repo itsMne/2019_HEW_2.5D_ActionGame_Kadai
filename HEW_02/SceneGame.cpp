@@ -17,6 +17,7 @@ SceneGame* CurrentGame = nullptr;
 
 SceneGame::SceneGame(): SceneBase()
 {
+	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
 	Init();
 	CurrentGame = this;
 	nScore = 0;
@@ -102,6 +103,8 @@ void SceneGame::Init()
 	fCurrentInGameZoom = SceneCamera->GetCurrentZoom();
 	bGameIsPaused = false;
 	nCurrentPauseSelection = PAUSE_CONTINUE;
+	for (int i = 0; i < MAX_HIT_EFFECT; i++)
+		HitEffect_UI[i] = new C_Ui("data/texture/AuraEffect.tga", UI_HIT_EFFECT);
 }
 
 void SceneGame::Uninit()
@@ -191,6 +194,8 @@ int SceneGame::Update()
 
 		return nSceneType;
 	}
+	for (int i = 0; i < MAX_HIT_EFFECT; i++)
+		HitEffect_UI[i]->Update();
 	fPauseOptionsAcceleration = 0;
 	pGiveUp_UI->SetRotationY(90);
 	pContinue_UI->SetRotationY(90);
@@ -293,7 +298,6 @@ int SceneGame::Update()
 	Mirrors->Update();//鏡（テレポート）
 	Enemies->Update();//敵
 	Goals->Update();//ゴール
-
 	return nSceneType;
 }
 
@@ -352,13 +356,15 @@ void SceneGame::Draw()
 	pSpeed_MoveObject_UI->Draw();
 	pDelay_MoveObject_UI->Draw();
 	pZoomAttack_UI->Draw();
-
+	for (int i = 0; i < MAX_HIT_EFFECT; i++)
+		HitEffect_UI[i]->Draw();
 	if (bGameIsPaused)
 	{
 		pBG_UI->Draw();
 		pGiveUp_UI->Draw();
 		pContinue_UI->Draw();
 	}
+	
 	// デバッグ文字列表示
 	DrawDebugProc();
 }
@@ -461,6 +467,22 @@ void SceneGame::SetPauseFrames(int nPauseF)
 bool SceneGame::IsGamePaused()
 {
 	return nPauseFrames>0;
+}
+
+void SceneGame::SetHitEffect()
+{
+	for (int i = 0; i < MAX_HIT_EFFECT; i++)
+	{
+		printf("eff: %d\n", i);
+		if (!HitEffect_UI[i])
+			continue;
+		
+		if (HitEffect_UI[i]->GetUse())
+			continue;
+		
+		HitEffect_UI[i]->SetHitEffectUse();
+		return;
+	}
 }
 
 SceneGame * GetCurrentGame()

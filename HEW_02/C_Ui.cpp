@@ -142,11 +142,15 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(OPTION_SIZE_X, OPTION_SIZE_Y);
 		SetPolygonPos(0, 0);
 		break;
+	case UI_HIT_EFFECT:
+		SetPolygonSize(1, 1);
+		SetPolygonPos(0, 0);
+		break;
 	}
 	fAcceleration = 0;
 	bDoorInPos = false;
 	bDoorOpen = true;
-	bIsInUse = true;
+	bIsInUse = false;
 }
 
 
@@ -328,6 +332,14 @@ void C_Ui::Update()
 		else
 			SetPolygonSize(OPTION_SIZE_X, OPTION_SIZE_Y);
 		break;
+	case UI_HIT_EFFECT:
+		if (!bIsInUse)
+			break;
+		fAcceleration += 10;
+		SetPolygonSize(Scale.x+ fAcceleration, Scale.y+ fAcceleration);
+		if (Scale.x > 1830)
+			bIsInUse = false;
+		break;
 	}
 
 
@@ -341,12 +353,12 @@ void C_Ui::Draw()
 	switch (nType)
 	{
 	case UI_HP01:
-		SetPolygonFrameSize((g_sizPolygon.x / HP_SIZE_X), g_sizPolygon.y / HP_SIZE_Y);
+		SetPolygonFrameSize((Scale.x / HP_SIZE_X), Scale.y / HP_SIZE_Y);
 		SetPolygonUV(1, 1);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	case UI_MP:
-		SetPolygonFrameSize((g_sizPolygon.x / HP_SIZE_X), g_sizPolygon.y / HP_SIZE_Y);
+		SetPolygonFrameSize((Scale.x / HP_SIZE_X), Scale.y / HP_SIZE_Y);
 		SetPolygonUV(1, 1);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -423,6 +435,11 @@ void C_Ui::Draw()
 		SetPolygonUV(uv.U / 4.0f, uv.V / 8.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
+	case UI_HIT_EFFECT:
+		if (!bIsInUse)
+			break;
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -470,6 +487,18 @@ void C_Ui::SetDoorOpen(bool bset)
 void C_Ui::SetAsSelectedOption(bool sel)
 {
 	bSelected = sel;
+}
+
+void C_Ui::SetHitEffectUse()
+{
+	bIsInUse = true;
+	fAcceleration = 0;
+	SetPolygonSize(0, 0);
+}
+
+bool C_Ui::GetUse()
+{
+	return bIsInUse;
 }
 
 void SetFramesForZoomUse(int frames)

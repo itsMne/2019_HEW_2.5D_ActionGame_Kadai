@@ -56,6 +56,7 @@ private:
 	int nTopSendOffFrame;
 	int nMidSendOffFrame;
 	int nUnlitFrames;
+	int nEnragedHitCountMax;
 	int nEnragedFrames;
 	int nEnragedCounter;
 	int nEnragedMeter;
