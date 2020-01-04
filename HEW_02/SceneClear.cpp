@@ -10,6 +10,7 @@ SceneClear::SceneClear()
 
 SceneClear::~SceneClear()
 {
+	Uninit();
 }
 
 void SceneClear::Init()
@@ -18,6 +19,7 @@ void SceneClear::Init()
 
 void SceneClear::Uninit()
 {
+	SAFE_DELETE(Clear);
 }
 
 int SceneClear::Update()

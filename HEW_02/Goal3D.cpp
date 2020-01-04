@@ -12,6 +12,7 @@ Goal3D::Goal3D(): GameObject3D()
 
 Goal3D::~Goal3D()
 {
+	GameObject3D::~GameObject3D();
 	Uninit();
 }
 

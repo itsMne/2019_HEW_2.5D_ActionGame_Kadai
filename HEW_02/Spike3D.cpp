@@ -12,6 +12,7 @@ Spike3D::Spike3D() : GameObject3D()
 
 Spike3D::~Spike3D()
 {
+	GameObject3D::~GameObject3D();
 	Uninit();
 }
 
@@ -92,7 +93,7 @@ void Spike3D::Draw()
 
 void Spike3D::Uninit()
 {
-	GameObject3D::Uninit();
+	SAFE_DELETE(pSpikeModel);
 }
 
 void Spike3D::RaiseSpikesX(int rise)

@@ -131,7 +131,7 @@ void SceneGame::Uninit()
 
 
 	// デバッグ文字列表示終了処理
-	UninitDebugProc();
+	//UninitDebugProc();
 }
 
 int SceneGame::Update()

@@ -31,7 +31,7 @@ SceneMenu::SceneMenu()
 
 SceneMenu::~SceneMenu()
 {
-
+	Uninit();
 }
 
 void SceneMenu::Init()

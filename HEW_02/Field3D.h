@@ -35,7 +35,7 @@ public:
 	Field3D(const char* TexturePath);
 	~Field3D();
 	HRESULT Init(const char* TexturePath);
-	void UninitField(void);
+	void Uninit(void);
 	void UninitTextures(void);
 	void Update(void);
 	void Draw(void);

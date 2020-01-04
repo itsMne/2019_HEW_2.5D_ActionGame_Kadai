@@ -10,6 +10,7 @@ SceneRanking::SceneRanking()
 
 SceneRanking::~SceneRanking()
 {
+	Uninit();
 }
 
 void SceneRanking::Init()
@@ -18,6 +19,7 @@ void SceneRanking::Init()
 
 void SceneRanking::Uninit()
 {
+	SAFE_DELETE(Ranking);
 }
 
 int SceneRanking::Update()

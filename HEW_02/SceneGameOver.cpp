@@ -10,6 +10,7 @@ SceneGameOver::SceneGameOver()
 
 SceneGameOver::~SceneGameOver()
 {
+	Uninit();
 }
 
 void SceneGameOver::Init()
@@ -18,6 +19,7 @@ void SceneGameOver::Init()
 
 void SceneGameOver::Uninit()
 {
+	SAFE_DELETE(GameOver);
 }
 
 int SceneGameOver::Update()

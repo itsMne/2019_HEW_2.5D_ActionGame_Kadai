@@ -153,6 +153,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 C_Ui::~C_Ui()
 {
 	Polygon2D::~Polygon2D();
+	Uninit();
 }
 
 void C_Ui::Init()

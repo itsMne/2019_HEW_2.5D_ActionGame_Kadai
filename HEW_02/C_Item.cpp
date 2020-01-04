@@ -22,6 +22,7 @@ C_Item::C_Item(int Type)
 
 C_Item::~C_Item()
 {
+	GameObject3D::~GameObject3D();
 	SAFE_DELETE(bbItem);
 }
 

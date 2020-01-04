@@ -75,7 +75,8 @@ Field3D::Field3D(const char* TexturePath) : GameObject3D()
 
 Field3D::~Field3D()
 {
-	UninitField();
+	GameObject3D::~GameObject3D();
+	Uninit();
 }
 
 
@@ -178,7 +179,7 @@ HRESULT Field3D::Init(const char* TexturePath)
 //=============================================================================
 // 終了処理
 //=============================================================================
-void Field3D::UninitField(void)
+void Field3D::Uninit(void)
 {
 	// テクスチャ サンプラの開放
 	SAFE_RELEASE(g_pSamplerState);

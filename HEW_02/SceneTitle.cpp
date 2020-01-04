@@ -21,6 +21,7 @@ SceneTitle::SceneTitle()
 
 SceneTitle::~SceneTitle()
 {
+	Uninit();
 }
 
 void SceneTitle::Init()
@@ -29,6 +30,10 @@ void SceneTitle::Init()
 
 void SceneTitle::Uninit()
 {
+	SAFE_DELETE(Title);
+	SAFE_DELETE(SlashEffect);
+	SAFE_DELETE(Effect1);
+	SAFE_DELETE(Effect2);
 }
 
 int SceneTitle::Update()

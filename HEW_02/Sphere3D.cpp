@@ -32,6 +32,7 @@ Sphere3D::Sphere3D(const char * szPath)
 
 Sphere3D::~Sphere3D()
 {
+	Uninit();
 }
 
 HRESULT Sphere3D::Init(XMFLOAT3 pos, XMFLOAT3 rot, int nSlice, int nStack, float fRadius, const char* szPath)

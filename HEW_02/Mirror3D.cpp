@@ -14,6 +14,7 @@ Mirror3D::Mirror3D(XMFLOAT3 Destination)
 
 Mirror3D::~Mirror3D()
 {
+	GameObject3D::~GameObject3D();
 	Uninit();
 }
 
