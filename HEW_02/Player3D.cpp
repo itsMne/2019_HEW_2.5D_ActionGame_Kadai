@@ -457,6 +457,7 @@ void Player3D::AttackingStateControl()
 				bIsAttacking = true;
 			break;
 		case NINJA_AIR_DOWN:
+			nCancelGravityFrames = 0;
 			bIsAttacking = true;
 			if (nAttackFrame >= 1746)
 				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
@@ -469,6 +470,7 @@ void Player3D::AttackingStateControl()
 			}
 			break;
 		case NINJA_UPPER_SLASH:
+			nCancelGravityFrames = 10;
 			if (pCurrentFloor && nAttackFrame>997) {
 				Jump(JUMP_FORCE);
 			}
