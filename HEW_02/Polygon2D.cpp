@@ -97,7 +97,7 @@ HRESULT Polygon2D::InitPolygon(ID3D11Device* pDevice)
 	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_rotPolygon = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	g_colPolygon = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	g_bInvalidate = false;
 
 	g_posTexFrame = XMFLOAT2(0.0f, 0.0f);
@@ -206,10 +206,10 @@ HRESULT Polygon2D::MakeVertexPolygon(ID3D11Device* pDevice)
 	g_vertexWk[3].vtx = XMFLOAT3(0.5f, -0.5f, 0.0f);
 
 	// 拡散反射光の設定
-	g_vertexWk[0].diffuse = g_colPolygon;
-	g_vertexWk[1].diffuse = g_colPolygon;
-	g_vertexWk[2].diffuse = g_colPolygon;
-	g_vertexWk[3].diffuse = g_colPolygon;
+	g_vertexWk[0].diffuse = Color;
+	g_vertexWk[1].diffuse = Color;
+	g_vertexWk[2].diffuse = Color;
+	g_vertexWk[3].diffuse = Color;
 
 	// テクスチャ座標の設定
 	g_vertexWk[0].tex = XMFLOAT2(0.0f, 0.0f);
@@ -248,10 +248,10 @@ void Polygon2D::SetVertexPolygon(void)
 		hr = pDeviceContext->Map(g_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
 		if (SUCCEEDED(hr)) {
 			// 拡散反射光の設定
-			g_vertexWk[0].diffuse = g_colPolygon;
-			g_vertexWk[1].diffuse = g_colPolygon;
-			g_vertexWk[2].diffuse = g_colPolygon;
-			g_vertexWk[3].diffuse = g_colPolygon;
+			g_vertexWk[0].diffuse = Color;
+			g_vertexWk[1].diffuse = Color;
+			g_vertexWk[2].diffuse = Color;
+			g_vertexWk[3].diffuse = Color;
 			// 頂点データを上書き
 			memcpy_s(msr.pData, sizeof(g_vertexWk), g_vertexWk, sizeof(g_vertexWk));
 			// 頂点データをアンロックする
@@ -320,26 +320,26 @@ void Polygon2D::SetPolygonFrameSize(float fWidth, float fHeight)
 //=============================================================================
 void Polygon2D::SetPolygonColor(float fRed, float fGreen, float fBlue)
 {
-	if (fRed != g_colPolygon.x || fGreen != g_colPolygon.y || fBlue != g_colPolygon.z) {
-		g_colPolygon.x = fRed;
-		g_colPolygon.y = fGreen;
-		g_colPolygon.z = fBlue;
+	if (fRed != Color.x || fGreen != Color.y || fBlue != Color.z) {
+		Color.x = fRed;
+		Color.y = fGreen;
+		Color.z = fBlue;
 		g_bInvalidate = true;
 	}
 }
 
 void Polygon2D::SetPolygonAlpha(float fAlpha)
 {
-	if (fAlpha != g_colPolygon.w) {
-		g_colPolygon.w = fAlpha;
+	if (fAlpha != Color.w) {
+		Color.w = fAlpha;
 		g_bInvalidate = true;
 	}
 }
 
 void Polygon2D::ReduceAlpha(float fAlpha)
 {
-	if (fAlpha != g_colPolygon.w) {
-		g_colPolygon.w -= fAlpha;
+	if (fAlpha != Color.w) {
+		Color.w -= fAlpha;
 		g_bInvalidate = true;
 	}
 }
@@ -361,7 +361,7 @@ float Polygon2D::GetRotationY()
 
 float Polygon2D::GetAlpha()
 {
-	return g_colPolygon.w;
+	return Color.w;
 }
 
 UV Polygon2D::GetUV()

@@ -3,6 +3,7 @@
 #include "Sphere3D.h"
 #include "C_Ui.h"
 #define MAX_HIT_EFFECT 10
+#define MAX_SAKURA_LEAVES 15
 class SceneGame :
 	public SceneBase
 {
@@ -39,6 +40,7 @@ private:
 	C_Ui*			pContinue_UI;
 	C_Ui*			pGiveUp_UI;
 	C_Ui*			HitEffect_UI[MAX_HIT_EFFECT];
+	C_Ui*			pSakuraleaf[MAX_SAKURA_LEAVES];
 	float			fPauseOptionsAcceleration;
 	int				nCurrentPauseSelection;
 	bool			bGameIsPaused;
@@ -80,5 +82,6 @@ public:
 	void SetPauseFrames(int nPauseF);
 	bool IsGamePaused();
 	void SetHitEffect();
+	void SetPetalsFrames(int frames);
 };
 SceneGame* GetCurrentGame();

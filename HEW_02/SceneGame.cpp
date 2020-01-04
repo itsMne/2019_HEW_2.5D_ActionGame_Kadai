@@ -14,7 +14,6 @@ enum PAUSE_OPTION
 
 SceneGame* CurrentGame = nullptr;
 
-
 SceneGame::SceneGame(): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
@@ -83,6 +82,9 @@ void SceneGame::Init()
 	pScore_UI = new C_Ui("data/texture/jNum.tga", UI_NUMBER);
 	// Score
 	pScore_Frame_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
+
+	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
+		pSakuraleaf[i] = new C_Ui("data/texture/LeafTexture.tga", UI_SAKURALEAF);
 
 	//レベルエディター
 	pLevel_Editor_UI = new C_Ui("data/texture/UI_LEINSTRUCTIONS.tga", UI_LEVEL_EDITOR);
@@ -298,6 +300,8 @@ int SceneGame::Update()
 	Mirrors->Update();//鏡（テレポート）
 	Enemies->Update();//敵
 	Goals->Update();//ゴール
+	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
+		pSakuraleaf[i]->Update();//ゴール
 	return nSceneType;
 }
 
@@ -356,6 +360,8 @@ void SceneGame::Draw()
 	pSpeed_MoveObject_UI->Draw();
 	pDelay_MoveObject_UI->Draw();
 	pZoomAttack_UI->Draw();
+	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
+		pSakuraleaf[i]->Draw();
 	for (int i = 0; i < MAX_HIT_EFFECT; i++)
 		HitEffect_UI[i]->Draw();
 	if (bGameIsPaused)
@@ -482,6 +488,15 @@ void SceneGame::SetHitEffect()
 		
 		HitEffect_UI[i]->SetHitEffectUse();
 		return;
+	}
+}
+
+void SceneGame::SetPetalsFrames(int frames)
+{
+	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
+	{
+		if (pSakuraleaf[i])
+			pSakuraleaf[i]->SetFrameUse(frames);
 	}
 }
 

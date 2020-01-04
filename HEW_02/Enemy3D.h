@@ -20,6 +20,7 @@ enum ENEMY_STATES
 	ENEMY_FALLING,
 	ENEMY_MOVING,
 	ENEMY_ATTACKING,
+	ENEMY_STUNT,
 	ENEMY_SENDOFF,
 	ENEMY_DEAD,
 	MAX_ENEMY_STATES
@@ -60,6 +61,7 @@ private:
 	int nEnragedFrames;
 	int nEnragedCounter;
 	int nEnragedMeter;
+	int nStuntFrames;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

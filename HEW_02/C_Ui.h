@@ -42,6 +42,7 @@ enum UITYPE
 	UI_PAUSE_BG,
 	UI_MENU_OPTION,
 	UI_HIT_EFFECT,
+	UI_SAKURALEAF,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -54,6 +55,7 @@ private:
 	int nMP, nMaxMP;
 	int nScore;
 	XMFLOAT2 vScorePos;
+	XMFLOAT2 vSpeed;
 	int nFramesToUseZoom;
 	//フェードに関する
 	bool bDoorOpen, bDoorInPos;
@@ -62,6 +64,7 @@ private:
 	bool bScalingUP;
 	float fScaleOffset;
 	bool bIsInUse;
+	int nFrameUse;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
@@ -79,6 +82,7 @@ public:
 	void SetAsSelectedOption(bool sel);
 	void SetHitEffectUse();
 	bool GetUse();
+	void SetFrameUse(int frames);
 };
 
 void SetFramesForZoomUse(int frames);

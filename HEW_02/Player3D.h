@@ -33,6 +33,7 @@ enum PLAYER_STATES
 	PLAYER_TELEPORTING,
 	PLAYER_TELEPORTING_DAMAGED,
 	PLAYER_DEAD,
+	PLAYER_GEISHA_DODGE,
 	PLAYER_MAX
 };
 enum AirMove
@@ -185,6 +186,9 @@ public:
 	bool PlayerGameOver();
 	bool PlayerIsFalling();
 	PLAYER_ATTACK_MOVE* GetPlayerAttack();
+	int GetCurrentTransformation();
+	void ReduceStamina(int red);
+	void SetPlayerState(int newState);
 };
 
 Player3D* GetMainPlayer();

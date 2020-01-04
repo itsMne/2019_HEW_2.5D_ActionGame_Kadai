@@ -9,9 +9,11 @@
 #define WARRIOR_MODEL_PATH "data/model/Warrior.fbx"
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
-#define PAUSE_FRAMES_PER_ATTACK 4
+#define PAUSE_FRAMES_PER_ATTACK 6
 #define UNLIT_FRAMES_PER_ATTACK 9
+
 SceneGame* pGame;
+
 enum ONI_ANIMATION
 {
 	ONI_IDLE=1,
@@ -62,6 +64,7 @@ void Enemy3D::Init()
 	nUnlitFrames = 0;
 	nDamageAgainstPlayer = 0;
 	fSendOffAcceleration = 0;
+	nStuntFrames = 0;
 	nFramesSendOff = 0;
 	nLastPlayerAttack = -1;
 	nDirection == RIGHT_DIR;
@@ -288,6 +291,8 @@ void Enemy3D::Update()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
+	if (pPlayer->GetState() == PLAYER_GEISHA_DODGE)
+		return;
 	if (nState == ENEMY_DEAD)
 	{
 		GetMainCamera()->SetFocalPoint(GetMainPlayer());
@@ -348,9 +353,15 @@ void Enemy3D::EnemyStatesControl()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	GameObject3D* pWall = nullptr;
 	DamageControl();
+	if (nStuntFrames > 0)
+		nStuntFrames--;
 	switch (nState)
 	{
 	case ENEMY_IDLE:
+		if (nStuntFrames > 0) {
+			nState = ENEMY_STUNT;
+			break;
+		}
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_IDLE]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 		if (pPlayer->GetFloor() == pCurrentFloor && pPlayer->GetFloor()!=nullptr) {
@@ -373,9 +384,21 @@ void Enemy3D::EnemyStatesControl()
 			nState = ENEMY_IDLE;
 		break;
 	case ENEMY_MOVING:
+		if (nStuntFrames > 0) {
+			nState = ENEMY_STUNT;
+			break;
+		}
 		EnemyMovingControl();
 		break;
+	case ENEMY_STUNT:
+		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
+		pModel->SwitchAnimation(nAnimations[ENEMY_SENDUP]);
+		break;
 	case ENEMY_ATTACKING:
+		if (nStuntFrames > 0) {
+			nState = ENEMY_STUNT;
+			break;
+		}
 		if (++nDelayCounter < nDelayFramesBeforeAttack) {
 			pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_ATTACKING]);
 			pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
@@ -384,6 +407,30 @@ void Enemy3D::EnemyStatesControl()
 		if (pModel->GetCurrentFrame() > nMinAttackFrame && pModel->GetCurrentFrame() < nMaxAttackFrame) {
 			if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetAttackHitbox()))
 			{
+				if (pPlayer->GetCurrentTransformation() == MODEL_GEISHA)
+				{
+					if (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetAttackHitbox()))
+					{
+						nState = ENEMY_STUNT;
+						nStuntFrames = 240;
+						pGame->ZoomPause(70, 120, 3, false, true);
+						pGame->SetPetalsFrames(240);
+						pGame->SetHitEffect();
+						pPlayer->SetPlayerState(PLAYER_GEISHA_DODGE);
+						pPlayer->ReduceStamina((int)(pPlayer->GetPlayerMaxMp() / 1.5f));
+					}
+					else {
+						nState = ENEMY_STUNT;
+						nStuntFrames = 120;
+						pGame->ZoomPause(70, 120, 3, false, true);
+						pGame->SetPetalsFrames(120);
+						pPlayer->SetPlayerState(PLAYER_GEISHA_DODGE);
+						pPlayer->ReduceStamina((int)(pPlayer->GetPlayerMaxMp() / 1.5f));
+					}
+					pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
+					pModel->SwitchAnimation(nAnimations[ENEMY_SENDUP]);
+					return;
+				}
 				pPlayer->SetDamage(nDamageAgainstPlayer);
 			}
 		}
@@ -485,6 +532,8 @@ void Enemy3D::DamageControl()
 	if (!pPlayerAttack)
 		return;
 	if (!pGame)
+		return;
+	if (pPlayerAttack->Animation == GEISHA_BLOCK)
 		return;
 	printf("enrcount: %d\n", nEnragedMeter);
 

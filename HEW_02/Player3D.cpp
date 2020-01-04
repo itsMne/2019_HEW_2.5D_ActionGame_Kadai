@@ -13,7 +13,7 @@
 #define MAX_ATTACKS 14
 #define INIT_HP 100
 #define INIT_STAMINA 30
-#define TRANSFORM_ACCELERATION 0.075f
+#define TRANSFORM_ACCELERATION 0.095f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
 Player3D* MainPlayer;
 
@@ -119,6 +119,17 @@ void Player3D::Init()
 
 void Player3D::Update()
 {
+	if (nState == PLAYER_GEISHA_DODGE && pPlayerModels[MODEL_GEISHA])
+	{
+		pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(2.5f);
+		if(nDirection==RIGHT_DIR)
+			pPlayerModels[MODEL_GEISHA]->SwitchAnimation(GEISHA_DODGE_RIGHT);
+		else
+			pPlayerModels[MODEL_GEISHA]->SwitchAnimation(GEISHA_DODGE_LEFT);
+		if (pPlayerModels[MODEL_GEISHA]->GetLoops() >= 1)
+			nState = PLAYER_IDLE;
+		return;
+	}
 	if (pMainCamera && !IsDebugAimOn()) {
 		if (pMainCamera->GetFocalPoint() != this)
 			return;
@@ -1188,4 +1199,19 @@ bool Player3D::PlayerIsFalling()
 PLAYER_ATTACK_MOVE * Player3D::GetPlayerAttack()
 {
 	return pCurrentAttackPlaying;
+}
+
+int Player3D::GetCurrentTransformation()
+{
+	return nCurrentTransformation;
+}
+
+void Player3D::ReduceStamina(int red)
+{
+	nStamina -= red;
+}
+
+void Player3D::SetPlayerState(int newState)
+{
+	nState = newState;
 }

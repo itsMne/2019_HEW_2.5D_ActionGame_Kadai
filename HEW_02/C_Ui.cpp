@@ -49,6 +49,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	nScore = 0;
 	nFramesToUseZoom = 0;
 	fScaleOffset = 0;
+	nFrameUse = 0;
 	vScorePos = XMFLOAT2(SCORE_POS_X, SCORE_POS_Y);
 	bSelected = false;
 	switch (Type)
@@ -145,6 +146,16 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	case UI_HIT_EFFECT:
 		SetPolygonSize(1, 1);
 		SetPolygonPos(0, 0);
+		break;
+	case UI_SAKURALEAF:
+		SetPolygonSize(315/3, 315/3);
+		//nFrameUse = 240;
+		SetPolygonAlpha(0);
+		vSpeed.x = (float)(rand() % 5 + 2);
+		vSpeed.y = (float)(rand() % 5 + 2);
+		uv = { (float)(rand()%7),0 };
+		SetPolygonFrameSize(1.0f / 7.0f, 1.0f / 1.0f);
+		SetPolygonPos((float)(rand() %(SCREEN_WIDTH)- (SCREEN_WIDTH / 2)), (float)(rand() % (SCREEN_HEIGHT / 2) - (SCREEN_HEIGHT / 2)));
 		break;
 	}
 	fAcceleration = 0;
@@ -340,6 +351,34 @@ void C_Ui::Update()
 		if (Scale.x > 1830)
 			bIsInUse = false;
 		break;
+	case UI_SAKURALEAF:
+		pPlayer = GetMainPlayer();
+		if (nFrameUse > 0)
+		{
+			if (GetAlpha() <= 1)
+				SetPolygonAlpha(Color.w + 0.05f);
+			if (GetAlpha() > 1)
+				SetPolygonAlpha(1);
+			if (pPlayer) {
+				if (GetAlpha() == 1 && pPlayer->GetState() != PLAYER_GEISHA_DODGE)
+					nFrameUse--;
+			}
+		}
+		else {
+			if (GetAlpha() >= 0)
+				SetPolygonAlpha(Color.w - 0.05f);
+			if (GetAlpha() < 0)
+				SetPolygonAlpha(0);
+		}
+		Position.x-=vSpeed.x;
+		Position.y-=vSpeed.y;
+		if (Position.x < -SCREEN_WIDTH / 2 - (Scale.x / 2)
+			|| Position.y < -SCREEN_HEIGHT / 2 - (Scale.y / 2)) {
+			SetPolygonPos((float)(rand() % (SCREEN_WIDTH) - (SCREEN_WIDTH / 2)), (SCREEN_HEIGHT / 2));
+			vSpeed.x = (float)(rand() % 3 + 1);
+			vSpeed.y = (float)(rand() % 3 + 1);
+		}
+		break;
 	}
 
 
@@ -440,6 +479,12 @@ void C_Ui::Draw()
 			break;
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
+	case UI_SAKURALEAF:
+		if (GetAlpha() == 0)
+			return;
+		SetPolygonUV(uv.U / 7.0f, 1.0f);
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -499,6 +544,11 @@ void C_Ui::SetHitEffectUse()
 bool C_Ui::GetUse()
 {
 	return bIsInUse;
+}
+
+void C_Ui::SetFrameUse(int frames)
+{
+	nFrameUse = frames;
 }
 
 void SetFramesForZoomUse(int frames)
