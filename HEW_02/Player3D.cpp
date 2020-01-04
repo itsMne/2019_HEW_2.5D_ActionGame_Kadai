@@ -1196,6 +1196,11 @@ bool Player3D::PlayerIsFalling()
 	return f_yForce>0;
 }
 
+bool Player3D::PlayerIsTransforming()
+{
+	return nNextTransform != nCurrentTransformation;
+}
+
 PLAYER_ATTACK_MOVE * Player3D::GetPlayerAttack()
 {
 	return pCurrentAttackPlaying;

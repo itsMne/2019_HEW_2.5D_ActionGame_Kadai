@@ -1,6 +1,7 @@
 #include "Enemy3D.h"
 #include "SceneGame.h"
 #include "Player3D.h"
+#include "RankManager.h"
 #include "C_Ui.h"
 #define RED_ONI_MODEL_PATH "data/model/RedOni.fbx"
 #define GREEN_ONI_MODEL_PATH "data/model/GreenOni.fbx"
@@ -291,6 +292,8 @@ void Enemy3D::Update()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	if (pPlayer->IsDebugAimOn())
 		return;
+	if (pPlayer->PlayerIsTransforming())
+		return;
 	if (pPlayer->GetState() == PLAYER_GEISHA_DODGE)
 		return;
 	if (nState == ENEMY_DEAD)
@@ -418,6 +421,7 @@ void Enemy3D::EnemyStatesControl()
 						pGame->SetHitEffect();
 						pPlayer->SetPlayerState(PLAYER_GEISHA_DODGE);
 						pPlayer->ReduceStamina((int)(pPlayer->GetPlayerMaxMp() / 1.5f));
+						AddMoveToRankMeter(GEISHA_BLOCK+100, 200);
 					}
 					else {
 						nState = ENEMY_STUNT;
@@ -426,6 +430,7 @@ void Enemy3D::EnemyStatesControl()
 						pGame->SetPetalsFrames(120);
 						pPlayer->SetPlayerState(PLAYER_GEISHA_DODGE);
 						pPlayer->ReduceStamina((int)(pPlayer->GetPlayerMaxMp() / 1.5f));
+						AddMoveToRankMeter(GEISHA_DODGE_RIGHT + 100, 50);
 					}
 					pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
 					pModel->SwitchAnimation(nAnimations[ENEMY_SENDUP]);
@@ -544,10 +549,12 @@ void Enemy3D::DamageControl()
 	if (pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH)
 	{
 		if (bDoDamage) {
+			AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 30);
 			GetMainCamera()->ShakeCamera({ 1.85f,1.85f,0.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK*1.5f);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
 			nHP -= 5;
+			
 		}
 		Position.x = AttackHitbox.x;
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState() != PLAYER_TELEPORTING) {
@@ -564,6 +571,8 @@ void Enemy3D::DamageControl()
 				Position.x += 1 * nDirection;
 			}
 		}
+		if (bDoDamage)
+			pGame->RaiseScoreWithRank(5); 
 		return;
 	}
 
@@ -582,6 +591,7 @@ void Enemy3D::DamageControl()
 			SetUnlitForFrames(12);
 			nHP -= 10;
 			pGame->SetHitEffect();
+			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 		}
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
 		if (pModel->GetAnimation() == nAnimations[ENEMY_SENDUP]) {
@@ -602,6 +612,7 @@ void Enemy3D::DamageControl()
 			nState = ENEMY_FALLING;
 		nFramesSendOff = 5;
 		if (bDoDamage) {
+			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			nHP -= 10;
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
@@ -618,6 +629,7 @@ void Enemy3D::DamageControl()
 			nEnragedMeter = 0;
 		nState = ENEMY_FALLING;
 		if (bDoDamage) {
+			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
@@ -630,6 +642,14 @@ void Enemy3D::DamageControl()
 	default:
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
 		if (bDoDamage) {
+			if (pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_A || pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_B ||
+				pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_C)
+				AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 40);
+			else if (pPlayerAttack->Animation == NINJA_ATTACK_COMBO_A || pPlayerAttack->Animation == NINJA_ATTACK_COMBO_B ||
+				pPlayerAttack->Animation == NINJA_ATTACK_COMBO_C)
+				AddMoveToRankMeter(NINJA_ATTACK_COMBO_A, 40);
+			else
+				AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			GetMainCamera()->ShakeCamera({ 1.85f,1.85f,0.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
 			SetUnlitForFrames(UNLIT_FRAMES_PER_ATTACK);
@@ -680,7 +700,8 @@ void Enemy3D::DamageControl()
 				}
 			}
 		}
-		
+		if (bDoDamage)
+			pGame->RaiseScoreWithRank(5);
 		fYForce = 0;
 		break;
 	}

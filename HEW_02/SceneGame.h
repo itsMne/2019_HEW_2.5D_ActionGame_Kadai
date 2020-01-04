@@ -8,7 +8,6 @@ class SceneGame :
 	public SceneBase
 {
 private:
-	int				nScore;
 	ID3D11Device*	g_pDevice;
 	Camera3D*		SceneCamera;
 	Light3D*		SceneLight;
@@ -75,6 +74,7 @@ public:
 	Go_List* GetEnemies();
 	int GetScore();
 	void RaiseScore(int rais);
+	void RaiseScoreWithRank(int rais);
 	void SetGoalReached();
 	Sphere3D* GetSkySphere();
 	void ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack);

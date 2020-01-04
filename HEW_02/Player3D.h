@@ -185,6 +185,7 @@ public:
 	void SetPlayerTeleporting(XMFLOAT3 Destination);
 	bool PlayerGameOver();
 	bool PlayerIsFalling();
+	bool PlayerIsTransforming();
 	PLAYER_ATTACK_MOVE* GetPlayerAttack();
 	int GetCurrentTransformation();
 	void ReduceStamina(int red);

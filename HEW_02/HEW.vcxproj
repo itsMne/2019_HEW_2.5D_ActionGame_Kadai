@@ -182,6 +182,7 @@
     <ClCompile Include="Model3D.cpp" />
     <ClCompile Include="Player3D.cpp" />
     <ClCompile Include="Polygon2D.cpp" />
+    <ClCompile Include="RankManager.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneClear.cpp" />
     <ClCompile Include="SceneGame.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Model3D.h" />
     <ClInclude Include="Player3D.h" />
     <ClInclude Include="Polygon2D.h" />
+    <ClInclude Include="RankManager.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneClear.h" />
     <ClInclude Include="SceneGame.h" />

@@ -3,6 +3,7 @@
 #include "Mirror3D.h"
 #include "Camera3D.h"
 #include "InputManager.h"
+#include "RankManager.h"
 #define RENDER_BOX_CAMERA { 0,0,0, 200,200,120 };
 
 enum PAUSE_OPTION
@@ -12,8 +13,8 @@ enum PAUSE_OPTION
 	PAUSE_MAX
 };
 
-SceneGame* CurrentGame = nullptr;
-
+SceneGame*		CurrentGame = nullptr;
+static int		nScore;
 SceneGame::SceneGame(): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
@@ -32,6 +33,7 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
+	RankManager::Init();
 	g_pDevice = GetDevice();
 	nScore = 0;
 	fZoomAcc = 0;
@@ -48,7 +50,6 @@ void SceneGame::Init()
 	bZoomBack = false;
 	if (MainWindow)
 		MainWindow->SetWindowColor(231.0f / 255.0f, 182.0f / 255.0f, 128.0f / 255.0f);
-	
 	SceneCamera = new Camera3D(true);
 	SceneLight = new Light3D();
 	pPlayer = new Player3D();
@@ -300,8 +301,13 @@ int SceneGame::Update()
 	Mirrors->Update();//鏡（テレポート）
 	Enemies->Update();//敵
 	Goals->Update();//ゴール
+
+	//ランクマネージャ
+	RankManager::Update();
+
+	//桜の葉
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
-		pSakuraleaf[i]->Update();//ゴール
+		pSakuraleaf[i]->Update();
 	return nSceneType;
 }
 
@@ -418,6 +424,11 @@ int SceneGame::GetScore()
 void SceneGame::RaiseScore(int rais)
 {
 	nScore += rais;
+}
+
+void SceneGame::RaiseScoreWithRank(int rais)
+{
+	nScore += rais*GetRank();
 }
 
 void SceneGame::SetGoalReached()

@@ -130,6 +130,7 @@
     <ClCompile Include="SceneMenu.cpp">
       <Filter>CPP\ゲームCPP\シーン</Filter>
     </ClCompile>
+    <ClCompile Include="RankManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -241,6 +242,7 @@
     <ClInclude Include="SceneMenu.h">
       <Filter>H\ゲームH\シーン</Filter>
     </ClInclude>
+    <ClInclude Include="RankManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">
