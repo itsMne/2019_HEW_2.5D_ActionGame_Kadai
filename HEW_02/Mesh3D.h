@@ -40,7 +40,7 @@ typedef struct {
 
 	ePrimitiveType primitiveType;			// プリミティブ型
 
-	MATERIAL* pMaterial = nullptr;					// マテリアル
+	MATERIAL* pMaterial;					// マテリアル
 } MESH;
 
 class Mesh3D

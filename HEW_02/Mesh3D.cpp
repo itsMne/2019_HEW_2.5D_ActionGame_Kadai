@@ -62,6 +62,7 @@ Mesh3D::Mesh3D()
 
 Mesh3D::~Mesh3D()
 {
+	Uninit();
 }
 
 HRESULT Mesh3D::Init()
@@ -257,11 +258,12 @@ void Mesh3D::ReleaseMesh()
 {
 	if (!pMesh) return;
 	// テクスチャ解放
-	SAFE_RELEASE(pMesh->pTexture);
+	//SAFE_RELEASE(pMesh->pTexture);
 	// 頂点バッファ解放
 	SAFE_RELEASE(pMesh->pVertexBuffer);
 	// インデックス バッファ解放
 	SAFE_RELEASE(pMesh->pIndexBuffer);
+	
 }
 
 void Mesh3D::SetNoCull(bool flag)

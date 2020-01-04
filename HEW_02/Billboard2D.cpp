@@ -159,8 +159,8 @@ void Billboard2D::Draw()
 void Billboard2D::End()
 {
 	// ƒƒbƒVƒ…‚ÌŠJ•ú
-	SAFE_RELEASE(pMesh->pTexture);
 	ReleaseMesh();
+	Mesh3D::Uninit();
 }
 
 void Billboard2D::SetBillboard(XMFLOAT3 pos, float fWidth, float fHeight, XMFLOAT4 color)
