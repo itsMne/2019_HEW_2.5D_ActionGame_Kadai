@@ -161,7 +161,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonSize(368/2, 315/2);
 		SetPolygonAlpha(1);
 		uv = { 0,0 };
-		SetPolygonFrameSize(1.0f / 4.0f, 1.0f / 1.0f);
+		SetPolygonFrameSize(1.0f / 3.0f, 1.0f / 1.0f);
 		SetPolygonPos(500,230);
 		break;
 	}
@@ -500,7 +500,7 @@ void C_Ui::Draw()
 		nCurrentRank = GetRank();
 		if (nCurrentRank <= 1)
 			return;
-		SetPolygonUV((float)(nCurrentRank-2) / 4.0f, 1.0f);
+		SetPolygonUV((float)(nCurrentRank-2) / 3.0f, 1.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	default:
