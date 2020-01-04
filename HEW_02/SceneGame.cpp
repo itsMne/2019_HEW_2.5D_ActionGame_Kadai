@@ -15,6 +15,7 @@ enum PAUSE_OPTION
 
 SceneGame*		CurrentGame = nullptr;
 static int		nScore;
+C_Ui* pVisualRank;
 SceneGame::SceneGame(): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
@@ -108,6 +109,7 @@ void SceneGame::Init()
 	nCurrentPauseSelection = PAUSE_CONTINUE;
 	for (int i = 0; i < MAX_HIT_EFFECT; i++)
 		HitEffect_UI[i] = new C_Ui("data/texture/AuraEffect.tga", UI_HIT_EFFECT);
+	pVisualRank = new C_Ui("data/texture/rankL.png", UI_RANK_VISUAL);
 }
 
 void SceneGame::Uninit()
@@ -370,6 +372,7 @@ void SceneGame::Draw()
 		pSakuraleaf[i]->Draw();
 	for (int i = 0; i < MAX_HIT_EFFECT; i++)
 		HitEffect_UI[i]->Draw();
+	pVisualRank->Draw();
 	if (bGameIsPaused)
 	{
 		pBG_UI->Draw();

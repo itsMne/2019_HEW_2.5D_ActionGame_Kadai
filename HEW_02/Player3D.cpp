@@ -2,6 +2,7 @@
 #include "debugproc.h"
 #include "InputManager.h"
 #include "input.h"
+#include "RankManager.h"
 #include "SceneGame.h"
 #include "string.h"
 #define PLAYER_SPEED	(5.0f)					// ˆÚ“®‘¬“x
@@ -106,7 +107,7 @@ void Player3D::Init()
 	nDirection = RIGHT_DIR;
 	nRecoveryFrames = 0;
 	nHP /= 2;//DEL
-	
+	nCancelGravityFrames = 0;
 #if SHOW_HITBOX
 	for (int i = 0; i < MAX_HB; i++)
 	{
@@ -433,21 +434,25 @@ void Player3D::AttackingStateControl()
 			break;
 		case NINJA_ATTACK_COMBOAIR_A:
 			bTwiceTheHitbox = true;
+			nCancelGravityFrames = 10;
 			if (nAttackFrame > 1222 && nAttackFrame < 1233)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_B:
 			bTwiceTheHitbox = true;
+			nCancelGravityFrames = 10;
 			if (nAttackFrame > 1311 && nAttackFrame < 1331)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_C:
 			bTwiceTheHitbox = true;
+			nCancelGravityFrames = 10;
 			if (nAttackFrame > 1394 && nAttackFrame < 1408)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_D:
 			bTwiceTheHitbox = true;
+			nCancelGravityFrames = 10;
 			if (nAttackFrame > 1473 && nAttackFrame < 1491)
 				bIsAttacking = true;
 			break;
@@ -804,6 +809,11 @@ void Player3D::Jump(float fJumpForce)
 
 void Player3D::GravityControl()
 {
+	if (nCancelGravityFrames > 0)
+	{
+		nCancelGravityFrames--;
+		return;
+	}
 	if (nState == PLAYER_ATTACKING) {
 		return;
 	}
@@ -1122,6 +1132,7 @@ void Player3D::SetDamage(int Damage)
 		return;
 	if (nHP == 0)
 		return;
+	ResetRanks();
 	nHP -= Damage;
 	if (nHP < 0)
 		nHP = 0;
@@ -1136,6 +1147,7 @@ void Player3D::SetDamageTeleport(int Damage)
 {
 	if (nState == PLAYER_TELEPORTING_DAMAGED)
 		return;
+	ResetRanks();
 	nState = PLAYER_TELEPORTING_DAMAGED;
 	nHP -= Damage;
 	if (nHP < 0)

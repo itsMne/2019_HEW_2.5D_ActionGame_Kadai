@@ -1,6 +1,7 @@
 #include "C_Ui.h"
 #include "Player3D.h"
 #include "SceneGame.h"
+#include "RankManager.h"
 #include "input.h"
 
 // É}ÉNÉçíËã`
@@ -149,13 +150,19 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		break;
 	case UI_SAKURALEAF:
 		SetPolygonSize(315/3, 315/3);
-		//nFrameUse = 240;
 		SetPolygonAlpha(0);
 		vSpeed.x = (float)(rand() % 5 + 2);
 		vSpeed.y = (float)(rand() % 5 + 2);
 		uv = { (float)(rand()%7),0 };
 		SetPolygonFrameSize(1.0f / 7.0f, 1.0f / 1.0f);
 		SetPolygonPos((float)(rand() %(SCREEN_WIDTH)- (SCREEN_WIDTH / 2)), (float)(rand() % (SCREEN_HEIGHT / 2) - (SCREEN_HEIGHT / 2)));
+		break;
+	case UI_RANK_VISUAL:
+		SetPolygonSize(368/2, 315/2);
+		SetPolygonAlpha(1);
+		uv = { 0,0 };
+		SetPolygonFrameSize(1.0f / 4.0f, 1.0f / 1.0f);
+		SetPolygonPos(500,230);
 		break;
 	}
 	fAcceleration = 0;
@@ -379,6 +386,9 @@ void C_Ui::Update()
 			vSpeed.y = (float)(rand() % 3 + 1);
 		}
 		break;
+	case UI_RANK_VISUAL:
+		
+		break;
 	}
 
 
@@ -386,6 +396,7 @@ void C_Ui::Update()
 
 void C_Ui::Draw()
 {
+	int nCurrentRank = 1;
 	if (nType == UI_ZOOM_ATTACK && nFramesToUseZoom <= 0)
 		return;
 	GetDeviceContext()->RSSetState(GetMainWindow()->GetRasterizerState(2));
@@ -483,6 +494,13 @@ void C_Ui::Draw()
 		if (GetAlpha() == 0)
 			return;
 		SetPolygonUV(uv.U / 7.0f, 1.0f);
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_RANK_VISUAL:
+		nCurrentRank = GetRank();
+		if (nCurrentRank <= 1)
+			return;
+		SetPolygonUV((float)(nCurrentRank-2) / 4.0f, 1.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	default:

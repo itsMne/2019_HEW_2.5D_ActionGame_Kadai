@@ -131,6 +131,7 @@ private:
 	XMFLOAT3 x3TeleportDestination;
 	bool bDeadAnimation;
 	int nRecoveryFrames;
+	int nCancelGravityFrames;
 public:
 	Player3D();
 	~Player3D();

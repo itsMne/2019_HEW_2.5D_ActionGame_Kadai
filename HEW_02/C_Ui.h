@@ -43,6 +43,7 @@ enum UITYPE
 	UI_MENU_OPTION,
 	UI_HIT_EFFECT,
 	UI_SAKURALEAF,
+	UI_RANK_VISUAL,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D

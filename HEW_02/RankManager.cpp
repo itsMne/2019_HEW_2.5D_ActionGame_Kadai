@@ -102,7 +102,6 @@ void RankManager::Update()
 	if (fRankFrames < 0)
 		fRankFrames = 0;
 	AddResult = MOVE_NOT_ADDED;
-	printf("RANK: %d\n", GetRank());
 }
 
 //*****************************************************************************
