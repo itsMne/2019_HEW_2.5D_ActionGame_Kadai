@@ -86,6 +86,7 @@ enum ANIMATION_SAMURAI
 	SAMURAI_IDLE,
 	SAMURAI_COMBOA,
 	SAMURAI_COMBOB,
+	SAMURAI_STINGER=30
 };
 typedef struct PLAYER_ATTACK_MOVE
 {
@@ -114,7 +115,7 @@ private:
 	int nInputTimer;
 	int nHP;//体力
 	int nMaxHP;//マックス体力
-	int nStamina;//スタミナ
+	float nStamina;//スタミナ
 	int nMaxStamina;//スタミナ
 	PLAYER_ATTACK_MOVE* pCurrentAttackPlaying;
 	Wall3D* RightWall;
@@ -132,6 +133,7 @@ private:
 	bool bDeadAnimation;
 	int nRecoveryFrames;
 	int nCancelGravityFrames;
+	int nStingerFrames;
 public:
 	Player3D();
 	~Player3D();
@@ -191,6 +193,7 @@ public:
 	int GetCurrentTransformation();
 	void ReduceStamina(int red);
 	void SetPlayerState(int newState);
+	void CancelAttack();
 };
 
 Player3D* GetMainPlayer();

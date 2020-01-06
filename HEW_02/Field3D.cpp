@@ -224,9 +224,10 @@ void Field3D::Update(void)
 #endif
 		if (pPlayer->GetFloor() == nullptr)
 		{
-			if (!IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_FEET)))
+			Hitbox3D hbField = GetHitBox();
+			if (!IsInCollision3D(hbField, pPlayer->GetHitBox(HB_FEET)))
 				return;
-			while (IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_FEET)))
+			while (IsInCollision3D(hbField, pPlayer->GetHitBox(HB_FEET)))
 				pPlayer->TranslateY(0.01f);
 			pPlayer->TranslateY(-0.01f);
 			pPlayer->SetFloor(this);

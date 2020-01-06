@@ -546,7 +546,9 @@ void Enemy3D::DamageControl()
 	nDirection = -1*pPlayer->GetDirection();
 	pGame->ZoomPause(60, 30, 3, false, true);
 	SetFramesForZoomUse(35);
-	if (pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH)
+	if (pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && 
+		pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH
+		&& pPlayerAttack->Animation != SAMURAI_STINGER)
 	{
 		if (bDoDamage) {
 			AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 30);
@@ -703,6 +705,8 @@ void Enemy3D::DamageControl()
 		if (bDoDamage)
 			pGame->RaiseScoreWithRank(5);
 		fYForce = 0;
+		if (pPlayerAttack->Animation == SAMURAI_STINGER)
+			pPlayer->CancelAttack();
 		break;
 	}
 	if (nEnragedCounter == 0 || nEnragedHitCountMax == 0) {
@@ -741,7 +745,7 @@ void Enemy3D::RegularCollisionWithPlayer()
 				pPlayer->TranslateX(-1);
 		}
 	}
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->PlayerIsFalling() && nState!=ENEMY_FALLING)
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->PlayerIsFalling() && nState != ENEMY_FALLING && nState != ENEMY_DAMAGED && nState != ENEMY_DAMAGEDALT)
 	{
 		pPlayer->TranslateX((-0.05f * nPlayerDirection));
 		pPlayer->SetYForce(0);

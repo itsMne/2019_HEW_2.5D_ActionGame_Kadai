@@ -11,10 +11,10 @@
 #define SCALE_SAMURAI 1.0f
 #define SCALE_GEISHA 1.0f
 #define MAX_INPUT_TIMER 60
-#define MAX_ATTACKS 14
+#define MAX_ATTACKS 15
 #define INIT_HP 100
 #define INIT_STAMINA 30
-#define TRANSFORM_ACCELERATION 0.095f
+#define TRANSFORM_ACCELERATION 0.15f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
 Player3D* MainPlayer;
 
@@ -41,6 +41,7 @@ PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 	//éò
 	{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		263 },
 	{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		348 },
+	{"FA",  MODEL_SAMURAI, SAMURAI_STINGER,		  true,  BOTH_MOVE,		1000 },
 	//å|é“														  
 	{"A",   MODEL_GEISHA, GEISHA_BLOCK,			  true,  BOTH_MOVE,		323 },
 };
@@ -59,6 +60,7 @@ void Player3D::Init()
 {
 	strcpy(szInputs, "********");
 	MainPlayer = this;
+	nStingerFrames = 0;
 	pCurrentAttackPlaying = nullptr;
 	for (int i = 0; i < MAX_HB; i++)
 		pVisualHitbox[i] = nullptr;
@@ -463,6 +465,8 @@ void Player3D::AttackingStateControl()
 				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
 			if (!pCurrentFloor) {
 				f_yForce += GRAVITY_FORCE*2.0f;
+				if (f_yForce > 17.5f)
+					f_yForce = 17.5f;
 				Position.y -= f_yForce;
 			}
 			else {
@@ -489,6 +493,20 @@ void Player3D::AttackingStateControl()
 			if (nAttackFrame > 303 && nAttackFrame < 331)
 				bIsAttacking = true;
 			break;
+		case SAMURAI_STINGER:
+			if(++nStingerFrames>30)
+				pCurrentAttackPlaying = nullptr;
+			nStamina-=0.5f;
+			bIsAttacking = true;
+			Position.x += 7 * nDirection;
+			if (nAttackFrame > 490)
+				pPlayerModels[nCurrentTransformation]->SetFrame(476);
+			if (++nStingerFrames > 60 * 2) {
+				pCurrentAttackPlaying = nullptr;
+				nStingerFrames = 0;
+			}
+			break;
+			
 		case GEISHA_BLOCK:
 			if (nAttackFrame > 261 && nAttackFrame < 318)
 				bIsAttacking = true;
@@ -524,8 +542,10 @@ void Player3D::AttackingStateControl()
 
 	if (pPlayerModels[nCurrentTransformation]->GetLoops() > 0 && nCurrentAnim != NINJA_AIR_DOWN)//
 		pCurrentAttackPlaying = nullptr;
-	if (!pCurrentAttackPlaying)
+	if (!pCurrentAttackPlaying) {
 		nState = PLAYER_IDLE;
+		nStingerFrames = 0;
+	}
 }
 
 void Player3D::TeleportControl()
@@ -1055,6 +1075,13 @@ void Player3D::Attack(const char * atkInput)
 		strcpy(szAtkInput, "UA");
 	if (GetInput(INPUT_DOWN) && !pCurrentFloor)
 		strcpy(szAtkInput, "DA");
+	if (nCurrentTransformation == MODEL_SAMURAI)
+	{
+		if(nDirection == RIGHT_DIR && GetInput(INPUT_RIGHT))
+			strcpy(szAtkInput, "FA");
+		else if (nDirection == LEFT_DIR && GetInput(INPUT_LEFT))
+			strcpy(szAtkInput, "FA");
+	}
 	Attack(szAtkInput, MAX_PLAYER_INPUT);
 }
 
@@ -1072,7 +1099,10 @@ void Player3D::Attack(const char * atkInput, int recursions)
 		if (!strcmp(stAllMoves[i].Input, inputToCheck))//çUåÇìÆçÏå©Ç¬ÇØÇΩ
 		{
 			pCurrentAttackPlaying = &stAllMoves[i];
-			SwitchAnimation(stAllMoves[i].Transformation, stAllMoves[i].Animation);
+			if(stAllMoves[i].Animation== SAMURAI_STINGER && stAllMoves[i].Transformation == MODEL_SAMURAI)
+				SwitchAnimation(stAllMoves[i].Transformation, 5);
+			else
+				SwitchAnimation(stAllMoves[i].Transformation, stAllMoves[i].Animation);
 			nState = PLAYER_ATTACKING;
 			if (stAllMoves[i].ResetInputs)
 				ResetInputs();
@@ -1233,4 +1263,11 @@ void Player3D::ReduceStamina(int red)
 void Player3D::SetPlayerState(int newState)
 {
 	nState = newState;
+}
+
+void Player3D::CancelAttack()
+{
+	pCurrentAttackPlaying = nullptr;
+	nState = PLAYER_IDLE;
+	nStingerFrames = 0;
 }
