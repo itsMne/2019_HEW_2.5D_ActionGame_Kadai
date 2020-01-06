@@ -17,6 +17,8 @@
 #define MEND_POS_X		   -160		// メニュー文字の表示位置
 #define MEND_POS_Y			  0		// メニュー文字の表示位置
 
+#define SCORE_SIZE_X		35							// 文字のサイズ
+#define SCORE_SIZE_Y		36							// 文字のサイズ
 enum UITYPE
 {
 	UI_HP00 = 0,
@@ -44,6 +46,9 @@ enum UITYPE
 	UI_HIT_EFFECT,
 	UI_SAKURALEAF,
 	UI_RANK_VISUAL,
+	UI_RESULT_SCORE,
+	UI_RANKING_SCORE,
+	UI_RANKING_TOP,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -84,6 +89,7 @@ public:
 	void SetHitEffectUse();
 	bool GetUse();
 	void SetFrameUse(int frames);
+	void SetRankTop(XMFLOAT2 Pos, int Scorenum);
 };
 
 void SetFramesForZoomUse(int frames);

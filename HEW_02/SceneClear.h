@@ -6,6 +6,7 @@ class SceneClear :
 {
 private:
 	C_Ui* Clear;
+	C_Ui* Score;
 public:
 	SceneClear();
 	~SceneClear();

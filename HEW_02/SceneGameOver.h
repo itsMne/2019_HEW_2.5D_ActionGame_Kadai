@@ -6,6 +6,7 @@ class SceneGameOver :
 {
 private:
 	C_Ui* GameOver;
+	C_Ui* Score;
 public:
 	SceneGameOver();
 	~SceneGameOver();

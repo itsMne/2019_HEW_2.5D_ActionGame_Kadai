@@ -5,6 +5,7 @@
 SceneClear::SceneClear()
 {
 	Clear = new C_Ui("data/texture/clear.jpg", UI_CLEAR);
+	Score = new C_Ui("data/texture/number.png", UI_RESULT_SCORE);
 }
 
 
@@ -37,4 +38,6 @@ void SceneClear::Draw()
 {
 	SetZBuffer(false);
 	Clear->Draw();
+
+	Score->Draw();
 }

@@ -25,8 +25,7 @@
 
 #define SCORE_WIDTH			8							// 表示桁数
 
-#define SCORE_SIZE_X		35							// 文字のサイズ
-#define SCORE_SIZE_Y		36							// 文字のサイズ
+
 #define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))+13	// 文字の表示位置
 #define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)+15	// 文字の表示位置
 
@@ -262,9 +261,9 @@ void C_Ui::Update()
 		if (--nFramesToUseZoom <= 0)
 			nFramesToUseZoom = 0;
 		SetPolygonAlpha(0.6f);
-		if (++nFrameCounter >= 8) {
+		if (++nFrameCounter >= 1) {
 			nFrameCounter = 0;
-			g_rotPolygon.z += 90;
+			g_rotPolygon.z += 20;
 			if (g_rotPolygon.z == 360)
 				g_rotPolygon.z = 0;
 		}
@@ -415,6 +414,7 @@ void C_Ui::Draw()
 	case UI_NUMBER:
 		Draw(&vScorePos, (unsigned)nScore, SCORE_WIDTH,
 			SCORE_SIZE_X, SCORE_SIZE_Y);
+		break;
 	case UI_LEVEL_EDITOR:
 		pPlayer = GetMainPlayer();
 		if (!pPlayer)
@@ -503,6 +503,21 @@ void C_Ui::Draw()
 		SetPolygonUV((float)(nCurrentRank-2) / 3.0f, 1.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
+	case UI_RESULT_SCORE:
+		vScorePos = XMFLOAT2(-SCORE_SIZE_X*11, -SCORE_SIZE_Y);
+		Draw(&vScorePos, (unsigned)GetScore(), SCORE_WIDTH,
+			SCORE_SIZE_X*2.5f, SCORE_SIZE_Y*3);
+		break;
+	case UI_RANKING_SCORE:
+			vScorePos = XMFLOAT2(-SCORE_SIZE_X * 8, -195);
+			Draw(&vScorePos, (unsigned)GetScore(), SCORE_WIDTH,
+				SCORE_SIZE_X*2.3f, SCORE_SIZE_Y *2.8);
+			break;	
+	case UI_RANKING_TOP:
+			//vScorePos = XMFLOAT2(-SCORE_SIZE_X * 8, -195);
+			Draw(&vScorePos, nScore, SCORE_WIDTH,
+				SCORE_SIZE_X*2.3f, SCORE_SIZE_Y *2.8);
+			break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -567,6 +582,12 @@ bool C_Ui::GetUse()
 void C_Ui::SetFrameUse(int frames)
 {
 	nFrameUse = frames;
+}
+
+void C_Ui::SetRankTop(XMFLOAT2 Pos, int Scorenum)
+{
+	vScorePos = Pos;
+	nScore = Scorenum;
 }
 
 void SetFramesForZoomUse(int frames)

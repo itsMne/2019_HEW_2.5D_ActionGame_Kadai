@@ -16,6 +16,7 @@ enum PAUSE_OPTION
 SceneGame*		CurrentGame = nullptr;
 static int		nScore;
 C_Ui* pVisualRank;
+
 SceneGame::SceneGame(): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
@@ -517,4 +518,9 @@ void SceneGame::SetPetalsFrames(int frames)
 SceneGame * GetCurrentGame()
 {
 	return CurrentGame;
+}
+
+int GetScore()
+{
+	return nScore;
 }

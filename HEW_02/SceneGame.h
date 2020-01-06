@@ -85,3 +85,4 @@ public:
 	void SetPetalsFrames(int frames);
 };
 SceneGame* GetCurrentGame();
+int GetScore();
