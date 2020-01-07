@@ -61,6 +61,7 @@ void Player3D::Init()
 	strcpy(szInputs, "********");
 	MainPlayer = this;
 	nStingerFrames = 0;
+	nDamage = 0;
 	pCurrentAttackPlaying = nullptr;
 	for (int i = 0; i < MAX_HB; i++)
 		pVisualHitbox[i] = nullptr;
@@ -79,6 +80,7 @@ void Player3D::Init()
 	pPlayerModels[MODEL_NINJA]->SetScale({ SCALE_NINJA,SCALE_NINJA,SCALE_NINJA });
 	pPlayerModels[MODEL_SAMURAI]->SetScale({ 0,SCALE_SAMURAI ,SCALE_SAMURAI });
 	f_yForce = 0;
+	bNinjaOnWall = false;
 	nInputTimer = 0;
 	Hitboxes[HB_FEET] = { 0,9.25f,0,3,3,1.5f };
 	Hitboxes[HB_BODY] = { 0,15,0,3,8,6 };
@@ -110,6 +112,7 @@ void Player3D::Init()
 	nRecoveryFrames = 0;
 	nHP /= 2;//DEL
 	nCancelGravityFrames = 0;
+	nToRecover = 0;
 #if SHOW_HITBOX
 	for (int i = 0; i < MAX_HB; i++)
 	{
@@ -165,6 +168,20 @@ void Player3D::Update()
 		nRecoveryFrames--;
 	if (nRecoveryFrames < 0)
 		nRecoveryFrames = 0;
+	if (nDamage > 0)
+	{
+		nDamage--;
+		nHP--;
+	}
+	if (nToRecover > 0)
+	{
+		nToRecover--;
+		nHP++;
+	}
+	if (nHP < 0)
+		nHP = 0;
+	if (nHP >= nMaxHP)
+		nHP = nMaxHP;
 	WallAttachedTo = nullptr;
 	bool bIsLocked = pCurrentAttackPlaying;
 	if (pCurrentAttackPlaying)
@@ -272,6 +289,7 @@ void Player3D::Update()
 		Hitboxes[HB_ATTACK].SizeY = 0;
 		Hitboxes[HB_ATTACK].SizeZ = 0;
 	}
+	bNinjaOnWall = false;
 	switch (nState)
 	{
 	case PLAYER_IDLE:
@@ -284,6 +302,7 @@ void Player3D::Update()
 					SwitchAnimation(MODEL_NINJA, NINJA_ON_WALL);
 				else
 					SwitchAnimation(MODEL_NINJA, NINJA_CRAWLING);
+				bNinjaOnWall = true;
 			}
 			else
 				SwitchAnimation(MODEL_NINJA, NINJA_AIR_IDLE); 
@@ -910,6 +929,8 @@ void Player3D::Draw()
 	{
 		pDebugAim->Draw();
 	}
+	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
+		pPlayerModels[i]->SetLight(GetMainLight());
 	DrawHitboxes();
 	GameObject3D::Draw();
 	
@@ -960,6 +981,7 @@ void Player3D::SwitchAnimation(int nModel, int nAnimation)
 {
 	pPlayerModels[nModel]->SwitchAnimation(nAnimation);
 	nCurrentAnimation = nAnimation;
+
 }
 
 void Player3D::SwitchAnimation(int nAnimation)
@@ -1067,6 +1089,8 @@ void Player3D::ResetInputs()
 
 void Player3D::Attack(const char * atkInput)
 {
+	if (bNinjaOnWall)
+		return;
 	char szAtkInput[MAX_PLAYER_INPUT + 1];
 	int i = 0;
 	for (i = 0; i < MAX_PLAYER_INPUT && atkInput[i] != '*'; szAtkInput[i] = atkInput[i], i++);
@@ -1148,9 +1172,7 @@ int Player3D::GetPlayerMaxMp()
 
 void Player3D::RiseHP(int nhprise)
 {
-	nHP += nhprise;
-	if (nHP >= nMaxHP)
-		nHP = nMaxHP;
+	nToRecover += nhprise;
 }
 
 bool Player3D::IsStaminaCooldownOn()
@@ -1165,9 +1187,7 @@ void Player3D::SetDamage(int Damage)
 	if (nHP == 0)
 		return;
 	ResetRanks();
-	nHP -= Damage;
-	if (nHP < 0)
-		nHP = 0;
+	nDamage+= Damage;
 	nRecoveryFrames = 60;
 	SwitchAnimationSpeed(1);
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGED);
@@ -1181,9 +1201,7 @@ void Player3D::SetDamageTeleport(int Damage)
 		return;
 	ResetRanks();
 	nState = PLAYER_TELEPORTING_DAMAGED;
-	nHP -= Damage;
-	if (nHP < 0)
-		nHP = 0;
+	nDamage += Damage;
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
 	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);
 	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
@@ -1270,4 +1288,14 @@ void Player3D::CancelAttack()
 	pCurrentAttackPlaying = nullptr;
 	nState = PLAYER_IDLE;
 	nStingerFrames = 0;
+}
+
+int Player3D::GetDamage()
+{
+	return nDamage;
+}
+
+int Player3D::GetToRecover()
+{
+	return nToRecover;
 }

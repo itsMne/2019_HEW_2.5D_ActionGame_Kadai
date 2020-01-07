@@ -50,6 +50,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	nFramesToUseZoom = 0;
 	fScaleOffset = 0;
 	nFrameUse = 0;
+	fOffsetY = 5;
 	vScorePos = XMFLOAT2(SCORE_POS_X, SCORE_POS_Y);
 	bSelected = false;
 	switch (Type)
@@ -165,6 +166,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		break;
 	}
 	fAcceleration = 0;
+	hpDamageCooloff = 0;
 	bDoorInPos = false;
 	bDoorOpen = true;
 	bIsInUse = false;
@@ -197,7 +199,6 @@ void C_Ui::Update()
 		return;
 	if (pCurrentGame)
 		nScore = pCurrentGame->GetScore();
-
 	switch (nType)
 	{
 	case UI_HP00:
@@ -206,10 +207,19 @@ void C_Ui::Update()
 			return;
 		nHP = pPlayer->GetPlayerHp();
 		nMaxHP = pPlayer->GetPlayerMaxHp();
+		if (++hpDamageCooloff > 4) {
+			fOffsetY *= -1;
+			hpDamageCooloff = 0;
+		}
 		if (nHP > 0)
 			SetPolygonColor(1, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
 		else
 			SetPolygonColor(0.25f, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
+
+		if (pPlayer->GetDamage() > 0)
+			SetPolygonPos(HP_POS_X , HP_POS_Y + fOffsetY);
+		else
+			SetPolygonPos(HP_POS_X, HP_POS_Y);
 		break;
 	case UI_HP01:
 		pPlayer = GetMainPlayer();
@@ -222,8 +232,15 @@ void C_Ui::Update()
 		{
 			break;
 		}
+		if (++hpDamageCooloff > 4) {
+			fOffsetY *= -1;
+			hpDamageCooloff = 0;
+		}
 		SetPolygonSize((float)HP_SIZE_X * (nHP / (float)nMaxHP), HP_SIZE_Y);
-		SetPolygonPos(HP_POS_X - (nMaxHP - nHP), HP_POS_Y);
+		if(pPlayer->GetDamage()>0)
+			SetPolygonPos(HP_POS_X - (nMaxHP - nHP), HP_POS_Y+fOffsetY);
+		else
+			SetPolygonPos(HP_POS_X - (nMaxHP - nHP), HP_POS_Y);
 		break;
 	case UI_MP:
 		pPlayer = GetMainPlayer();
@@ -389,7 +406,6 @@ void C_Ui::Update()
 		
 		break;
 	}
-
 
 }
 

@@ -130,7 +130,9 @@
     <ClCompile Include="SceneMenu.cpp">
       <Filter>CPP\ゲームCPP\シーン</Filter>
     </ClCompile>
-    <ClCompile Include="RankManager.cpp" />
+    <ClCompile Include="RankManager.cpp">
+      <Filter>CPP\ゲームCPP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -242,7 +244,9 @@
     <ClInclude Include="SceneMenu.h">
       <Filter>H\ゲームH\シーン</Filter>
     </ClInclude>
-    <ClInclude Include="RankManager.h" />
+    <ClInclude Include="RankManager.h">
+      <Filter>H\ゲームH</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

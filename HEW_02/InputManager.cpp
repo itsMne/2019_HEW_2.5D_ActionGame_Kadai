@@ -42,6 +42,7 @@ void UpdateInputManager()
 	bInputs[INPUT_SCALE_UP_X] = GetKeyPress(VK_L);
 	bInputs[INPUT_SCALE_DOWN_Z] = GetKeyPress(VK_K);
 	bInputs[INPUT_SCALE_UP_Z] = GetKeyPress(VK_I);
+	bInputs[INPUT_SPACE] = GetKeyPress(VK_SPACE);
 	bInputs[INPUT_SWITCH_DEBUG_TYPE_UP] = GetKeyTrigger(VK_O);
 	bInputs[INPUT_SWITCH_DEBUG_TYPE_DOWN] = GetKeyTrigger(VK_U);
 	bInputs[INPUT_SAVE_LEVEL] = GetKeyPress(VK_LCONTROL) && GetKeyTrigger(VK_S);

@@ -515,13 +515,26 @@ void DebugAim::ScaleControl(float fSpeed)
 		break;
 	default:
 		if (!(GetInput(INPUT_SHIFT))) {
-			if (GetInput(INPUT_SCALE_UP_Z)) {
-				Scale.y += fSpeed;
-				GetMainCamera()->ZoomOutZ(fSpeed * 12);
+			if (!GetInput(INPUT_SPACE)) {
+				if (GetInput(INPUT_SCALE_UP_Z)) {
+					Scale.y += fSpeed;
+					GetMainCamera()->ZoomOutZ(fSpeed * 12);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_Z)) {
+					Scale.y -= fSpeed;
+					GetMainCamera()->ZoomOutZ(-fSpeed * 12);
+				}
 			}
-			if (GetInput(INPUT_SCALE_DOWN_Z)) {
-				Scale.y -= fSpeed;
-				GetMainCamera()->ZoomOutZ(-fSpeed * 12);
+			else
+			{
+				if (GetInput(INPUT_SCALE_UP_Z)) {
+					Scale.z += fSpeed;
+					GetMainCamera()->ZoomOutZ(fSpeed * 12);
+				}
+				if (GetInput(INPUT_SCALE_DOWN_Z)) {
+					Scale.z -= fSpeed;
+					GetMainCamera()->ZoomOutZ(-fSpeed * 12);
+				}
 			}
 			if (GetInput(INPUT_SCALE_UP_X)) {
 				Scale.x += fSpeed;

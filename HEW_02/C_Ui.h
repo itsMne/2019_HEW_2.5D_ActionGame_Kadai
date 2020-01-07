@@ -71,6 +71,8 @@ private:
 	float fScaleOffset;
 	bool bIsInUse;
 	int nFrameUse;
+	float fOffsetY;
+	int hpDamageCooloff;
 public:
 	C_Ui();
 	C_Ui(const char*, int);

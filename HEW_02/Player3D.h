@@ -115,6 +115,7 @@ private:
 	int nInputTimer;
 	int nHP;//体力
 	int nMaxHP;//マックス体力
+	int nDamage;
 	float nStamina;//スタミナ
 	int nMaxStamina;//スタミナ
 	PLAYER_ATTACK_MOVE* pCurrentAttackPlaying;
@@ -134,6 +135,8 @@ private:
 	int nRecoveryFrames;
 	int nCancelGravityFrames;
 	int nStingerFrames;
+	int nToRecover;
+	bool bNinjaOnWall;
 public:
 	Player3D();
 	~Player3D();
@@ -194,6 +197,8 @@ public:
 	void ReduceStamina(int red);
 	void SetPlayerState(int newState);
 	void CancelAttack();
+	int GetDamage();
+	int GetToRecover();
 };
 
 Player3D* GetMainPlayer();
