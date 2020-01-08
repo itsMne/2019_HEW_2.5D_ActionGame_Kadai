@@ -2,6 +2,7 @@
 #include "SceneGame.h"
 #include "Player3D.h"
 #include "RankManager.h"
+#include "InputManager.h"
 #include "C_Ui.h"
 #define RED_ONI_MODEL_PATH "data/model/RedOni.fbx"
 #define GREEN_ONI_MODEL_PATH "data/model/GreenOni.fbx"
@@ -415,6 +416,7 @@ void Enemy3D::EnemyStatesControl()
 					if (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetAttackHitbox()))
 					{
 						nState = ENEMY_STUNT;
+						VibrateXinput(65535, 65535, 30);
 						nStuntFrames = 240;
 						pGame->ZoomPause(70, 120, 3, false, true);
 						pGame->SetPetalsFrames(240);
@@ -425,6 +427,7 @@ void Enemy3D::EnemyStatesControl()
 					}
 					else {
 						nState = ENEMY_STUNT;
+						VibrateXinput(65535/3, 65535/3, 30);
 						nStuntFrames = 120;
 						pGame->ZoomPause(70, 120, 3, false, true);
 						pGame->SetPetalsFrames(120);
@@ -588,6 +591,7 @@ void Enemy3D::DamageControl()
 			nEnragedMeter = 0;
 		fYForce = 0;
 		if (bDoDamage) {
+			VibrateXinput(65535, 65535, 30);
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(4);
 			SetUnlitForFrames(12);
@@ -614,6 +618,7 @@ void Enemy3D::DamageControl()
 			nState = ENEMY_FALLING;
 		nFramesSendOff = 5;
 		if (bDoDamage) {
+			VibrateXinput(65535, 65535, 30);
 			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			nHP -= 10;
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
@@ -631,6 +636,7 @@ void Enemy3D::DamageControl()
 			nEnragedMeter = 0;
 		nState = ENEMY_FALLING;
 		if (bDoDamage) {
+			VibrateXinput(65535, 65535, 30);
 			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK);
@@ -644,6 +650,7 @@ void Enemy3D::DamageControl()
 	default:
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
 		if (bDoDamage) {
+			VibrateXinput(65535/2, 65535/2, 30);
 			if (pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_A || pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_B ||
 				pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_C)
 				AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 40);

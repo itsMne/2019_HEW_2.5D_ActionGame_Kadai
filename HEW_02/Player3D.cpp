@@ -1186,6 +1186,7 @@ void Player3D::SetDamage(int Damage)
 		return;
 	if (nHP == 0)
 		return;
+	VibrateXinput(65535/2, 65535/2, 30);
 	ResetRanks();
 	nDamage+= Damage;
 	nRecoveryFrames = 60;
@@ -1199,6 +1200,7 @@ void Player3D::SetDamageTeleport(int Damage)
 {
 	if (nState == PLAYER_TELEPORTING_DAMAGED)
 		return;
+	VibrateXinput(65535/2, 65535/2, 30);
 	ResetRanks();
 	nState = PLAYER_TELEPORTING_DAMAGED;
 	nDamage += Damage;

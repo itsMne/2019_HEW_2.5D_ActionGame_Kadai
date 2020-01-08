@@ -40,4 +40,5 @@ void InitInputManager();
 void UpdateInputManager();
 void EndInputManager();
 bool GetInput(int nInput);
+void VibrateXinput(float vivbrationL, float VibrationR, int FrameNumbers);
 #endif
