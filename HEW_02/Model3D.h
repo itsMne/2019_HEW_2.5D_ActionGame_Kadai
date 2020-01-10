@@ -5,6 +5,22 @@
 #include "FbxModel.h"
 #include "Light3D.h"
 //#include "Camera3D.h"
+
+enum MyEnum
+{
+	ENEMY_ONI_MODEL_RED,
+	ENEMY_ONI_MODEL_GREEN,
+	ENEMY_ONI_MODEL_YELLOW,
+	ENEMY_ONI_MODEL_BLUE,
+	ENEMY_WARRIOR,
+	WALL_MODEL,
+	SPIKE_MODEL,
+	SAMURAI_MODEL_PATH,
+	NINJA_MODEL_PATH,
+	GEISHA_MODEL_PATH,
+	MAX_PRELOADED_MODELS,
+};
+
 class Model3D
 {
 private:
@@ -24,10 +40,12 @@ private:
 	bool bCanLoop;
 	bool AnimationFrame;
 	int nCurrentAnimation;
+	bool bPreLoadedModel;
 public:
 	Model3D();
 	~Model3D();
 	HRESULT InitModel(const char*ModelPath, void* Parent);
+	HRESULT InitModel(int ModelPath, void* Parent);
 	void SetLight(Light3D * pLight);
 	void UninitModel(void);
 	void UpdateModel(void);

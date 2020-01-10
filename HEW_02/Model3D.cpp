@@ -9,8 +9,23 @@
 #include "debugproc.h"
 #include "SceneGame.h"
 
-#define MAX_LOOPS	9000
+#define MAX_LOOPS	9000	
+char ModelPaths[MAX_PRELOADED_MODELS][256] =
+{
+	"data/model/RedOni.fbx"	  ,
+	"data/model/GreenOni.fbx" ,
+	"data/model/YellowOni.fbx",
+	"data/model/BlueOni.fbx"  ,
+	"data/model/Warrior.fbx"  ,
+	"data/model/Cube.fbx",
+	"data/model/Spike.fbx",
+	"data/model/SamuraiHew.fbx",
+	"data/model/NinjaHew.fbx",
+	"data/model/GeishaHew.fbx",
 
+};
+
+CFbxModel* Models[MAX_PRELOADED_MODELS] = {nullptr};
 Model3D::Model3D()
 {
 	nFramCount = 0;
@@ -57,12 +72,50 @@ HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 		g_pModel->SetCamera(pMainCamera->GetCameraPos());
 		SetLight(pLight);
 	}
+	bPreLoadedModel = false;
 	return hr;
+}
+
+HRESULT Model3D::InitModel(int ModelPath, void * pParent)
+{
+	if (ModelPath > MAX_PRELOADED_MODELS || ModelPath < 0)
+		return S_OK;
+	HRESULT hr = S_OK;
+	nCurrentAnimation = 0;
+	ID3D11Device* pDevice = GetDevice();
+	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
+	pMainCamera = GetMainCamera();
+	if (!pMainCamera)
+	{
+		printf("メインカメラがありません\n");
+		return S_OK;
+	}
+	Parent = pParent;
+	// 位置、向きの初期設定
+	Position = XMFLOAT3(0.0f, 10.0f, 0.0f);
+	Rotation = XMFLOAT3(0.0f, 90.0f, 0.0f);
+	Scale = XMFLOAT3(0.1, 0.1, 0.1);
+	// FBXファイルの読み込み
+	if (!Models[ModelPath]) {
+		Models[ModelPath] = new CFbxModel();
+		Light3D* pLight = GetMainLight();
+		fFrame = Models[ModelPath]->GetInitialAnimFrame();
+		Models[ModelPath]->SetCamera(pMainCamera->GetCameraPos());
+		Models[ModelPath]->Init(pDevice, pDeviceContext, ModelPaths[ModelPath]);
+		g_pModel = Models[ModelPath];
+		SetLight(pLight);
+	}
+	else {
+		g_pModel = Models[ModelPath];
+	}
+	bPreLoadedModel = true;
+	return S_OK;
 }
 
 void Model3D::SetLight(Light3D * pLight)
 {
-	g_pModel->SetLight(pLight->GetLight());
+	if(g_pModel)
+		g_pModel->SetLight(pLight->GetLight());
 }
 
 
@@ -72,7 +125,8 @@ void Model3D::SetLight(Light3D * pLight)
 void Model3D::UninitModel(void)
 {
 	// FBXファイルの解放
-	SAFE_DELETE(g_pModel);
+	if(!bPreLoadedModel)
+		SAFE_DELETE(g_pModel);
 }
 
 //=============================================================================

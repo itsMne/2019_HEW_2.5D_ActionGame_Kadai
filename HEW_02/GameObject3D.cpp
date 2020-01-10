@@ -287,6 +287,13 @@ void GameObject3D::InitModel(const char * szPath)
 	pModel->InitModel(szPath, this);
 }
 
+void GameObject3D::InitModel(int ModelPath)
+{
+	if (!pModel)
+		pModel = new Model3D();
+	pModel->InitModel(ModelPath, this);
+}
+
 Hitbox3D GameObject3D::GetHitBox()
 {
 	return { hitbox.x + Position.x, hitbox.y + Position.y,hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };

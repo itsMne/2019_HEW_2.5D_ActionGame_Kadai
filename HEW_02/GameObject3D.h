@@ -54,6 +54,7 @@ public:
 	void SetRotation(XMFLOAT3);
 	void SetScale(XMFLOAT3);
 	void InitModel(const char* szPath);
+	void InitModel(int ModelPath);
 	Hitbox3D GetHitBox();
 	void SetHitbox(Hitbox3D hb);
 	int GetType();

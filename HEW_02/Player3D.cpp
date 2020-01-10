@@ -68,13 +68,13 @@ void Player3D::Init()
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
 		pPlayerModels[i] = nullptr;
 	pPlayerModels[MODEL_SAMURAI] = new Model3D();
-	pPlayerModels[MODEL_SAMURAI]->InitModel("data/model/SamuraiHew.fbx", this);
+	pPlayerModels[MODEL_SAMURAI]->InitModel(SAMURAI_MODEL_PATH, this);
 	pPlayerModels[MODEL_SAMURAI]->SetPosition({ -5,6,0 });
 	pPlayerModels[MODEL_NINJA] = new Model3D();
-	pPlayerModels[MODEL_NINJA]->InitModel("data/model/NinjaHew.fbx", this);
+	pPlayerModels[MODEL_NINJA]->InitModel(NINJA_MODEL_PATH, this);
 	pPlayerModels[MODEL_NINJA]->SetPosition({ -5,6,0 });
 	pPlayerModels[MODEL_GEISHA] = new Model3D();
-	pPlayerModels[MODEL_GEISHA]->InitModel("data/model/GeishaHew.fbx", this);
+	pPlayerModels[MODEL_GEISHA]->InitModel(GEISHA_MODEL_PATH, this);
 	pPlayerModels[MODEL_GEISHA]->SetPosition({ -5,6,0 });
 	pPlayerModels[MODEL_GEISHA]->SetScale({ 0,SCALE_GEISHA,SCALE_GEISHA });
 	pPlayerModels[MODEL_NINJA]->SetScale({ SCALE_NINJA,SCALE_NINJA,SCALE_NINJA });

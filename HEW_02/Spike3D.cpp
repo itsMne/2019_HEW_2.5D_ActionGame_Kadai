@@ -1,6 +1,6 @@
 #include "Spike3D.h"
 #include "Player3D.h"
-#define MODEL_PATH "data/model/Spike.fbx"
+
 #define SPIKE_DAMAGE 10
 
 Spike3D::Spike3D() : GameObject3D()
@@ -20,7 +20,7 @@ void Spike3D::Init()
 {
 	if (!pSpikeModel) {
 		pSpikeModel = new Model3D();
-		pSpikeModel->InitModel(MODEL_PATH, this);
+		pSpikeModel->InitModel(SPIKE_MODEL, this);
 	}
 	nSpikesOnX = 1;
 	nSpikesOnY = 1;

@@ -4,11 +4,7 @@
 #include "RankManager.h"
 #include "InputManager.h"
 #include "C_Ui.h"
-#define RED_ONI_MODEL_PATH "data/model/RedOni.fbx"
-#define GREEN_ONI_MODEL_PATH "data/model/GreenOni.fbx"
-#define BLUE_ONI_MODEL_PATH "data/model/BlueOni.fbx"
-#define YELLOW_ONI_MODEL_PATH "data/model/YellowOni.fbx"
-#define WARRIOR_MODEL_PATH "data/model/Warrior.fbx"
+
 #define CANCEL_GRAVITY_FRAMES 30
 #define DETECTED_SECONDS 16
 #define PAUSE_FRAMES_PER_ATTACK 6
@@ -87,7 +83,7 @@ void Enemy3D::Init()
 	case TYPE_ONI_A:
 		bUseGravity = true;
 		nHP = 100;
-		InitModel(YELLOW_ONI_MODEL_PATH);
+		InitModel(ENEMY_ONI_MODEL_YELLOW);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
@@ -122,7 +118,7 @@ void Enemy3D::Init()
 	case TYPE_ONI_B:
 		bUseGravity = true;
 		nHP = 135;
-		InitModel(BLUE_ONI_MODEL_PATH);
+		InitModel(ENEMY_ONI_MODEL_BLUE);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
@@ -158,7 +154,7 @@ void Enemy3D::Init()
 	case TYPE_ONI_C:
 		bUseGravity = true;
 		nHP = 170;
-		InitModel(GREEN_ONI_MODEL_PATH);
+		InitModel(ENEMY_ONI_MODEL_GREEN);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
@@ -193,7 +189,7 @@ void Enemy3D::Init()
 	case TYPE_ONI_D:
 		bUseGravity = true;
 		nHP = 200;
-		InitModel(RED_ONI_MODEL_PATH);
+		InitModel(ENEMY_ONI_MODEL_RED);
 		pModel->SetScale({ 0.75f,0.75f,0.75f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
@@ -230,7 +226,7 @@ void Enemy3D::Init()
 	case TYPE_WARRIOR:
 		bUseGravity = true;
 		nHP = 150;
-		InitModel(WARRIOR_MODEL_PATH);
+		InitModel(ENEMY_WARRIOR);
 		pModel->SetScale({ 1.25f,1.25f,1.25f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(WARRIOR_IDLE);

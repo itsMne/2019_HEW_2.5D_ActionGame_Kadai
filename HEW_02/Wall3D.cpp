@@ -1,7 +1,7 @@
 #include "Wall3D.h"
 #include "Cube3D.h"
 #include "Player3D.h"
-#define WALL_MODEL_PATH "data/model/Cube.fbx"
+
 
 
 Wall3D::Wall3D() : GameObject3D()
@@ -17,7 +17,7 @@ Wall3D::~Wall3D()
 
 void Wall3D::Init()
 {
-	GameObject3D::InitModel(WALL_MODEL_PATH);
+	GameObject3D::InitModel(WALL_MODEL);
 	pModel->SetScale({ 11,11,11 });
 	pModel->SetRotation({ 0,0,0 });
 	Scale = { 1,1,1 };
