@@ -145,12 +145,12 @@ int SceneMenu::Update()
 			bOptionSelected = true;
 		}
 		break;
-	case END:
+	case ALT:
 		pStart->SetAsSelectedOption(false);
 		pRanking->SetAsSelectedOption(false);
 		pEnd->SetAsSelectedOption(true);
 		if (GetInput(INPUT_JUMP)) {
-			nNextScene = SCENE_TITLE;
+			nNextScene = SCENE_HELL_GAME;
 			bOptionSelected = true;
 		}
 		break;

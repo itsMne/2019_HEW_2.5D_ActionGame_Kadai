@@ -4,9 +4,19 @@
 #include "C_Ui.h"
 #define MAX_HIT_EFFECT 10
 #define MAX_SAKURA_LEAVES 15
+
+enum SCENE_GAME_TYPE
+{
+	SCENE_NONE=0,
+	SCENE_GAMENORMAL,
+	SCENE_GAMEHELL
+};
+
 class SceneGame :
 	public SceneBase
 {
+protected:
+	int				nSceneGameType;
 private:
 	ID3D11Device*	g_pDevice;
 	Camera3D*		SceneCamera;
@@ -59,7 +69,7 @@ private:
 	bool bCancelZoom;
 public:
 	
-	SceneGame();
+	SceneGame(int type);
 	~SceneGame();
 	void Init();
 	void Uninit();

@@ -5,7 +5,7 @@
 enum MENU {
 	START = 0,			// スタート
 	RANKING,			// ランキング
-	END,				// エンド
+	ALT,				// エンド
 	MENU_MAX
 };
 class SceneMenu :

@@ -45,7 +45,7 @@ HRESULT InitScene()
 			Doors[LEFTDOOR]->SetDoorOpen(true);
 		if (Doors[RIGHTDOOR])
 			Doors[RIGHTDOOR]->SetDoorOpen(true);
-		Scene = new SceneGame();
+		Scene = new SceneGame(SCENE_GAMENORMAL);
 		break;
 	case SCENE_GAMEOVER:
 		if (Doors[LEFTDOOR])
@@ -67,6 +67,13 @@ HRESULT InitScene()
 		if (Doors[RIGHTDOOR])
 			Doors[RIGHTDOOR]->SetDoorOpen(true);
 		Scene = new SceneRanking();
+		break;
+	case SCENE_HELL_GAME:
+		if (Doors[LEFTDOOR])
+			Doors[LEFTDOOR]->SetDoorOpen(true);
+		if (Doors[RIGHTDOOR])
+			Doors[RIGHTDOOR]->SetDoorOpen(true);
+		Scene = new SceneGame(SCENE_GAMEHELL);
 		break;
 	default:
 		break;

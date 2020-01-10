@@ -13,17 +13,22 @@ enum PAUSE_OPTION
 	PAUSE_MAX
 };
 
+
+
 SceneGame*		CurrentGame = nullptr;
 static int		nScore;
 C_Ui* pVisualRank;
 
-SceneGame::SceneGame(): SceneBase()
+SceneGame::SceneGame(int type): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
-	Init();
-	CurrentGame = this;
+	//
+	
 	nScore = 0;
 	bGoalReached = false;
+	nSceneGameType = type;
+	CurrentGame = nullptr;
+	Init();
 }
 
 
@@ -35,6 +40,9 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
+	if (CurrentGame)
+		return;
+	CurrentGame = this;
 	RankManager::Init();
 	g_pDevice = GetDevice();
 	nScore = 0;
@@ -45,7 +53,7 @@ void SceneGame::Init()
 	nTimeSeconds = 0;
 	nFrameCounter = 0;
 	nPauseFrames = 0;
-	nSceneType = SCENE_GAME;
+	
 	MainWindow = GetMainWindow();
 	bPauseZooming = false;
 	bCancelZoom = false;
@@ -66,16 +74,10 @@ void SceneGame::Init()
 	SceneCamera->Init();
 	SceneLight->Init();
 
-	Walls->Load("Walls_Level", GO_WALL);
-	Fields->Load("Fields_Level", GO_FLOOR);
-	Items->Load("Items_Level", GO_ITEM);
-	Goals->Load("Goals_Level", GO_GOAL);
-	Spikes->Load("Spikes_Level", GO_SPIKE);
-	Mirrors->Load("Mirrors_Level", GO_MIRROR);
-	Enemies->Load("Enemies_Level", GO_ENEMY);
+
+
 	InitDebugProc();
 	SceneCamera->SetFocalPoint(pPlayer);
-
 	// Hp
 	pHP_UI_BACK = new C_Ui("data/texture/HP000.png", UI_HP00);
 	pHP_UI_FRONT = new C_Ui("data/texture/HP001.png", UI_HP01);
@@ -111,6 +113,32 @@ void SceneGame::Init()
 	for (int i = 0; i < MAX_HIT_EFFECT; i++)
 		HitEffect_UI[i] = new C_Ui("data/texture/AuraEffect.tga", UI_HIT_EFFECT);
 	pVisualRank = new C_Ui("data/texture/rankL.png", UI_RANK_VISUAL);
+
+	switch (nSceneGameType)
+	{
+	case SCENE_GAMEHELL:
+		printf("\nHELL\n");
+		Walls->Load("HELL_Walls_Level", GO_WALL);
+		Fields->Load("HELL_Fields_Level", GO_FLOOR);
+		Items->Load("HELL_Items_Level", GO_ITEM);
+		Goals->Load("HELL_Goals_Level", GO_GOAL);
+		Spikes->Load("HELL_Spikes_Level", GO_SPIKE);
+		Mirrors->Load("HELL_Mirrors_Level", GO_MIRROR);
+		Enemies->Load("HELL_Enemies_Level", GO_ENEMY);
+		nSceneType = SCENE_HELL_GAME;
+		return;
+	case SCENE_GAMENORMAL:
+		printf("\nNORMAL\n");
+		Walls->Load("Walls_Level", GO_WALL);
+		Fields->Load("Fields_Level", GO_FLOOR);
+		Items->Load("Items_Level", GO_ITEM);
+		Goals->Load("Goals_Level", GO_GOAL);
+		Spikes->Load("Spikes_Level", GO_SPIKE);
+		Mirrors->Load("Mirrors_Level", GO_MIRROR);
+		Enemies->Load("Enemies_Level", GO_ENEMY);
+		nSceneType = SCENE_GAME;
+		return;
+	}
 }
 
 void SceneGame::Uninit()
@@ -147,10 +175,12 @@ int SceneGame::Update()
 {
 	if (pPlayer->PlayerGameOver())
 	{
+		printf("\nGAME OVER\n");
 		return SCENE_GAMEOVER;//ゲームオーバーなら
 	}
 	if (bGoalReached)
 	{
+		printf("\nGOAL\n");
 		return SCENE_CLEAR;//後で次のシーンで変更する
 	}
 	if (bGameIsPaused)
