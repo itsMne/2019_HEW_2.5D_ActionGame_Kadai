@@ -455,25 +455,24 @@ void Player3D::AttackingStateControl()
 			break;
 		case NINJA_ATTACK_COMBOAIR_A:
 			bTwiceTheHitbox = true;
-			nCancelGravityFrames = 10;
+			nCancelGravityFrames = 5;
 			if (nAttackFrame > 1222 && nAttackFrame < 1233)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_B:
 			bTwiceTheHitbox = true;
-			nCancelGravityFrames = 10;
 			if (nAttackFrame > 1311 && nAttackFrame < 1331)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_C:
 			bTwiceTheHitbox = true;
-			nCancelGravityFrames = 10;
+			nCancelGravityFrames = 5;
 			if (nAttackFrame > 1394 && nAttackFrame < 1408)
 				bIsAttacking = true;
 			break;
 		case NINJA_ATTACK_COMBOAIR_D:
 			bTwiceTheHitbox = true;
-			nCancelGravityFrames = 10;
+			nCancelGravityFrames = 5;
 			if (nAttackFrame > 1473 && nAttackFrame < 1491)
 				bIsAttacking = true;
 			break;
