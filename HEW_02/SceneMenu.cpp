@@ -3,7 +3,7 @@
 #include "input.h"
 #include "InputManager.h"
 
-#define NUM_PAUSE_MENU		3
+#define NUM_PAUSE_MENU		4
 
 SceneMenu* Menu;
 
@@ -16,14 +16,17 @@ SceneMenu::SceneMenu()
 
 	pStart = new C_Ui("data/texture/Menu00.png", UI_MENU_OPTION);
 	pRanking = new C_Ui("data/texture/Menu02.png", UI_MENU_OPTION);
-	pEnd = new C_Ui("data/texture/Menu01.png", UI_MENU_OPTION);
-
-	pStart->SetPolygonPos(500, 0);
+	pHard = new C_Ui("data/texture/Menu01.png", UI_MENU_OPTION);
+	pTutorial = new  C_Ui("data/texture/Menu04.png", UI_MENU_OPTION);
+	pStart->SetPolygonPos(150, 0);
+	pHard->SetPolygonPos(-150, 0);
 	pRanking->SetPolygonPos(-500, 0);
+	pTutorial->SetPolygonPos(500, 0);
 
 	pStart->SetRotationY(90);
 	pRanking->SetRotationY(90);
-	pEnd->SetRotationY(90);
+	pHard->SetRotationY(90);
+	pTutorial->SetRotationY(90);
 	bOptionSelected = false;
 	nNextScene = 0;
 }
@@ -43,7 +46,7 @@ void SceneMenu::Uninit()
 {
 	SAFE_DELETE(pStart);
 	SAFE_DELETE(pRanking);
-	SAFE_DELETE(pEnd);
+	SAFE_DELETE(pHard);
 }
 
 int SceneMenu::Update()
@@ -51,25 +54,34 @@ int SceneMenu::Update()
 	static float fAcceleration = 0;
 	if (bOptionSelected)
 	{
-		if (pStart->GetRotationY() != 90 || pRanking->GetRotationY() != 90 || pEnd->GetRotationY() != 90)
+		if (pStart->GetRotationY() != 90 || pRanking->GetRotationY() != 90 || pHard->GetRotationY() != 90 || pTutorial->GetRotationY() != 90)
 		{
 			fAcceleration -= 1;
-			if (pStart->GetRotationY() < 90)
-				pStart->RotateAroundY(-fAcceleration);
-			if (pStart->GetRotationY() > 90) {
-				pStart->SetRotationY(90);
+
+			if (pTutorial->GetRotationY() < 90)
+				pTutorial->RotateAroundY(-fAcceleration);
+			if (pTutorial->GetRotationY() > 90) {
+				pTutorial->SetRotationY(90);
 				fAcceleration = 0;
 			}
-			if (pStart->GetRotationY() == 90)
-			{
-				if (pEnd->GetRotationY() < 90)
-					pEnd->RotateAroundY(-fAcceleration);
-				if (pEnd->GetRotationY() > 90) {
-					pEnd->SetRotationY(90);
+			if (pTutorial->GetRotationY() == 90) {
+				if (pStart->GetRotationY() < 90)
+					pStart->RotateAroundY(-fAcceleration);
+				if (pStart->GetRotationY() > 90) {
+					pStart->SetRotationY(90);
 					fAcceleration = 0;
 				}
 			}
-			if (pEnd->GetRotationY() == 90)
+			if (pStart->GetRotationY() == 90)
+			{
+				if (pHard->GetRotationY() < 90)
+					pHard->RotateAroundY(-fAcceleration);
+				if (pHard->GetRotationY() > 90) {
+					pHard->SetRotationY(90);
+					fAcceleration = 0;
+				}
+			}
+			if (pHard->GetRotationY() == 90)
 			{
 				if (pRanking->GetRotationY() < 90)
 					pRanking->RotateAroundY(-fAcceleration);
@@ -84,36 +96,48 @@ int SceneMenu::Update()
 		return nNextScene;
 	}
 	if (GetInput(INPUT_TRIGGER_RIGHT)) {
-		g_nSelectMenu = (MENU)((g_nSelectMenu + 1) % NUM_PAUSE_MENU);
+		g_nSelectMenu = (MENU)((g_nSelectMenu + NUM_PAUSE_MENU - 1) % NUM_PAUSE_MENU);
 	}
 	else if (GetInput(INPUT_TRIGGER_LEFT)) {
-		g_nSelectMenu = (MENU)((g_nSelectMenu + NUM_PAUSE_MENU - 1) % NUM_PAUSE_MENU);
+		g_nSelectMenu = (MENU)((g_nSelectMenu + 1) % NUM_PAUSE_MENU);
 	}
 
 	pStart->Update();
 	pRanking->Update();
-	pEnd->Update();
+	pHard->Update();
+	pTutorial->Update();
 
 	
-	if (pStart->GetRotationY() != 0 || pRanking->GetRotationY() != 0 || pEnd->GetRotationY() != 0) 
+	if (pStart->GetRotationY() != 0 || pRanking->GetRotationY() != 0 || pHard->GetRotationY() != 0 || pTutorial->GetRotationY() != 0)
 	{
 		fAcceleration += 1;
-		if (pStart->GetRotationY() > 0)
-			pStart->RotateAroundY(-fAcceleration);
-		if (pStart->GetRotationY() < 0) {
-			pStart->SetRotationY(0);
+
+		if (pTutorial->GetRotationY() > 0)
+			pTutorial->RotateAroundY(-fAcceleration);
+		if (pTutorial->GetRotationY() < 0) {
+			pTutorial->SetRotationY(0);
 			fAcceleration = 0;
 		}
-		if (pStart->GetRotationY() == 0)
+
+		if (pTutorial->GetRotationY() == 0)
 		{
-			if (pEnd->GetRotationY() > 0)
-				pEnd->RotateAroundY(-fAcceleration);
-			if (pEnd->GetRotationY() < 0) {
-				pEnd->SetRotationY(0);
+			if (pStart->GetRotationY() > 0)
+				pStart->RotateAroundY(-fAcceleration);
+			if (pStart->GetRotationY() < 0) {
+				pStart->SetRotationY(0);
 				fAcceleration = 0;
 			}
 		}
-		if (pEnd->GetRotationY() == 0)
+		if (pStart->GetRotationY() == 0)
+		{
+			if (pHard->GetRotationY() > 0)
+				pHard->RotateAroundY(-fAcceleration);
+			if (pHard->GetRotationY() < 0) {
+				pHard->SetRotationY(0);
+				fAcceleration = 0;
+			}
+		}
+		if (pHard->GetRotationY() == 0)
 		{
 			if (pRanking->GetRotationY() > 0)
 				pRanking->RotateAroundY(-fAcceleration);
@@ -127,10 +151,21 @@ int SceneMenu::Update()
 	}
 	fAcceleration = 0;
 	switch (g_nSelectMenu) {
+	case TUTORIAL:
+		pStart->SetAsSelectedOption(false);
+		pRanking->SetAsSelectedOption(false);
+		pHard->SetAsSelectedOption(false);
+		pTutorial->SetAsSelectedOption(true);
+		if (GetInput(INPUT_JUMP)) {
+			nNextScene = SCENE_TUTORIAL_GAME;
+			bOptionSelected = true;
+		}
+		break;
 	case START:
 		pStart->SetAsSelectedOption(true);
 		pRanking->SetAsSelectedOption(false);
-		pEnd->SetAsSelectedOption(false);
+		pHard->SetAsSelectedOption(false);
+		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
 			nNextScene = SCENE_GAME;
 			bOptionSelected = true;
@@ -139,7 +174,8 @@ int SceneMenu::Update()
 	case RANKING:
 		pStart->SetAsSelectedOption(false);
 		pRanking->SetAsSelectedOption(true);
-		pEnd->SetAsSelectedOption(false);
+		pHard->SetAsSelectedOption(false);
+		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
 			nNextScene = SCENE_RANKING;
 			bOptionSelected = true;
@@ -148,7 +184,8 @@ int SceneMenu::Update()
 	case ALT:
 		pStart->SetAsSelectedOption(false);
 		pRanking->SetAsSelectedOption(false);
-		pEnd->SetAsSelectedOption(true);
+		pHard->SetAsSelectedOption(true);
+		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
 			nNextScene = SCENE_HELL_GAME;
 			bOptionSelected = true;
@@ -165,7 +202,8 @@ void SceneMenu::Draw()
 	SetZBuffer(false);
 	pStart->Draw();
 	pRanking->Draw();
-	pEnd->Draw();
+	pHard->Draw();
+	pTutorial->Draw();
 }
 
 //=============================================================================

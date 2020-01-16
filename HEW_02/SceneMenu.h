@@ -3,9 +3,10 @@
 #include "C_Ui.h"
 
 enum MENU {
-	START = 0,			// スタート
+	TUTORIAL=0,
+	START,			// スタート
+	ALT,			
 	RANKING,			// ランキング
-	ALT,				// エンド
 	MENU_MAX
 };
 class SceneMenu :
@@ -14,7 +15,8 @@ class SceneMenu :
 private:
 	C_Ui* pStart;
 	C_Ui* pRanking;
-	C_Ui* pEnd;
+	C_Ui* pHard;
+	C_Ui* pTutorial;
 	bool bOptionSelected;
 	MENU g_nSelectMenu;
 	int nNextScene;

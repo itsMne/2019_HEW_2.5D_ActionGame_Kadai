@@ -14,7 +14,7 @@
 #define MAX_ATTACKS 15
 #define INIT_HP 100
 #define INIT_STAMINA 30
-#define TRANSFORM_ACCELERATION 0.15f
+#define TRANSFORM_ACCELERATION 0.55f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
 Player3D* MainPlayer;
 

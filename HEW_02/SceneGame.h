@@ -93,6 +93,7 @@ public:
 	bool IsGamePaused();
 	void SetHitEffect();
 	void SetPetalsFrames(int frames);
+	int GetSceneType();
 };
 SceneGame* GetCurrentGame();
 int GetScore();

@@ -262,6 +262,8 @@ void Enemy3D::Init()
 	default:
 		break;
 	}
+	pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_IDLE]);
+	pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
 }
 
 void Enemy3D::Update()
@@ -329,6 +331,11 @@ void Enemy3D::Update()
 #if USE_IN_RENDERZONE
 	if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && nState != ENEMY_DEAD) {
 		nState = ENEMY_IDLE;
+		if (pModel)
+		{
+			pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_IDLE]);
+			pModel->SwitchAnimation(nAnimations[ENEMY_IDLE]);
+		}
 		return;
 	}
 #endif
@@ -462,7 +469,8 @@ void Enemy3D::EnemyStatesControl()
 		}
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDOFF]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
-		fSendOffAcceleration += 1.0f;
+		printf("SO\n");
+		fSendOffAcceleration += 1.5f;
 		Position.x -= fSendOffAcceleration * nDirection;
 		break;
 	default:
@@ -663,7 +671,8 @@ void Enemy3D::DamageControl()
 			if (nEnragedHitCountMax > 0 && nEnragedCounter == 0)
 				nEnragedMeter++;
 		}
-		Position.x = AttackHitbox.x;
+		if(nState!=ENEMY_SENDOFF && pPlayerAttack->Animation != SAMURAI_STINGER)
+			Position.x = AttackHitbox.x;
 		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
 			pPlayer->TranslateX(1.5f* nPlayerDirection);
 			if(!pCurrentFloor)
@@ -712,7 +721,7 @@ void Enemy3D::DamageControl()
 			pPlayer->CancelAttack();
 		break;
 	}
-	if (nEnragedCounter == 0 || nEnragedHitCountMax == 0) {
+	if ((nEnragedCounter == 0 || nEnragedHitCountMax == 0) && nState != ENEMY_SENDOFF && nState != ENEMY_FALLING) {
 		nState = ENEMY_DAMAGED;
 	}
 	if (nEnragedHitCountMax <= nEnragedMeter && nEnragedHitCountMax!=0) {
@@ -801,6 +810,7 @@ void Enemy3D::Draw()
 			return;
 	}
 #endif
+	//printf("%d\n", pModel->GetCurrentFrame());
 	GameObject3D::Draw();
 }
 

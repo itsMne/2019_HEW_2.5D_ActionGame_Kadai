@@ -77,12 +77,6 @@ void Billboard2D::Update()
 	if (++nAnimeCount >= 3) {
 		++uv.U;
 		if (uv.U >= (float)nFrameX) {
-			//// ‰eíœ
-			//nIdxShadow = -1;
-			// ’eíœ
-			//bUse = false;
-			//continue;
-			//nAnimeIdx = 0;
 			uv.U = 0;
 			uv.V++;
 			if (uv.V >= (float)nFrameY)

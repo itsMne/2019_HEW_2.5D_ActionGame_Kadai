@@ -100,6 +100,10 @@ void GameObject3D::Update()
 				List = pS_Game->GetEnemies();
 				List->DeleteObject(this);
 				break;
+			case GO_MIRROR:
+				List = pS_Game->GetMirrors();
+				List->DeleteObject(this);
+				break;
 			default:
 				break;
 			}

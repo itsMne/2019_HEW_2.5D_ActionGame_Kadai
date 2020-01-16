@@ -439,14 +439,44 @@ void DebugAim::SaveAllControl()
 	if (GetInput(INPUT_SAVE_LEVEL))
 	{
 		SceneGame* p_sCurrentGame = (SceneGame*)pCurrentGame;
-		p_sCurrentGame->GetFields()->SaveFields("Fields_Level");
-		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
-		p_sCurrentGame->GetWalls()->SaveWalls("Walls_Level");
-		p_sCurrentGame->GetItems()->SaveItems("Items_Level");
-		p_sCurrentGame->GetSpikes()->SaveSpikes("Spikes_Level");
-		p_sCurrentGame->GetGoals()->SaveMisc("Goals_Level");
-		p_sCurrentGame->GetMirrors()->SaveMirrors("Mirrors_Level");
-		p_sCurrentGame->GetEnemies()->SaveEnemies("Enemies_Level");
+		int nSceneType = p_sCurrentGame->GetSceneType();
+
+		switch (nSceneType)
+		{
+		case SCENE_HELL_GAME:
+			p_sCurrentGame->GetFields()->SaveFields("HELL/Fields_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("HELL/Goals_Level");
+			p_sCurrentGame->GetWalls()->SaveWalls("HELL/Walls_Level");
+			p_sCurrentGame->GetItems()->SaveItems("HELL/Items_Level");
+			p_sCurrentGame->GetSpikes()->SaveSpikes("HELL/Spikes_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("HELL/Goals_Level");
+			p_sCurrentGame->GetMirrors()->SaveMirrors("HELL/Mirrors_Level");
+			p_sCurrentGame->GetEnemies()->SaveEnemies("HELL/Enemies_Level");
+			return;
+		case SCENE_GAME:
+			p_sCurrentGame->GetFields()->SaveFields("HEWLEVEL/Fields_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("HEWLEVEL/Goals_Level");
+			p_sCurrentGame->GetWalls()->SaveWalls("HEWLEVEL/Walls_Level");
+			p_sCurrentGame->GetItems()->SaveItems("HEWLEVEL/Items_Level");
+			p_sCurrentGame->GetSpikes()->SaveSpikes("HEWLEVEL/Spikes_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("HEWLEVEL/Goals_Level");
+			p_sCurrentGame->GetMirrors()->SaveMirrors("HEWLEVEL/Mirrors_Level");
+			p_sCurrentGame->GetEnemies()->SaveEnemies("HEWLEVEL/Enemies_Level");
+			return;
+		case SCENE_TUTORIAL_GAME:
+			p_sCurrentGame->GetFields()->SaveFields("TUTORIAL/Fields_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("TUTORIAL/Goals_Level");
+			p_sCurrentGame->GetWalls()->SaveWalls("TUTORIAL/Walls_Level");
+			p_sCurrentGame->GetItems()->SaveItems("TUTORIAL/Items_Level");
+			p_sCurrentGame->GetSpikes()->SaveSpikes("TUTORIAL/Spikes_Level");
+			p_sCurrentGame->GetGoals()->SaveMisc("TUTORIAL/Goals_Level");
+			p_sCurrentGame->GetMirrors()->SaveMirrors("TUTORIAL/Mirrors_Level");
+			p_sCurrentGame->GetEnemies()->SaveEnemies("TUTORIAL/Enemies_Level");
+			return;
+		default:
+			break;
+		}
+
 	}
 }
 

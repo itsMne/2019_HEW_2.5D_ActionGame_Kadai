@@ -75,6 +75,13 @@ HRESULT InitScene()
 			Doors[RIGHTDOOR]->SetDoorOpen(true);
 		Scene = new SceneGame(SCENE_GAMEHELL);
 		break;
+	case SCENE_TUTORIAL_GAME:
+		if (Doors[LEFTDOOR])
+			Doors[LEFTDOOR]->SetDoorOpen(true);
+		if (Doors[RIGHTDOOR])
+			Doors[RIGHTDOOR]->SetDoorOpen(true);
+		Scene = new SceneGame(SCENE_TUTORIAL_GAME);
+		break;
 	default:
 		break;
 	}

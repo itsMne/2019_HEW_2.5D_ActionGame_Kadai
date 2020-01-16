@@ -40,6 +40,8 @@ private:
 	bool bCanLoop;
 	bool AnimationFrame;
 	int nCurrentAnimation;
+	int nCurrentMaxFrame;
+	int nCurrentInitialFrame;
 	bool bPreLoadedModel;
 public:
 	Model3D();

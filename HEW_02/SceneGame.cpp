@@ -22,8 +22,6 @@ C_Ui* pVisualRank;
 SceneGame::SceneGame(int type): SceneBase()
 {
 	for (int i = 0; i < MAX_HIT_EFFECT; i++, HitEffect_UI[i] = nullptr);
-	//
-	
 	nScore = 0;
 	bGoalReached = false;
 	nSceneGameType = type;
@@ -118,25 +116,36 @@ void SceneGame::Init()
 	{
 	case SCENE_GAMEHELL:
 		printf("\nHELL\n");
-		Walls->Load("HELL_Walls_Level", GO_WALL);
-		Fields->Load("HELL_Fields_Level", GO_FLOOR);
-		Items->Load("HELL_Items_Level", GO_ITEM);
-		Goals->Load("HELL_Goals_Level", GO_GOAL);
-		Spikes->Load("HELL_Spikes_Level", GO_SPIKE);
-		Mirrors->Load("HELL_Mirrors_Level", GO_MIRROR);
-		Enemies->Load("HELL_Enemies_Level", GO_ENEMY);
+		Walls->Load("HELL/Walls_Level", GO_WALL);
+		Fields->Load("HELL/Fields_Level", GO_FLOOR);
+		Items->Load("HELL/Items_Level", GO_ITEM);
+		Goals->Load("HELL/Goals_Level", GO_GOAL);
+		Spikes->Load("HELL/Spikes_Level", GO_SPIKE);
+		Mirrors->Load("HELL/Mirrors_Level", GO_MIRROR);
+		Enemies->Load("HELL/Enemies_Level", GO_ENEMY);
 		nSceneType = SCENE_HELL_GAME;
 		return;
 	case SCENE_GAMENORMAL:
 		printf("\nNORMAL\n");
-		Walls->Load("Walls_Level", GO_WALL);
-		Fields->Load("Fields_Level", GO_FLOOR);
-		Items->Load("Items_Level", GO_ITEM);
-		Goals->Load("Goals_Level", GO_GOAL);
-		Spikes->Load("Spikes_Level", GO_SPIKE);
-		Mirrors->Load("Mirrors_Level", GO_MIRROR);
-		Enemies->Load("Enemies_Level", GO_ENEMY);
+		Walls->Load("HEWLEVEL/Walls_Level", GO_WALL);
+		Fields->Load("HEWLEVEL/Fields_Level", GO_FLOOR);
+		Items->Load("HEWLEVEL/Items_Level", GO_ITEM);
+		Goals->Load("HEWLEVEL/Goals_Level", GO_GOAL);
+		Spikes->Load("HEWLEVEL/Spikes_Level", GO_SPIKE);
+		Mirrors->Load("HEWLEVEL/Mirrors_Level", GO_MIRROR);
+		Enemies->Load("HEWLEVEL/Enemies_Level", GO_ENEMY);
 		nSceneType = SCENE_GAME;
+		return;
+	case SCENE_TUTORIAL_GAME:
+		printf("\nNORMAL\n");
+		Walls->Load("TUTORIAL/Walls_Level", GO_WALL);
+		Fields->Load("TUTORIAL/Fields_Level", GO_FLOOR);
+		Items->Load("TUTORIAL/Items_Level", GO_ITEM);
+		Goals->Load("TUTORIAL/Goals_Level", GO_GOAL);
+		Spikes->Load("TUTORIAL/Spikes_Level", GO_SPIKE);
+		Mirrors->Load("TUTORIAL/Mirrors_Level", GO_MIRROR);
+		Enemies->Load("TUTORIAL/Enemies_Level", GO_ENEMY);
+		nSceneType = SCENE_TUTORIAL_GAME;
 		return;
 	}
 }
@@ -543,6 +552,11 @@ void SceneGame::SetPetalsFrames(int frames)
 		if (pSakuraleaf[i])
 			pSakuraleaf[i]->SetFrameUse(frames);
 	}
+}
+
+int SceneGame::GetSceneType()
+{
+	return nSceneType;
 }
 
 SceneGame * GetCurrentGame()

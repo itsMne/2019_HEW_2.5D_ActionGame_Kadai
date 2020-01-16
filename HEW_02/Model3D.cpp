@@ -35,6 +35,7 @@ Model3D::Model3D()
 	fAnimSpeed = 2;
 	bCanLoop = true;
 	AnimationFrame = false;
+	g_pModel = nullptr;
 }
 
 
@@ -61,7 +62,9 @@ HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 	// FBXファイルの読み込み
 	g_pModel = new CFbxModel();
 	Light3D* pLight = GetMainLight();
-	fFrame = g_pModel->GetInitialAnimFrame();
+	SwitchAnimation(0);
+	//fFrame = nCurrentInitialFrame = g_pModel->GetInitialAnimFrame();
+	//nCurrentMaxFrame = g_pModel->GetMaxAnimFrame();
 	if (!pMainCamera)
 	{
 		printf("メインカメラがありません\n");
@@ -99,7 +102,7 @@ HRESULT Model3D::InitModel(int ModelPath, void * pParent)
 	if (!Models[ModelPath]) {
 		Models[ModelPath] = new CFbxModel();
 		Light3D* pLight = GetMainLight();
-		fFrame = Models[ModelPath]->GetInitialAnimFrame();
+		SwitchAnimation(0);
 		Models[ModelPath]->SetCamera(pMainCamera->GetCameraPos());
 		Models[ModelPath]->Init(pDevice, pDeviceContext, ModelPaths[ModelPath]);
 		g_pModel = Models[ModelPath];
@@ -139,11 +142,15 @@ void Model3D::UpdateModel(void)
 
 void Model3D::SwitchAnimation(int nNewAnimNum)
 {
-	nCurrentAnimation = nNewAnimNum;
-	if (g_pModel->GetCurrentAnimation() == nNewAnimNum)
+	if (!g_pModel)
 		return;
+	g_pModel->SetAnimStack(nCurrentAnimation);
+	if (nCurrentAnimation == nNewAnimNum)
+		return;
+	nCurrentAnimation = nNewAnimNum;
 	g_pModel->SetAnimStack(nNewAnimNum);
-	fFrame = g_pModel->GetInitialAnimFrame();
+	fFrame = nCurrentInitialFrame = g_pModel->GetInitialAnimFrame();
+	nCurrentMaxFrame = g_pModel->GetMaxAnimFrame();
 	nFramCount = nCountLoop = 0;
 }
 
@@ -193,11 +200,8 @@ void Model3D::DrawModel(void)
 	// ワールドマトリックスの設定
 	XMStoreFloat4x4(&g_mtxWorld, mtxWorld);
 
-	AnimationFrame = true;
-	if (AnimationFrame) {
-		AnimationControl();
-		AnimationFrame = false;
-	}
+	SwitchAnimation(nCurrentAnimation);
+	AnimationControl();
 	SetZWrite(true);
 	g_pModel->Render(g_mtxWorld, pMainCamera->GetViewMatrix(), pMainCamera->GetProjMatrix(), eOpacityOnly);
 	SetZWrite(false);
@@ -215,11 +219,11 @@ void Model3D::AnimationControl()
 		nFramCount = 0;
 		//printf("%f\n",fAnimSpeed);
 		fFrame += fAnimSpeed;
-		if (fFrame >= g_pModel->GetMaxAnimFrame()) {
+		if (fFrame >= nCurrentMaxFrame) {
 			if (bCanLoop) {
 				if (++nCountLoop > MAX_LOOPS)
 					nCountLoop = MAX_LOOPS;
-				fFrame = g_pModel->GetInitialAnimFrame();
+				fFrame = nCurrentInitialFrame;
 			}
 			else {
 				fFrame--;
@@ -337,14 +341,14 @@ int Model3D::GetAnimation()
 int Model3D::GetEndFrameOfCurrentAnimation()
 {
 	if (g_pModel)
-		return g_pModel->GetMaxAnimFrame();
+		return nCurrentMaxFrame;
 	return 0;
 }
 
 int Model3D::GetCurrentFrame()
 {
 	if (g_pModel)
-		return fFrame;
+		return (int)fFrame;
 	return 0;
 }
 
