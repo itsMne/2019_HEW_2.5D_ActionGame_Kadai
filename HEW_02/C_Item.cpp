@@ -96,7 +96,7 @@ void C_Item::Update()
 		if (pPlayer->IsDebugAimOn())
 			return;
 	}
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->GetState()!=PLAYER_TELEPORTING)
 	{
 		bUse = false;
 		switch (nItemType)
