@@ -41,6 +41,11 @@ enum WARRIOR_ANIMATION
 	WARRIOR_FALLING,
 	WARRIOR_MAX
 };
+
+enum ONI_BOSS_ANIMATION
+{
+
+};
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
 	nEnemyType = enemyType;
@@ -360,8 +365,11 @@ void Enemy3D::EnemyStatesControl()
 	Player3D* pPlayer = (Player3D*)pPlayerPointer;
 	GameObject3D* pWall = nullptr;
 	DamageControl();
-	if (nStuntFrames > 0)
+	if (nStuntFrames > 0) {
 		nStuntFrames--;
+		if (nStuntFrames <= 0)
+			nState = ENEMY_IDLE;
+	}
 	switch (nState)
 	{
 	case ENEMY_IDLE:

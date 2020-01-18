@@ -68,7 +68,6 @@ void SceneGame::Init()
 	Goals = new Go_List();
 	Mirrors = new Go_List();
 	Enemies = new Go_List();
-	SkySphere = new Sphere3D("data/texture/haikei.jpg");
 	SceneCamera->Init();
 	SceneLight->Init();
 
@@ -116,6 +115,7 @@ void SceneGame::Init()
 	{
 	case SCENE_GAMEHELL:
 		printf("\nHELL\n");
+		SkySphere = new Sphere3D("data/texture/haikei3.jpg");
 		Walls->Load("HELL/Walls_Level", GO_WALL);
 		Fields->Load("HELL/Fields_Level", GO_FLOOR);
 		Items->Load("HELL/Items_Level", GO_ITEM);
@@ -127,6 +127,7 @@ void SceneGame::Init()
 		return;
 	case SCENE_GAMENORMAL:
 		printf("\nNORMAL\n");
+		SkySphere = new Sphere3D("data/texture/haikei.jpg");
 		Walls->Load("HEWLEVEL/Walls_Level", GO_WALL);
 		Fields->Load("HEWLEVEL/Fields_Level", GO_FLOOR);
 		Items->Load("HEWLEVEL/Items_Level", GO_ITEM);
@@ -138,6 +139,7 @@ void SceneGame::Init()
 		return;
 	case SCENE_TUTORIAL_GAME:
 		printf("\nNORMAL\n");
+		SkySphere = new Sphere3D("data/texture/haikei2.jpg");
 		Walls->Load("TUTORIAL/Walls_Level", GO_WALL);
 		Fields->Load("TUTORIAL/Fields_Level", GO_FLOOR);
 		Items->Load("TUTORIAL/Items_Level", GO_ITEM);

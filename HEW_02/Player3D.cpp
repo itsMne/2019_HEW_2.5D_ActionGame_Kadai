@@ -127,7 +127,7 @@ void Player3D::Update()
 {
 	if (nState == PLAYER_GEISHA_DODGE && pPlayerModels[MODEL_GEISHA])
 	{
-		pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(2.5f);
+		pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(2.75f);
 		if(nDirection==RIGHT_DIR)
 			pPlayerModels[MODEL_GEISHA]->SwitchAnimation(GEISHA_DODGE_RIGHT);
 		else
@@ -879,7 +879,9 @@ void Player3D::GravityControl()
 			if ((LockMovementRight == M_LOCKED || LockMovementLeft == M_LOCKED) && nCurrentTransformation == MODEL_NINJA)
 			{
 				if (GetInput(INPUT_NINJACRAWL_UP)) {
-					Position.y++;
+					GameObject3D* WallHead = GetCurrentGame()->GetWalls()->CheckCollision(GetHitBox(HB_HEAD));
+					if(!WallHead)
+						Position.y++;
 					f_yForce = 0;
 				}
 				else if (GetInput(INPUT_DOWN))
@@ -928,13 +930,15 @@ void Player3D::Draw()
 	{
 		pDebugAim->Draw();
 	}
-	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
-		pPlayerModels[i]->SetLight(GetMainLight());
+
 	DrawHitboxes();
 	GameObject3D::Draw();
-	
+	Light3D* pLight = GetMainLight();
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++) {
-		
+		pLight->SetLightEnable(true);
+		if(bUnlit)
+			pLight->SetLightEnable(false);
+		pPlayerModels[i]->SetLight(pLight);
 	}
 	SetCullMode(CULLMODE_NONE);
 	if (pPlayerModels[nCurrentTransformation] && pPlayerModels[nCurrentTransformation]->GetRotation().y != 90 - (XM_PI*0.65f))
@@ -944,6 +948,7 @@ void Player3D::Draw()
 		if (pPlayerModels[nNextTransform] && pPlayerModels[nNextTransform]->GetRotation().y != 90 - (XM_PI*0.65f))
 			pPlayerModels[nNextTransform]->DrawModel();
 	}
+	pLight->SetLightEnable(true);
 	SetCullMode(CULLMODE_CCW);
 	
 }

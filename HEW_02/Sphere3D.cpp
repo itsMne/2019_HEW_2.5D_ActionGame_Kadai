@@ -2,7 +2,7 @@
 #include "main.h"
 #include "Texture.h"
 #include "Camera3D.h"
-#define USE_16_SLASHES true
+#define USE_16_SLASHES false
 #define SKYBOX_SIZE 800
 //*****************************************************************************
 // É}ÉNÉçíËã`
@@ -21,7 +21,7 @@ Sphere3D::Sphere3D(const char * szPath)
 #if USE_16_SLASHES
 	Init({ 0,50,100 }, { 0,0,0 }, 16, 8, SKYBOX_SIZE, szPath);
 #else
-	Init({ 0,50,100 }, { 0,0,0 }, 32, 16, SKYBOX_SIZE, szPath);
+	Init({ 0,50,100 }, { 0,0,0 }, 64, 32, SKYBOX_SIZE, szPath);
 #endif
 	bisUnlit = true;
 	bNoCull = true;

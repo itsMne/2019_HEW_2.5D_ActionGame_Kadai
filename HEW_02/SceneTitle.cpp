@@ -8,13 +8,41 @@ SceneTitle::SceneTitle()
 	MainWindow = GetMainWindow();
 	if (MainWindow)
 		MainWindow->SetWindowColor(0, 0, 0);
-	Title = new C_Ui("data/texture/haikei.png", UI_TITLE);
+	Title = new C_Ui("data/texture/Title/haikei.png", UI_TITLE);
 	SlashEffect = new C_Ui("data/texture/Slash.tga", UI_SLASH_EFFECT);
-	Effect1 = new C_Ui("data/texture/haikei0.png", UI_TITLE);
-	Effect2 = new C_Ui("data/texture/haikei1.png", UI_TITLE);
+	Effect1 = new C_Ui("data/texture/Title/haikei0.png", UI_TITLE);
+	Effect2 = new C_Ui("data/texture/Title/haikei1.png", UI_TITLE);
+	for (int i = 0; i < 4; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			Kanji[i] = new C_Ui("data/texture/Title/TE_1.tga", MAXUITYPE);
+			Kanji[i]->SetPolygonPos(80, 150);
+			break;
+		case 1:
+			Kanji[i] = new C_Ui("data/texture/Title/TE_2.tga", MAXUITYPE);
+			Kanji[i]->SetPolygonPos(80, 0);
+			break;
+		case 2:
+			Kanji[i] = new C_Ui("data/texture/Title/TE_3.tga", MAXUITYPE);
+			Kanji[i]->SetPolygonPos(-80, 150);
+			break;
+		case 3:
+			Kanji[i] = new C_Ui("data/texture/Title/TE_4.tga", MAXUITYPE);
+			Kanji[i]->SetPolygonPos(-80, 0);
+			break;
+		default:
+			break;
+		}
+		Kanji[i]->SetRotationY(90);
+		Kanji[i]->SetPolygonSize(164, 167);
+	}
 	Effect1->SetPolygonAlpha(0.5f);
 	Effect2->SetPolygonAlpha(0.5f);
 	alpha1 = 1; 
+	nRotatingKanji = 0;
+	fAccelerationRot = 0;
 	alpha2 = -1;
 }
 
@@ -38,6 +66,19 @@ void SceneTitle::Uninit()
 
 int SceneTitle::Update()
 {
+	if (nRotatingKanji < 4) {
+		fAccelerationRot += 1.5f;
+		Kanji[nRotatingKanji]->RotateAroundY(-fAccelerationRot);
+		if (Kanji[nRotatingKanji]->GetRotationY() <= 0)
+		{
+			Kanji[nRotatingKanji]->SetRotationY(0);
+			nRotatingKanji++;
+			fAccelerationRot = 0;
+		}
+		if (nRotatingKanji < 4)
+			return SCENE_TITLE;
+	}
+	
 	SlashEffect->Update();
 	Effect1->SetPolygonAlpha(Effect1->GetAlpha() - 0.005f*alpha1);
 	Effect2->SetPolygonAlpha(Effect2->GetAlpha() - 0.005f*alpha2);
@@ -66,6 +107,8 @@ int SceneTitle::Update()
 void SceneTitle::Draw()
 {
 	SetZBuffer(false);
+	for (int i = 0; i < 4; i++)
+		Kanji[i]->Draw();
 	if (SlashEffect->GetUV().V >= 5) {
 		Title->Draw();
 		Effect1->Draw();

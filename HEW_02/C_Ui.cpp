@@ -265,7 +265,7 @@ void C_Ui::Update()
 	case UI_SLASH_EFFECT:
 		if (uv.U == 3 && uv.V == 7)
 			break;
-		if (++nFrameCounter >= 60)
+		if (++nFrameCounter >= 15)
 		{
 			uv.U++;
 			if (uv.U == 4) {

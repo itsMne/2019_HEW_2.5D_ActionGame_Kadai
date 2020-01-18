@@ -63,6 +63,10 @@ void RankManager::Update()
 		return;
 	if (pPlayer->GetState() == PLAYER_TELEPORTING)
 		return;
+	if (pPlayer->PlayerIsTransforming())
+		return;
+	if (pPlayer->GetState() == PLAYER_GEISHA_DODGE)
+		return;
 	if (AddResult == MOVE_ADDED) {
 		fRankFrames += nMoveStrength;
 		nFramesForFreezingRank = 15;
