@@ -1,6 +1,7 @@
 #include "DXWindow3D.h"
 #include "SceneManager.h"
 #include "InputManager.h"
+#include "Sound.h"
 #include <io.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -230,6 +231,8 @@ HRESULT DXWindow3D::Init(HWND hWnd, BOOL bWindow)
 	CD3D11_DEPTH_STENCIL_DESC dsd(def);
 	dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	g_pDevice->CreateDepthStencilState(&dsd, &g_pDSS);
+
+	InitSound(hWnd);
 
 	return hr;
 }

@@ -180,7 +180,7 @@ public:
 	int GetPlayerMaxMp();
 	void RiseHP(int nhprise);
 	bool IsStaminaCooldownOn();
-	void SetDamage(int Damage);
+	bool SetDamage(int Damage);
 	void SetDamageTeleport(int Damage);
 	float GetYForce();
 	void SetYForce(float fyforce);

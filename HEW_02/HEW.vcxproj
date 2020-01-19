@@ -192,6 +192,7 @@
     <ClCompile Include="SceneRanking.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sphere3D.cpp" />
     <ClCompile Include="Spike3D.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -232,6 +233,7 @@
     <ClInclude Include="SceneRanking.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="Sphere3D.h" />
     <ClInclude Include="Spike3D.h" />
     <ClInclude Include="Texture.h" />

@@ -1,4 +1,5 @@
 #include "SceneTitle.h"
+#include "Sound.h"
 #include "InputManager.h"
 
 
@@ -44,6 +45,7 @@ SceneTitle::SceneTitle()
 	nRotatingKanji = 0;
 	fAccelerationRot = 0;
 	alpha2 = -1;
+	
 }
 
 
@@ -67,14 +69,17 @@ void SceneTitle::Uninit()
 int SceneTitle::Update()
 {
 	if (nRotatingKanji < 4) {
-		fAccelerationRot += 1.5f;
+		fAccelerationRot += 1.0f;
 		Kanji[nRotatingKanji]->RotateAroundY(-fAccelerationRot);
 		if (Kanji[nRotatingKanji]->GetRotationY() <= 0)
 		{
 			Kanji[nRotatingKanji]->SetRotationY(0);
 			nRotatingKanji++;
 			fAccelerationRot = 0;
+			PlaySoundGame(SOUND_LABEL_SE_SHINE);
 		}
+		if(nRotatingKanji==2)
+			PlaySoundGame(SOUND_LABEL_BGM_TITLE);
 		if (nRotatingKanji < 4)
 			return SCENE_TITLE;
 	}
@@ -97,8 +102,11 @@ int SceneTitle::Update()
 		if (Effect2->GetAlpha() > 1)
 			Effect2->SetPolygonAlpha(1);
 	}
-
+	if (SlashEffect->GetUV().V == 1 && SlashEffect->GetUV().U == 0)
+		PlaySoundGame(SOUND_LABEL_SE_BIGSLASH);
 	if (GetInput(INPUT_JUMP) && SlashEffect->GetUV().V >= 7) {
+		StopSound();
+		PlaySoundGame(SOUND_LABEL_SE_GAMESTART);
 		return SCENE_MENU;
 	}
 	return SCENE_TITLE;

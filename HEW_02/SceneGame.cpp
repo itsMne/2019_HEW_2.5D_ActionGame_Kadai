@@ -2,6 +2,7 @@
 #include "Enemy3D.h"
 #include "Mirror3D.h"
 #include "Camera3D.h"
+#include "Sound.h"
 #include "InputManager.h"
 #include "RankManager.h"
 #define RENDER_BOX_CAMERA { 0,0,0, 200,200,120 };
@@ -201,25 +202,35 @@ int SceneGame::Update()
 		fPauseOptionsAcceleration += 1;
 		if (pContinue_UI->GetRotationY() > 0)
 			pContinue_UI->RotateAroundY(-fPauseOptionsAcceleration);
-		if (pContinue_UI->GetRotationY() < 0)
+		if (pContinue_UI->GetRotationY() < 0) {
 			pContinue_UI->SetRotationY(0);
+			PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONSHOWN);
+		}
 		if (pContinue_UI->GetRotationY() == 0) {
 			if (pGiveUp_UI->GetRotationY() > 0)
 				pGiveUp_UI->RotateAroundY(-fPauseOptionsAcceleration);
-			if (pGiveUp_UI->GetRotationY() < 0)
+			if (pGiveUp_UI->GetRotationY() < 0) {
 				pGiveUp_UI->SetRotationY(0);
+				PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONSHOWN);
+			}
 		}
-		if (GetInput(INPUT_TRIGGER_LEFT))
+		if (GetInput(INPUT_TRIGGER_LEFT)) {
 			nCurrentPauseSelection++;
+			PlaySoundGame(SOUND_LABEL_SE_MENUMOVE);
+		}
 
-		if (GetInput(INPUT_TRIGGER_RIGHT))
+		if (GetInput(INPUT_TRIGGER_RIGHT)) {
 			nCurrentPauseSelection--;
+			PlaySoundGame(SOUND_LABEL_SE_MENUMOVE);
+		}
 		if (nCurrentPauseSelection == PAUSE_MAX)
 			nCurrentPauseSelection = 0;
 		if (nCurrentPauseSelection < 0)
 			nCurrentPauseSelection = PAUSE_MAX - 1;
-		if (GetInput(INPUT_PAUSE) && pContinue_UI->GetRotationY() == 0 && pGiveUp_UI->GetRotationY() == 0)
+		if (GetInput(INPUT_PAUSE) && pContinue_UI->GetRotationY() == 0 && pGiveUp_UI->GetRotationY() == 0) {
 			bGameIsPaused = false;
+			PlaySoundGame(SOUND_LABEL_SE_PAUSE);
+		}
 
 		switch (nCurrentPauseSelection)
 		{
@@ -326,8 +337,9 @@ int SceneGame::Update()
 		if(bPauseFramesWhenZoom)
 			return nSceneType;
 	}
-	if (GetInput(INPUT_PAUSE))
+	if (GetInput(INPUT_PAUSE)) {
 		bGameIsPaused = true;
+	}
 	if (--nPauseFrames > 0)
 		return nSceneType;
 	nPauseFrames = 0;

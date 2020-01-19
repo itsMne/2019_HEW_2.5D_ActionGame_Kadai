@@ -3,6 +3,7 @@
 #include "Player3D.h"
 #include "RankManager.h"
 #include "InputManager.h"
+#include "Sound.h"
 #include "C_Ui.h"
 
 #define CANCEL_GRAVITY_FRAMES 30
@@ -83,6 +84,7 @@ void Enemy3D::Init()
 	nDelayCounter = nDetectedFrames = 0;
 	nDelayFramesBeforeAttack = 0;
 	bUnlit = false;
+	nAttackHitSound = SOUND_LABEL_SE_ENEMYATTACK1;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI_A:
@@ -311,6 +313,7 @@ void Enemy3D::Update()
 			GetMainCamera()->CancelShake();
 			GetMainCamera()->ShakeCamera({ 3.95f,3.95f,2.75f }, 30, 15);
 			bUse = false;
+			PlaySoundGame(SOUND_LABEL_SE_DISSAPPEARED);
 		}
 		return;
 	}
@@ -329,6 +332,7 @@ void Enemy3D::Update()
 		pGame->ZoomPause(70, 60, 3, true, true);
 		GetMainCamera()->SetFocalPoint(this);
 		nState = ENEMY_DEAD;
+		PlaySoundGame(SOUND_LABEL_SE_KO);
 		bUseGravity = false;
 		return;
 	}
@@ -427,6 +431,8 @@ void Enemy3D::EnemyStatesControl()
 					if (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetAttackHitbox()))
 					{
 						nState = ENEMY_STUNT;
+						PlaySoundGame(SOUND_LABEL_SE_BLOCKGEISHA);
+						PlaySoundGame(SOUND_LABEL_SE_GEISHADODGED);
 						VibrateXinput(65535, 65535, 30);
 						nStuntFrames = 240;
 						pGame->ZoomPause(70, 120, 3, false, true);
@@ -438,6 +444,7 @@ void Enemy3D::EnemyStatesControl()
 					}
 					else {
 						nState = ENEMY_STUNT;
+						PlaySoundGame(SOUND_LABEL_SE_GEISHADODGED);
 						VibrateXinput(65535/3, 65535/3, 30);
 						nStuntFrames = 120;
 						pGame->ZoomPause(70, 120, 3, false, true);
@@ -450,7 +457,9 @@ void Enemy3D::EnemyStatesControl()
 					pModel->SwitchAnimation(nAnimations[ENEMY_SENDUP]);
 					return;
 				}
-				pPlayer->SetDamage(nDamageAgainstPlayer);
+				bool DamagedDeal=pPlayer->SetDamage(nDamageAgainstPlayer);
+				if (DamagedDeal)
+					PlaySoundGame((SOUND_LABEL)nAttackHitSound);
 			}
 		}
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_ATTACKING]);
@@ -603,6 +612,7 @@ void Enemy3D::DamageControl()
 			nEnragedMeter = 0;
 		fYForce = 0;
 		if (bDoDamage) {
+			PlaySoundGame(SOUND_LABEL_SE_BIGSLASH3);
 			VibrateXinput(65535, 65535, 30);
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
 			pGame->SetPauseFrames(4);
@@ -630,6 +640,7 @@ void Enemy3D::DamageControl()
 			nState = ENEMY_FALLING;
 		nFramesSendOff = 5;
 		if (bDoDamage) {
+			PlaySoundGame(SOUND_LABEL_SE_BIGSLASH);
 			VibrateXinput(65535, 65535, 30);
 			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			nHP -= 10;
@@ -648,6 +659,7 @@ void Enemy3D::DamageControl()
 			nEnragedMeter = 0;
 		nState = ENEMY_FALLING;
 		if (bDoDamage) {
+			PlaySoundGame(SOUND_LABEL_SE_BIGSLASH2);
 			VibrateXinput(65535, 65535, 30);
 			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
 			GetMainCamera()->ShakeCamera({ 2.95f,2.95f,2.75f }, 25, 15);
@@ -660,8 +672,13 @@ void Enemy3D::DamageControl()
 		}
 		break;
 	default:
+		
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
 		if (bDoDamage) {
+			if(pPlayerAttack->Animation != SAMURAI_STINGER)
+				PlaySoundGame(SOUND_LABEL_SE_NINJA_REGULARSLASH);
+			else
+				PlaySoundGame(SOUND_LABEL_SE_BIGSLASH2);
 			VibrateXinput(65535/2, 65535/2, 30);
 			if (pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_A || pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_B ||
 				pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_C)
@@ -746,6 +763,7 @@ void Enemy3D::DamageControl()
 		GetMainCamera()->SetFocalPoint(this);
 		nState = ENEMY_DEAD;
 		bUseGravity = false;
+		PlaySoundGame(SOUND_LABEL_SE_KO);
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "SceneMenu.h"
 #include "C_Ui.h"
 #include "input.h"
+#include "Sound.h"
 #include "InputManager.h"
 
 #define NUM_PAUSE_MENU		4
@@ -29,6 +30,7 @@ SceneMenu::SceneMenu()
 	pTutorial->SetRotationY(90);
 	bOptionSelected = false;
 	nNextScene = 0;
+	PlaySoundGame(SOUND_LABEL_BGM_MENU);
 }
 
 
@@ -63,6 +65,7 @@ int SceneMenu::Update()
 			if (pTutorial->GetRotationY() > 90) {
 				pTutorial->SetRotationY(90);
 				fAcceleration = 0;
+				PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 			}
 			if (pTutorial->GetRotationY() == 90) {
 				if (pStart->GetRotationY() < 90)
@@ -70,6 +73,7 @@ int SceneMenu::Update()
 				if (pStart->GetRotationY() > 90) {
 					pStart->SetRotationY(90);
 					fAcceleration = 0;
+					PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 				}
 			}
 			if (pStart->GetRotationY() == 90)
@@ -79,6 +83,7 @@ int SceneMenu::Update()
 				if (pHard->GetRotationY() > 90) {
 					pHard->SetRotationY(90);
 					fAcceleration = 0;
+					PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 				}
 			}
 			if (pHard->GetRotationY() == 90)
@@ -88,6 +93,7 @@ int SceneMenu::Update()
 				if (pRanking->GetRotationY() > 90) {
 					pRanking->SetRotationY(90);
 					fAcceleration = 0;
+					PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 				}
 			}
 			return SCENE_MENU;
@@ -96,9 +102,11 @@ int SceneMenu::Update()
 		return nNextScene;
 	}
 	if (GetInput(INPUT_TRIGGER_RIGHT)) {
+		PlaySoundGame(SOUND_LABEL_SE_MENUMOVE);
 		g_nSelectMenu = (MENU)((g_nSelectMenu + NUM_PAUSE_MENU - 1) % NUM_PAUSE_MENU);
 	}
 	else if (GetInput(INPUT_TRIGGER_LEFT)) {
+		PlaySoundGame(SOUND_LABEL_SE_MENUMOVE);
 		g_nSelectMenu = (MENU)((g_nSelectMenu + 1) % NUM_PAUSE_MENU);
 	}
 
@@ -117,6 +125,7 @@ int SceneMenu::Update()
 		if (pTutorial->GetRotationY() < 0) {
 			pTutorial->SetRotationY(0);
 			fAcceleration = 0;
+			PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 		}
 
 		if (pTutorial->GetRotationY() == 0)
@@ -126,6 +135,7 @@ int SceneMenu::Update()
 			if (pStart->GetRotationY() < 0) {
 				pStart->SetRotationY(0);
 				fAcceleration = 0;
+				PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 			}
 		}
 		if (pStart->GetRotationY() == 0)
@@ -135,6 +145,7 @@ int SceneMenu::Update()
 			if (pHard->GetRotationY() < 0) {
 				pHard->SetRotationY(0);
 				fAcceleration = 0;
+				PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 			}
 		}
 		if (pHard->GetRotationY() == 0)
@@ -144,7 +155,7 @@ int SceneMenu::Update()
 			if (pRanking->GetRotationY() < 0) {
 				pRanking->SetRotationY(0);
 				fAcceleration = 0;
-				
+				PlaySoundGame(SOUND_LABEL_SE_MENUOPTIONHIDDEN);
 			}
 		}
 		return SCENE_MENU;
@@ -157,6 +168,8 @@ int SceneMenu::Update()
 		pHard->SetAsSelectedOption(false);
 		pTutorial->SetAsSelectedOption(true);
 		if (GetInput(INPUT_JUMP)) {
+			StopSound();
+			PlaySoundGame(SOUND_LABEL_SE_GAMESTART2);
 			nNextScene = SCENE_TUTORIAL_GAME;
 			bOptionSelected = true;
 		}
@@ -167,6 +180,8 @@ int SceneMenu::Update()
 		pHard->SetAsSelectedOption(false);
 		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
+			StopSound();
+			PlaySoundGame(SOUND_LABEL_SE_GAMESTART2);
 			nNextScene = SCENE_GAME;
 			bOptionSelected = true;
 		}
@@ -177,6 +192,8 @@ int SceneMenu::Update()
 		pHard->SetAsSelectedOption(false);
 		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
+			StopSound();
+			PlaySoundGame(SOUND_LABEL_SE_RANKING_START);
 			nNextScene = SCENE_RANKING;
 			bOptionSelected = true;
 		}
@@ -187,6 +204,8 @@ int SceneMenu::Update()
 		pHard->SetAsSelectedOption(true);
 		pTutorial->SetAsSelectedOption(false);
 		if (GetInput(INPUT_JUMP)) {
+			StopSound();
+			PlaySoundGame(SOUND_LABEL_SE_GAMESTART3);
 			nNextScene = SCENE_HELL_GAME;
 			bOptionSelected = true;
 		}

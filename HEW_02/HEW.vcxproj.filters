@@ -133,6 +133,7 @@
     <ClCompile Include="RankManager.cpp">
       <Filter>CPP\ゲームCPP</Filter>
     </ClCompile>
+    <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -247,6 +248,7 @@
     <ClInclude Include="RankManager.h">
       <Filter>H\ゲームH</Filter>
     </ClInclude>
+    <ClInclude Include="Sound.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

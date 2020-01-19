@@ -5,6 +5,8 @@
 #include "RankManager.h"
 #include "SceneGame.h"
 #include "string.h"
+#include "Sound.h"
+
 #define PLAYER_SPEED	(5.0f)					// ˆÚ“®‘¬“x
 #define JUMP_FORCE 7.0f
 #define SCALE_NINJA	  1.0f
@@ -1132,6 +1134,13 @@ void Player3D::Attack(const char * atkInput, int recursions)
 			else
 				SwitchAnimation(stAllMoves[i].Transformation, stAllMoves[i].Animation);
 			nState = PLAYER_ATTACKING;
+			if(nCurrentTransformation==MODEL_SAMURAI || pCurrentAttackPlaying->Animation == NINJA_ATTACK_COMBOAIR_D
+				|| pCurrentAttackPlaying->Animation == NINJA_ATTACK_COMBO_E)
+				PlaySoundGame(SOUND_LABEL_SE_SWING);
+			else if (nCurrentTransformation == MODEL_NINJA)
+				PlaySoundGame(SOUND_LABEL_SE_SWING2);
+			else if (nCurrentTransformation == MODEL_GEISHA)
+				PlaySoundGame(SOUND_LABEL_SE_SWING3);
 			if (stAllMoves[i].ResetInputs)
 				ResetInputs();
 			return;
@@ -1184,12 +1193,12 @@ bool Player3D::IsStaminaCooldownOn()
 	return bStaminaCoolDown;
 }
 
-void Player3D::SetDamage(int Damage)
+bool Player3D::SetDamage(int Damage)
 {
 	if (nRecoveryFrames > 0)
-		return;
+		return false;
 	if (nHP == 0)
-		return;
+		return false;
 	VibrateXinput(65535/2, 65535/2, 30);
 	ResetRanks();
 	nDamage+= Damage;
@@ -1198,6 +1207,7 @@ void Player3D::SetDamage(int Damage)
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGED);
 	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);
 	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
+	return true;
 }
 
 void Player3D::SetDamageTeleport(int Damage)
