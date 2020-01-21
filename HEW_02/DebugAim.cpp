@@ -400,7 +400,7 @@ void DebugAim::Update()
 			}
 		}
 		break;
-	case DA_ENEMY_ONI: case DA_ENEMY_ONIB: case DA_ENEMY_ONIC: case DA_ENEMY_ONID: case DA_ENEMY_WARRIOR:
+	case DA_ENEMY_ONI: case DA_ENEMY_ONIB: case DA_ENEMY_ONIC: case DA_ENEMY_ONID: case DA_ENEMY_WARRIOR: case DA_ENEMY_ONIBOSS: 
 		if (!pDA_Enemy) {
 			pDA_Enemy = new Enemy3D(nObjectType - DA_ENEMY_ONI);
 			pDA_Enemy->SetIgnoreRenderingZone(true);
@@ -622,7 +622,7 @@ void DebugAim::Draw()
 		if (pDA_Mirror)
 			pDA_Mirror->Draw();
 		break;
-	case DA_ENEMY_ONI: case DA_ENEMY_ONIB: case DA_ENEMY_ONIC: case DA_ENEMY_ONID: case DA_ENEMY_WARRIOR:
+	case DA_ENEMY_ONI: case DA_ENEMY_ONIB: case DA_ENEMY_ONIC: case DA_ENEMY_ONID: case DA_ENEMY_WARRIOR: case DA_ENEMY_ONIBOSS:
 		if (pDA_Enemy)
 			pDA_Enemy->Draw();
 		break;

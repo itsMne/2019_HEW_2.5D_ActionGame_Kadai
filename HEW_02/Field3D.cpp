@@ -358,10 +358,10 @@ HRESULT Field3D::MakeVertexField(ID3D11Device* pDevice)
 	g_vertexWk[3].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	// 拡散反射光の設定
-	g_vertexWk[0].diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	g_vertexWk[1].diffuse = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	g_vertexWk[2].diffuse = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	g_vertexWk[3].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	g_vertexWk[0].diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+	g_vertexWk[1].diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+	g_vertexWk[2].diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+	g_vertexWk[3].diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
 
 	// テクスチャ座標の設定
 	g_vertexWk[0].tex = XMFLOAT2(0.0f, 0.0f);

@@ -38,34 +38,30 @@ float4 main(VS_OUTPUT input) : SV_Target0
 {
 	float3 Diff = g_Diffuse.rgb;
 	float Alpha = g_Diffuse.a;
-	if (g_Ambient.a != 0.0f) {								// テクスチャ有無
+	if (g_Ambient.a != 0.0f) {									// テクスチャ有無
 		float4 TexDiff = g_texture.Sample(g_sampler, input.Tex);
 		Diff *= TexDiff.rgb;
 		Alpha *= TexDiff.a;
 	}
 	if (Alpha <= 0.0f) discard;
 
-	float3 Spec = g_Specular.rgb;								// 鏡面反射色
-	if (g_lightDir.x == 0.0f && g_lightDir.y == 0.0f && g_lightDir.z == 0.0f) {
-		Diff = g_Ambient.rgb + Diff;							// 拡散色 + 環境色
-	} else {
+	if (g_lightDir.x != 0.0f || g_lightDir.y != 0.0f || g_lightDir.z != 0.0f) {
 		float3 L = normalize(-g_lightDir.xyz);					// 光源へのベクトル
 		float3 N = normalize(input.Normal);						// 法線ベクトル
 		float3 V = normalize(g_cameraPos.xyz - input.PosForPS);	// 視点へのベクトル
 		float3 H = normalize(L + V);							// ハーフベクトル
 		Diff = g_lightAmbient.rgb * g_Ambient.rgb +
 			g_lightDiffuse.rgb * Diff * saturate(dot(L, N));	// 拡散色 + 環境色
-		Spec *= g_lightSpecular.rgb *
+		float3 Spec = g_Specular.rgb * g_lightSpecular.rgb *
 			pow(saturate(dot(N, H)), g_Specular.a);				// 鏡面反射色
+		Diff += Spec;
 	}
 
-	float3 Emis = g_Emissive.rgb;
+	float3 Emis = g_Emissive.rgb;								// 発光色
 	if (g_Emissive.a != 0.0f) {
 		float4 Emis4 = g_texEmissive.Sample(g_sampler, input.Tex);
 		Emis *= (Emis4.rgb * Emis4.a);
 	}
-
-	Diff += Spec;
 	Diff += Emis;
 
 	return float4(Diff, Alpha);

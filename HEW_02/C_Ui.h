@@ -49,6 +49,7 @@ enum UITYPE
 	UI_RESULT_SCORE,
 	UI_RANKING_SCORE,
 	UI_RANKING_TOP,
+	UI_OWARI,
 	MAXUITYPE,
 };
 class C_Ui :public Polygon2D
@@ -70,7 +71,9 @@ private:
 	bool bScalingUP;
 	float fScaleOffset;
 	bool bIsInUse;
+	bool bOwariAnimationisOver;
 	int nFrameUse;
+	int nCounterOwariOnScreen;
 	float fOffsetY;
 	int hpDamageCooloff;
 public:

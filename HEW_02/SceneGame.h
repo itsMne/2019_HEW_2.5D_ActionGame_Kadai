@@ -50,6 +50,7 @@ private:
 	C_Ui*			pGiveUp_UI;
 	C_Ui*			HitEffect_UI[MAX_HIT_EFFECT];
 	C_Ui*			pSakuraleaf[MAX_SAKURA_LEAVES];
+	C_Ui*			pOwari;
 	float			fPauseOptionsAcceleration;
 	int				nCurrentPauseSelection;
 	bool			bGameIsPaused;
@@ -90,6 +91,7 @@ public:
 	void ZoomPause(float fDistance, int nFrames, float Speed, bool PauseFramesWhenZoom, bool ZoomBack);
 	void CancelZoom();
 	void SetPauseFrames(int nPauseF);
+	bool IsUsingPauseFrames();
 	bool IsGamePaused();
 	void SetHitEffect();
 	void SetPetalsFrames(int frames);

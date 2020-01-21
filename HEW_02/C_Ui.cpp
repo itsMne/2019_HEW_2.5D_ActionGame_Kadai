@@ -164,10 +164,17 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonFrameSize(1.0f / 3.0f, 1.0f / 1.0f);
 		SetPolygonPos(500,230);
 		break;
+	case UI_OWARI:
+		SetPolygonSize(0, 0);
+		uv = { 0,0 };
+		SetPolygonFrameSize(1.0f / 3.0f, 1.0f / 10.0f);
+		SetPolygonPos(0, 0);
+		break;
 	}
 	fAcceleration = 0;
 	hpDamageCooloff = 0;
 	bDoorInPos = false;
+	bOwariAnimationisOver = false;
 	bDoorOpen = true;
 	bIsInUse = false;
 }
@@ -405,6 +412,39 @@ void C_Ui::Update()
 	case UI_RANK_VISUAL:
 		
 		break;
+	case UI_OWARI:
+		if (!bIsInUse)
+			return;
+		if (!CompVector(Scale, { 333, 720, 1 }))
+		{
+			Scale.z = 1;
+			Scale.x += fAcceleration;
+			Scale.y += fAcceleration;
+			if (Scale.x > 333)
+				Scale.x = 333;
+			if (Scale.y > 720)
+				Scale.y = 720;
+			fAcceleration+=2;
+			return;
+		}
+		
+		if (++nCounterOwariOnScreen > 120) {
+			if (++nFrameCounter >= 2)
+			{
+				nFrameCounter = 0;
+				uv.U++;
+				if (uv.U == 3) {
+					uv.V++;
+					uv.U = 0;
+					if (uv.V == 10) {
+						uv.V = 9;
+						uv.U = 2;
+						bOwariAnimationisOver = true;
+					}
+				}
+			}
+		}
+		break;
 	}
 
 }
@@ -534,6 +574,12 @@ void C_Ui::Draw()
 			Draw(&vScorePos, nScore, SCORE_WIDTH,
 				SCORE_SIZE_X*2.3f, SCORE_SIZE_Y *2.8);
 			break;
+	case UI_OWARI:
+		if (!bIsInUse)
+			return;
+		SetPolygonUV(uv.U / 3.0f, uv.V / 10.0f);
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;

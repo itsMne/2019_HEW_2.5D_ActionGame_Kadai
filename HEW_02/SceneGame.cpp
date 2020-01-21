@@ -98,6 +98,7 @@ void SceneGame::Init()
 	pZoomAttack_UI = new C_Ui("data/texture/ZoomEffect.tga", UI_ZOOM_ATTACK);
 
 	pBG_UI = new C_Ui("data/texture/PauseMenu/PauseMenuBackground.png", UI_PAUSE_BG);
+	pOwari = new C_Ui("data/texture/OwariAnime.tga", UI_OWARI);
 	pContinue_UI = new C_Ui("data/texture/PauseMenu/Continue.png", UI_MENU_OPTION);
 	pContinue_UI->SetPolygonPos(250, 0);
 	pGiveUp_UI = new C_Ui("data/texture/PauseMenu/GiveUp.png", UI_MENU_OPTION);
@@ -357,7 +358,7 @@ int SceneGame::Update()
 	Mirrors->Update();//鏡（テレポート）
 	Enemies->Update();//敵
 	Goals->Update();//ゴール
-
+	pOwari->Update();
 	//ランクマネージャ
 	RankManager::Update();
 
@@ -421,6 +422,7 @@ void SceneGame::Draw()
 	pLevel_Editor_STATICMODE_UI->Draw();
 	pSpeed_MoveObject_UI->Draw();
 	pDelay_MoveObject_UI->Draw();
+	pOwari->Draw();
 	pZoomAttack_UI->Draw();
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
 		pSakuraleaf[i]->Draw();
@@ -538,9 +540,14 @@ void SceneGame::SetPauseFrames(int nPauseF)
 	nPauseFrames = nPauseF;
 }
 
-bool SceneGame::IsGamePaused()
+bool SceneGame::IsUsingPauseFrames()
 {
 	return nPauseFrames>0;
+}
+
+bool SceneGame::IsGamePaused()
+{
+	return bGameIsPaused;
 }
 
 void SceneGame::SetHitEffect()

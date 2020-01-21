@@ -112,7 +112,6 @@ void Player3D::Init()
 	Position = { 0,0,0 };
 	nDirection = RIGHT_DIR;
 	nRecoveryFrames = 0;
-	nHP /= 2;//DEL
 	nCancelGravityFrames = 0;
 	nToRecover = 0;
 #if SHOW_HITBOX
@@ -1202,7 +1201,7 @@ bool Player3D::SetDamage(int Damage)
 	VibrateXinput(65535/2, 65535/2, 30);
 	ResetRanks();
 	nDamage+= Damage;
-	nRecoveryFrames = 60;
+	nRecoveryFrames = 150;
 	SwitchAnimationSpeed(1);
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGED);
 	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);

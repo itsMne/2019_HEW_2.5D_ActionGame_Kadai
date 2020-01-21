@@ -45,7 +45,15 @@ enum WARRIOR_ANIMATION
 
 enum ONI_BOSS_ANIMATION
 {
-
+	ONI_BOSS_IDLE,
+	ONI_BOSS_ATTACKA,
+	ONI_BOSS_ATTACKB,
+	ONI_BOSS_DAMAGEA,
+	ONI_BOSS_DAMAGEB,
+	ONI_BOSS_DAMAGEUP,
+	ONI_BOSS_DAMAGEFALL,
+	ONI_BOSS_SENDOFF,
+	ONI_BOSS_WALK,
 };
 Enemy3D::Enemy3D(int enemyType) :GameObject3D()
 {
@@ -266,6 +274,43 @@ void Enemy3D::Init()
 		nMidSendOffFrame = 897;
 		nEnragedFrames = 180;
 		break;
+	case TYPE_BOSS_ONI:
+		bUseGravity = true;
+		nHP = 150;
+		InitModel(ENEMY_BOSS_MODEL_PATH);
+		pModel->SetScale({ 0.25f,0.25f,0.25f });
+		pModel->SetPositionZ(-10);
+		pModel->SwitchAnimation(WARRIOR_IDLE);
+		fSpeed = 1.0f;
+		fSpeed = 0.0f;//DEL
+		hitbox = { 0,22.5f,0,15,29,10 };
+		hbAttack = { 40,22.5f,0,40,29,10 };
+		nDelayFramesBeforeAttack = 20;
+		nMinAttackFrame = 215;
+		nMaxAttackFrame = 235;
+		nDamageAgainstPlayer = 30;
+		nAnimations[ENEMY_IDLE] = ONI_BOSS_IDLE;
+		nAnimations[ENEMY_DAMAGED] = ONI_BOSS_DAMAGEA;
+		nAnimations[ENEMY_DAMAGEDALT] = ONI_BOSS_DAMAGEB;
+		nAnimations[ENEMY_FALLING] = ONI_BOSS_DAMAGEFALL;
+		nAnimations[ENEMY_MOVING] = ONI_BOSS_WALK;
+		nAnimations[ENEMY_ATTACKING] = ONI_BOSS_ATTACKA;
+		nAnimations[ENEMY_SENDUP] = WARRIOR_SENDUP;
+		nAnimations[ENEMY_SENDOFF] = WARRIOR_SENDOFF;
+
+		fAnimationSpeeds[ENEMY_IDLE] = 2;
+		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
+		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
+		fAnimationSpeeds[ENEMY_FALLING] = 2;
+		fAnimationSpeeds[ENEMY_MOVING] = 0.5f * 4;
+		fAnimationSpeeds[ENEMY_ATTACKING] = 0.7f;
+		fAnimationSpeeds[ENEMY_SENDUP] = 4;
+		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
+		nEnragedHitCountMax = 5;
+		nTopSendOffFrame = 828;
+		nMidSendOffFrame = 897;
+		nEnragedFrames = 180;
+		break;
 	default:
 		break;
 	}
@@ -361,7 +406,7 @@ void Enemy3D::Update()
 	}
 ;	RegularCollisionWithPlayer();
 	EnemyStatesControl();
-
+	 
 }
 
 void Enemy3D::EnemyStatesControl()
@@ -824,7 +869,7 @@ void Enemy3D::GravityControl()
 		if (!(IsInCollision3D(pCurrentFloor->GetHitBox(), GetHitBox())))
 			pCurrentFloor = nullptr;
 	}
-}
+} 
 
 void Enemy3D::Draw()
 {

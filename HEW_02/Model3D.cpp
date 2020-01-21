@@ -22,6 +22,7 @@ char ModelPaths[MAX_PRELOADED_MODELS][256] =
 	"data/model/SamuraiHew.fbx",
 	"data/model/NinjaHew.fbx",
 	"data/model/GeishaHew.fbx",
+	"data/model/BossOni.fbx",
 
 };
 
@@ -211,7 +212,7 @@ void Model3D::DrawModel(void)
 void Model3D::AnimationControl()
 {
 	SceneGame* pGame = GetCurrentGame();
-	if (pGame->IsGamePaused()) {
+	if (pGame->IsUsingPauseFrames() || pGame->IsGamePaused()) {
 		g_pModel->SetAnimFrame((int)fFrame);
 		return;
 	}
