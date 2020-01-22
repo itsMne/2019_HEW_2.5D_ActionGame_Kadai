@@ -173,6 +173,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	}
 	fAcceleration = 0;
 	hpDamageCooloff = 0;
+	nCounterOwariOnScreen = 0;
 	bDoorInPos = false;
 	bOwariAnimationisOver = false;
 	bDoorOpen = true;
@@ -418,13 +419,13 @@ void C_Ui::Update()
 		if (!CompVector(Scale, { 333, 720, 1 }))
 		{
 			Scale.z = 1;
+			fAcceleration += 2;
 			Scale.x += fAcceleration;
 			Scale.y += fAcceleration;
 			if (Scale.x > 333)
 				Scale.x = 333;
 			if (Scale.y > 720)
 				Scale.y = 720;
-			fAcceleration+=2;
 			return;
 		}
 		
@@ -641,6 +642,11 @@ bool C_Ui::GetUse()
 	return bIsInUse;
 }
 
+void C_Ui::SetUse(bool use)
+{
+	bIsInUse = use;
+}
+
 void C_Ui::SetFrameUse(int frames)
 {
 	nFrameUse = frames;
@@ -651,6 +657,12 @@ void C_Ui::SetRankTop(XMFLOAT2 Pos, int Scorenum)
 	vScorePos = Pos;
 	nScore = Scorenum;
 }
+
+bool C_Ui::IsOwariMessageDone()
+{
+	return bOwariAnimationisOver;
+}
+
 
 void SetFramesForZoomUse(int frames)
 {

@@ -64,6 +64,7 @@ private:
 	int nEnragedMeter;
 	int nStuntFrames;
 	int nAttackHitSound;
+	bool bIsBoss;
 public:
 	Enemy3D(int enemyType);
 	~Enemy3D();

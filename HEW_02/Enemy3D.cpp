@@ -87,6 +87,7 @@ void Enemy3D::Init()
 	pGame = nullptr;
 	bUseGravity = false;
 	bUse = true;
+	bIsBoss = false;
 	nState = ENEMY_IDLE;
 	fSpeed = 1;
 	nDelayCounter = nDetectedFrames = 0;
@@ -275,6 +276,7 @@ void Enemy3D::Init()
 		nEnragedFrames = 180;
 		break;
 	case TYPE_BOSS_ONI:
+		bIsBoss = true;
 		bUseGravity = true;
 		nHP = 150;
 		InitModel(ENEMY_BOSS_MODEL_PATH);
@@ -617,7 +619,7 @@ void Enemy3D::DamageControl()
 	SetFramesForZoomUse(35);
 	if (pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && 
 		pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH
-		&& pPlayerAttack->Animation != SAMURAI_STINGER)
+		&& pPlayerAttack->Animation != SAMURAI_STINGER && !bIsBoss)
 	{
 		if (bDoDamage) {
 			AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 30);
@@ -651,8 +653,10 @@ void Enemy3D::DamageControl()
 	{
 	case NINJA_UPPER_SLASH:
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDUP]);
-		Position.x = AttackHitbox.x;
-		Position.y = AttackHitbox.y-20;
+		if (!bIsBoss) {
+			Position.x = AttackHitbox.x;
+			Position.y = AttackHitbox.y - 20;
+		}
 		if(nEnragedMeter>0)
 			nEnragedMeter = 0;
 		fYForce = 0;
@@ -683,7 +687,8 @@ void Enemy3D::DamageControl()
 		nState = ENEMY_SENDOFF;
 		if(!pCurrentFloor)
 			nState = ENEMY_FALLING;
-		nFramesSendOff = 5;
+		if (!bIsBoss)
+			nFramesSendOff = 5;
 		if (bDoDamage) {
 			PlaySoundGame(SOUND_LABEL_SE_BIGSLASH);
 			VibrateXinput(65535, 65535, 30);
@@ -698,8 +703,10 @@ void Enemy3D::DamageControl()
 		}
 		break;
 	case NINJA_AIR_DOWN:
-		Position.x = pPlayer->GetPosition().x+(-5* nDirection);
-		Position.y = pPlayer->GetPosition().y;
+		if (!bIsBoss) {
+			Position.x = pPlayer->GetPosition().x + (-5 * nDirection);
+			Position.y = pPlayer->GetPosition().y;
+		}
 		if (nEnragedMeter > 0)
 			nEnragedMeter = 0;
 		nState = ENEMY_FALLING;
@@ -741,20 +748,22 @@ void Enemy3D::DamageControl()
 			if (nEnragedHitCountMax > 0 && nEnragedCounter == 0)
 				nEnragedMeter++;
 		}
-		if(nState!=ENEMY_SENDOFF && pPlayerAttack->Animation != SAMURAI_STINGER)
-			Position.x = AttackHitbox.x;
-		if (!(pPlayer->GetFloor()) && pPlayer->GetState()!=PLAYER_TELEPORTING) {
-			pPlayer->TranslateX(1.5f* nPlayerDirection);
-			if(!pCurrentFloor)
-				Position.y = AttackHitbox.y - 20;
-			nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
-		}
-		pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
-		if (pWall) {
-			while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
-			{
-				pPlayer->TranslateX(1 * -nPlayerDirection);
-				Position.x += 1*nDirection;
+		if (!bIsBoss) {
+			if (nState != ENEMY_SENDOFF && pPlayerAttack->Animation != SAMURAI_STINGER)
+				Position.x = AttackHitbox.x;
+			if (!(pPlayer->GetFloor()) && pPlayer->GetState() != PLAYER_TELEPORTING) {
+				pPlayer->TranslateX(1.5f* nPlayerDirection);
+				if (!pCurrentFloor)
+					Position.y = AttackHitbox.y - 20;
+				nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+			}
+			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+			if (pWall) {
+				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+				{
+					pPlayer->TranslateX(1 * -nPlayerDirection);
+					Position.x += 1 * nDirection;
+				}
 			}
 		}
 		if (nLastPlayerAttack != pPlayerAttack->Animation && nEnragedCounter==0)
@@ -818,7 +827,8 @@ void Enemy3D::RegularCollisionWithPlayer()
 	int nPlayerDirection = pPlayer->GetDirection();
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->GetFloor())
 	{
-		Position.x += 0.5f * nPlayerDirection;
+		if (!bIsBoss)
+			Position.x += 0.5f * nPlayerDirection;
 		if (nPlayerDirection == LEFT_DIR) {
 			while ((pPlayer->GetState() == PLAYER_WALKING && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox())))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
 				pPlayer->TranslateX(1);
@@ -832,7 +842,8 @@ void Enemy3D::RegularCollisionWithPlayer()
 	{
 		pPlayer->TranslateX((-0.05f * nPlayerDirection));
 		pPlayer->SetYForce(0);
-		Position.x += 2 * nPlayerDirection;
+		if (!bIsBoss)
+			Position.x += 2 * nPlayerDirection;
 	}
 }
 

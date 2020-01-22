@@ -580,6 +580,19 @@ int SceneGame::GetSceneType()
 	return nSceneType;
 }
 
+bool SceneGame::IsOwariMessageOver()
+{
+	if(pOwari)
+		return pOwari->IsOwariMessageDone();
+	return false;
+}
+
+void SceneGame::ActivateOwariMessage()
+{
+	if (pOwari)
+		pOwari->SetUse(true);
+}
+
 SceneGame * GetCurrentGame()
 {
 	return CurrentGame;

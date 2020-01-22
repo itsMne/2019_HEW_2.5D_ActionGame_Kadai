@@ -18,6 +18,7 @@
 #define INIT_STAMINA 30
 #define TRANSFORM_ACCELERATION 0.55f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
+#define ATTACK_ANIMATION_SPEED 2.8f
 Player3D* MainPlayer;
 
 enum MOVEMENT_LOCKED
@@ -114,6 +115,7 @@ void Player3D::Init()
 	nRecoveryFrames = 0;
 	nCancelGravityFrames = 0;
 	nToRecover = 0;
+	fAccelerationOver = 0;
 #if SHOW_HITBOX
 	for (int i = 0; i < MAX_HB; i++)
 	{
@@ -126,6 +128,11 @@ void Player3D::Init()
 
 void Player3D::Update()
 {
+	if (nState == PLAYER_OVER)
+	{
+		StageClearControl();
+		return;
+	}
 	if (nState == PLAYER_GEISHA_DODGE && pPlayerModels[MODEL_GEISHA])
 	{
 		pPlayerModels[MODEL_GEISHA]->SwitchAnimationSpeed(2.75f);
@@ -409,7 +416,7 @@ void Player3D::Update()
 
 void Player3D::AttackingStateControl()
 {
-	SwitchAnimationSpeed(2.5f);
+	SwitchAnimationSpeed(ATTACK_ANIMATION_SPEED);
 	Hitboxes[HB_ATTACK].x = 7.5f*nDirection;
 	XMFLOAT3 hbAttackScale = ATTACK_HITBOX_SCALE;
 	bool bIsAttacking = false;
@@ -675,6 +682,63 @@ void Player3D::DeadStateControl()
 	pPlayerModels[MODEL_NINJA]->UpdateModel();
 	bDeadAnimation = true;
 	printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
+}
+
+void Player3D::StageClearControl()
+{
+	Rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	nDirection = RIGHT_DIR;
+	pPlayerModels[MODEL_NINJA]->SetCanLoop(false);
+	if (!pCurrentFloor) {
+		GravityControl();
+		return;
+	}
+	nNextTransform = MODEL_NINJA;
+	TransformingStateControl();
+	if (nCurrentTransformation != MODEL_NINJA)
+		return;
+	SceneGame* pGame = GetCurrentGame();
+	if (!pGame)
+		return;
+	SwitchAnimation(MODEL_NINJA, NINJA_OVER);
+	pPlayerModels[MODEL_NINJA]->SwitchAnimationSpeed(1);
+	pPlayerModels[MODEL_NINJA]->UpdateModel();
+	if (pMainCamera)
+	{
+		
+		if (pMainCamera->GetCurrentZoom() < 35) {
+			fAccelerationOver+=0.1f;
+			pMainCamera->ZoomInZ(fAccelerationOver);
+			if (pMainCamera->GetCurrentZoom() > 35)
+			{
+				pMainCamera->ZoomInZ(35);
+				fAccelerationOver = 0;
+			}
+		}
+	}
+	if (pPlayerModels[MODEL_NINJA]->GetCurrentFrame() >= 2523 && !pGame->IsOwariMessageOver())
+	{
+		pPlayerModels[MODEL_NINJA]->PauseModelAnimation(true);
+		pGame->ActivateOwariMessage();
+		return;
+	}
+	else {
+		pPlayerModels[MODEL_NINJA]->PauseModelAnimation(false);
+	}
+	if (pPlayerModels[MODEL_NINJA]->GetCurrentFrame() >= 2560)
+	{
+		fAccelerationOver+=0.005f;
+		Scale.x -= fAccelerationOver;
+		Scale.z -= fAccelerationOver;
+		if (Scale.z < 0)
+			Scale.z = 0;
+		if (Scale.x < 0)
+			Scale.x = 0;
+	}
+	if (Scale.x == 0 && Scale.z == 0)
+	{
+		pGame->SetGoalReached();
+	}
 }
 
 void Player3D::DamagedTeleportingControl()
@@ -1194,6 +1258,8 @@ bool Player3D::IsStaminaCooldownOn()
 
 bool Player3D::SetDamage(int Damage)
 {
+	if (nState == PLAYER_OVER)
+		return false;
 	if (nRecoveryFrames > 0)
 		return false;
 	if (nHP == 0)

@@ -96,6 +96,8 @@ public:
 	void SetHitEffect();
 	void SetPetalsFrames(int frames);
 	int GetSceneType();
+	bool IsOwariMessageOver();
+	void ActivateOwariMessage();
 };
 SceneGame* GetCurrentGame();
 int GetScore();

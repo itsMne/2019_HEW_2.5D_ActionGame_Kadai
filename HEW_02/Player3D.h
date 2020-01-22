@@ -34,6 +34,7 @@ enum PLAYER_STATES
 	PLAYER_TELEPORTING_DAMAGED,
 	PLAYER_DEAD,
 	PLAYER_GEISHA_DODGE,
+	PLAYER_OVER,
 	PLAYER_MAX
 };
 enum AirMove
@@ -70,6 +71,7 @@ enum ANIMATION_NINJA
 	NINJA_KICKWALL,
 	NINJA_CRAWLING,
 	NINJA_DAMAGEDALT,
+	NINJA_OVER,
 };
 enum ANIMATION_GEISHA
 {
@@ -136,6 +138,7 @@ private:
 	int nCancelGravityFrames;
 	int nStingerFrames;
 	int nToRecover;
+	float fAccelerationOver;
 	bool bNinjaOnWall;
 public:
 	Player3D();
@@ -146,6 +149,7 @@ public:
 	void TeleportControl();
 	bool DebugAimControl();
 	void DeadStateControl();
+	void StageClearControl();
 	void DamagedTeleportingControl();
 	void PlayerInputsControl(bool bIsLocked);
 	void TransformingStateControl();

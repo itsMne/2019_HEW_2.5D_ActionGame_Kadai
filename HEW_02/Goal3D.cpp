@@ -40,10 +40,11 @@ void Goal3D::Update()
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
 	{
-		SceneGame* pGame = GetCurrentGame();
-		if (!pGame)
-			return;
-		pGame->SetGoalReached();
+		pPlayer->SetPlayerState(PLAYER_OVER);
+		//SceneGame* pGame = GetCurrentGame();
+		//if (!pGame)
+		//	return;
+		//pGame->SetGoalReached();
 	}
 }
 

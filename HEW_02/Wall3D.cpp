@@ -50,10 +50,16 @@ void Wall3D::Update()
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_RIGHT), GetHitBox()))
 	{
 		pPlayer->SetRightWall(this);
+		if (pPlayer->GetPlayerAttack())
+			if (pPlayer->GetPlayerAttack()->Animation == SAMURAI_STINGER)
+				pPlayer->CancelAttack();
 	}
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_LEFT), GetHitBox()))
 	{
 		pPlayer->SetLeftWall(this);
+		if (pPlayer->GetPlayerAttack())
+			if (pPlayer->GetPlayerAttack()->Animation == SAMURAI_STINGER)
+				pPlayer->CancelAttack();
 	}
 }
 

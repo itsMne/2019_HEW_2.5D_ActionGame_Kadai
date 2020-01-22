@@ -40,6 +40,7 @@ private:
 	int nCountLoop;
 	bool bCanLoop;
 	bool AnimationFrame;
+	bool bPauseAnimation;
 	int nCurrentAnimation;
 	int nCurrentMaxFrame;
 	int nCurrentInitialFrame;
@@ -80,5 +81,6 @@ public:
 	int GetLoops();
 	void SetCanLoop(bool);
 	void SetFrame(int frame);
+	void PauseModelAnimation(bool pause);
 };
 #endif

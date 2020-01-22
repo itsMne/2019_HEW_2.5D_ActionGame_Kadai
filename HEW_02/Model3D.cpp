@@ -37,6 +37,7 @@ Model3D::Model3D()
 	bCanLoop = true;
 	AnimationFrame = false;
 	g_pModel = nullptr;
+	bPauseAnimation = false;
 }
 
 
@@ -77,6 +78,7 @@ HRESULT Model3D::InitModel(const char* ModelPath, void* pParent)
 		SetLight(pLight);
 	}
 	bPreLoadedModel = false;
+	bPauseAnimation = false;
 	return hr;
 }
 
@@ -212,7 +214,7 @@ void Model3D::DrawModel(void)
 void Model3D::AnimationControl()
 {
 	SceneGame* pGame = GetCurrentGame();
-	if (pGame->IsUsingPauseFrames() || pGame->IsGamePaused()) {
+	if (pGame->IsUsingPauseFrames() || pGame->IsGamePaused() || bPauseAnimation) {
 		g_pModel->SetAnimFrame((int)fFrame);
 		return;
 	}
@@ -366,4 +368,9 @@ void Model3D::SetCanLoop(bool loop)
 void Model3D::SetFrame(int frame)
 {
 	fFrame = frame;
+}
+
+void Model3D::PauseModelAnimation(bool pause)
+{
+	bPauseAnimation = pause;
 }

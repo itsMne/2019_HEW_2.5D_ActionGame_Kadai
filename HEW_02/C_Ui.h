@@ -93,8 +93,10 @@ public:
 	void SetAsSelectedOption(bool sel);
 	void SetHitEffectUse();
 	bool GetUse();
+	void SetUse(bool use);
 	void SetFrameUse(int frames);
 	void SetRankTop(XMFLOAT2 Pos, int Scorenum);
+	bool IsOwariMessageDone();
 };
 
 void SetFramesForZoomUse(int frames);
