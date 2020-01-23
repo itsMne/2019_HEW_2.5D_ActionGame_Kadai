@@ -83,8 +83,10 @@ void C_Item::Update()
 #endif
 	if (!bUse)
 		return;
-	bbItem->SetPosition(Position);
-	bbItem->SetRotation(Rotation);
+	if (bbItem) {
+		bbItem->SetPosition(Position);
+		bbItem->SetRotation(Rotation);
+	}
 	Rotation.y += 0.025f;
 	if (Rotation.y > 3.14 * 2)
 		Rotation.y = 0;

@@ -29,9 +29,10 @@ void DebugAim::Init()
 	pDA_Goal = nullptr;
 	pDA_Mirror = nullptr;
 	pDA_Enemy = nullptr;
+	pDA_EventBox = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
-	hitbox = { 0,10.0f,0,2,2,6 };
+	hitbox = { 0,10.0f,0,2,2,9 };
 	bStaticObject = true;
 	x3Start = {0,0,0};
 	x3End = {0,0,0};
@@ -49,6 +50,7 @@ void DebugAim::Init()
 	ModelPosEnd->InitModel(MODEL_PATH_X, nullptr);
 	ModelPosTeleport = new Model3D();
 	ModelPosTeleport->InitModel(MODEL_PATH_X2, nullptr);
+	EventNum = 0;
 }
 
 void DebugAim::Update()
@@ -142,6 +144,15 @@ void DebugAim::Update()
 	x3End.z = fDelayBetweenStops;
 	Player3D* pPlayer = nullptr;
 	int nitemType;
+	if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_UP))
+		EventNum++;
+	if (GetInput(INPUT_MOVEABLE_OBJECT_DELAY_DOWN))
+		EventNum--;
+	if (EventNum < 0)
+		EventNum = 0;
+	if (EventNum >= MAX_EVENTS)
+		EventNum = MAX_EVENTS - 1;
+	
 	switch (nObjectType)
 	{
 	case DA_DEBUGAIM:
@@ -429,6 +440,36 @@ void DebugAim::Update()
 			}
 		}
 		break;
+	case DA_EVENT:
+		if (!pDA_EventBox) {
+			EventNum = 0;
+			pDA_EventBox = new EventBox3D(EventNum);
+			pDA_EventBox->SetIgnoreRenderingZone(true);
+			Scale = { 10,10,10 };
+			pDA_EventBox->SetPosition({ Position.x,Position.y + 12,Position.z });
+			pDA_EventBox->SetHitbox({ 0,0,0, Scale.x,Scale.y,Scale.z });
+		}
+		else {
+			pDA_EventBox->SetPosition({ Position.x,Position.y + 12,Position.z });
+			pDA_EventBox->SetScaleWithHitbox(Scale);
+			pDA_EventBox->Update();
+			ScaleControl(fSpeed);
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				Hitbox3D pHB = pDA_EventBox->GetHitBox();
+				pHB.x = 0;
+				pHB.y = 0;
+				pHB.z = 0;
+				p_sCurrentGame->GetEvents()->AddEvent({ Position.x,Position.y + 12,Position.z }, pHB, EventNum);
+				printf("EVENT:%d\n", pDA_EventBox->GetEvenType());
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetEvents()->DeleteLastPosObject();
+			}
+		}
+
+		break;
 	default:
 		break;
 	}
@@ -451,7 +492,7 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetSpikes()->SaveSpikes("HELL/Spikes_Level");
 			p_sCurrentGame->GetGoals()->SaveMisc("HELL/Goals_Level");
 			p_sCurrentGame->GetMirrors()->SaveMirrors("HELL/Mirrors_Level");
-			p_sCurrentGame->GetEnemies()->SaveEnemies("HELL/Enemies_Level");
+			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
 			return;
 		case SCENE_GAME:
 			p_sCurrentGame->GetFields()->SaveFields("HEWLEVEL/Fields_Level");
@@ -462,6 +503,7 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetGoals()->SaveMisc("HEWLEVEL/Goals_Level");
 			p_sCurrentGame->GetMirrors()->SaveMirrors("HEWLEVEL/Mirrors_Level");
 			p_sCurrentGame->GetEnemies()->SaveEnemies("HEWLEVEL/Enemies_Level");
+			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
 			return;
 		case SCENE_TUTORIAL_GAME:
 			p_sCurrentGame->GetFields()->SaveFields("TUTORIAL/Fields_Level");
@@ -472,6 +514,8 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetGoals()->SaveMisc("TUTORIAL/Goals_Level");
 			p_sCurrentGame->GetMirrors()->SaveMirrors("TUTORIAL/Mirrors_Level");
 			p_sCurrentGame->GetEnemies()->SaveEnemies("TUTORIAL/Enemies_Level");
+			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
+
 			return;
 		default:
 			break;
@@ -518,6 +562,7 @@ void DebugAim::SwitchObjectTypeControl()
 	SAFE_DELETE(pDA_Goal);
 	SAFE_DELETE(pDA_Mirror);
 	SAFE_DELETE(pDA_Enemy);
+	SAFE_DELETE(pDA_EventBox);
 	Scale = { 1,1,1 };
 }
 
@@ -525,13 +570,19 @@ void DebugAim::ScaleControl(float fSpeed)
 {
 	switch (nObjectType)
 	{
-	case DA_FIELD:
+	case DA_FIELD: case DA_EVENT:
 		if (!(GetInput(INPUT_SHIFT))) {
 			if (GetInput(INPUT_SCALE_UP_Z)) {
-				Scale.z += fSpeed;
+				if(nObjectType == DA_FIELD)
+					Scale.z += fSpeed;
+				else
+					Scale.y += fSpeed;
 			}
 			if (GetInput(INPUT_SCALE_DOWN_Z)) {
-				Scale.z -= fSpeed;
+				if (nObjectType == DA_FIELD)
+					Scale.z -= fSpeed;
+				else
+					Scale.y -= fSpeed;
 			}
 			if (GetInput(INPUT_SCALE_UP_X)) {
 				Scale.x += fSpeed;
@@ -626,6 +677,10 @@ void DebugAim::Draw()
 		if (pDA_Enemy)
 			pDA_Enemy->Draw();
 		break;
+	case DA_EVENT:
+		if (pDA_EventBox)
+			pDA_EventBox->Draw();
+		break;
 	default:
 		break;
 	}
@@ -662,4 +717,15 @@ int DebugAim::GetMoveSpeedInt()
 int DebugAim::GetDelayObj()
 {
 	return (int)fDelayBetweenStops;
+}
+int DebugAim::GetNumEvent()
+{
+	return EventNum;
+}
+
+bool DebugAim::IsEventSet()
+{
+	if (pDA_EventBox)
+		return true;
+	return false;
 }

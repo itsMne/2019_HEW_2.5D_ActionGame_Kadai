@@ -2,6 +2,7 @@
 #include "Player3D.h"
 #include "SceneGame.h"
 #include "RankManager.h"
+#include "Texture.h"
 #include "input.h"
 
 // マクロ定義
@@ -35,7 +36,19 @@
 #define OPTION_SIZE_X 743/4
 #define OPTION_SIZE_Y 1433/4
 C_Ui* pZoomEffect = nullptr;
-
+ID3D11ShaderResourceView* TutorialTextures[MAX_TUTORIAL_MESSAGES] = {nullptr};
+char TutorialPathTex[MAX_TUTORIAL_MESSAGES][256] =
+{
+	"data/texture/TUTORIAL/TUTORIAL_MOVE.tga",
+	"data/texture/TUTORIAL/TUTORIAL_JUMP.tga",
+	"data/texture/TUTORIAL/TUTORIAL_MOVE2.tga",
+	"data/texture/TUTORIAL/TUTORIAL_GEISHA_B.tga",
+	"data/texture/TUTORIAL/TUTORIAL_GEISHA_A.tga",
+	"data/texture/TUTORIAL/TUTORIAL_GEISHA_C.tga",
+	"data/texture/TUTORIAL/TUTORIAL_ATTACK.tga",
+	"data/texture/TUTORIAL/TUTORIAL_SAMURAI_A.tga",
+	"data/texture/TUTORIAL/TUTORIAL_SAMURAI_B.tga",
+};
 C_Ui::C_Ui()
 {
 }
@@ -90,6 +103,9 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		break;
 	case UI_LEVEL_EDITOR_DELAY:
 		vScorePos = { -30,-220 - 45 };
+		break;
+	case UI_LEVEL_EDITOR_NUMEVENT:
+		vScorePos = { 0,0 };
 		break;
 	case UI_TITLE:
 		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -170,6 +186,32 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		SetPolygonFrameSize(1.0f / 3.0f, 1.0f / 10.0f);
 		SetPolygonPos(0, 0);
 		break;
+	case UI_SAKURA:
+		SetPolygonSize(315 / 3, 315 / 3);
+		SetPolygonAlpha(1);
+		vSpeed.x = (float)(rand() % 5 + 2);
+		vSpeed.y = (float)(rand() % 5 + 2);
+		uv = { (float)(rand() % 7),0 };
+		SetPolygonFrameSize(1.0f / 7.0f, 1.0f / 1.0f);
+		SetPolygonPos((float)(rand() % (SCREEN_WIDTH)-(SCREEN_WIDTH / 2)), (float)(rand() % (SCREEN_HEIGHT / 2) - (SCREEN_HEIGHT / 2)));
+		break;
+	case UI_TUTORIAL_MESSAGE:
+		SAFE_DELETE(g_pTexture);
+		for (int i = 0; i < MAX_TUTORIAL_MESSAGES; i++)
+		{
+			if (!TutorialTextures[i])
+			{
+				CreateTextureFromFile(GetDevice(), TutorialPathTex[i], &TutorialTextures[i]);
+				printf("チュートリアルのテクスチャ：%s\n", TutorialPathTex[i]);
+			}
+		}
+		SetPolygonSize(405, 720);
+		SetPolygonPos(400, -200);
+		uv = { 0,0 };
+		SetPolygonFrameSize(1.0f / 2.0f, 1.0f / 1.0f);
+		nTutorialMessage = 0;
+		g_pTexture = TutorialTextures[nTutorialMessage];
+		break;
 	}
 	fAcceleration = 0;
 	hpDamageCooloff = 0;
@@ -203,7 +245,8 @@ void C_Ui::Update()
 	SceneGame* pCurrentGame = GetCurrentGame();
 	if (!pCurrentGame && 
 		nType != UI_SLASH_EFFECT && nType != UI_DOOR_LEFT
-			&& nType != UI_DOOR_RIGHT && nType != UI_MENU_OPTION)
+			&& nType != UI_DOOR_RIGHT && nType != UI_MENU_OPTION
+		&& nType != UI_SAKURA)
 		return;
 	if (pCurrentGame)
 		nScore = pCurrentGame->GetScore();
@@ -411,7 +454,6 @@ void C_Ui::Update()
 		}
 		break;
 	case UI_RANK_VISUAL:
-		
 		break;
 	case UI_OWARI:
 		if (!bIsInUse)
@@ -443,6 +485,28 @@ void C_Ui::Update()
 						bOwariAnimationisOver = true;
 					}
 				}
+			}
+		}
+		break;
+	case UI_SAKURA:
+
+		Position.x -= vSpeed.x;
+		Position.y -= vSpeed.y;
+		if (Position.x < -SCREEN_WIDTH / 2 - (Scale.x / 2)
+			|| Position.y < -SCREEN_HEIGHT / 2 - (Scale.y / 2)) {
+			SetPolygonPos((float)(rand() % (SCREEN_WIDTH)-(SCREEN_WIDTH / 2) + 300), (float)(rand() % (SCREEN_HEIGHT / 2) + (SCREEN_HEIGHT / 2)));
+			vSpeed.x = (float)(rand() % 3 + 1);
+			vSpeed.y = (float)(rand() % 3 + 1);
+		}
+		break;
+	case UI_TUTORIAL_MESSAGE:
+		g_pTexture = TutorialTextures[nTutorialMessage];
+		if (++nFrameCounter >= 30)
+		{
+			nFrameCounter = 0;
+			uv.U++;
+			if (uv.U == 2) {
+				uv.U = 0;
 			}
 		}
 		break;
@@ -520,6 +584,17 @@ void C_Ui::Draw()
 		Draw(&vScorePos, pPlayer->GetDebugAim()->GetDelayObj(), 5,
 			25, 25);
 		break;
+	case UI_LEVEL_EDITOR_NUMEVENT:
+		pPlayer = GetMainPlayer();
+		if (!pPlayer)
+			return;
+		if (!(pPlayer->IsDebugAimOn()))
+			return;
+		if (!pPlayer->GetDebugAim()->IsEventSet())
+			return;
+		Draw(&vScorePos, pPlayer->GetDebugAim()->GetNumEvent(), 3,
+			25, 25);
+		break;
 	case UI_TITLE:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
@@ -581,9 +656,18 @@ void C_Ui::Draw()
 		SetPolygonUV(uv.U / 3.0f, uv.V / 10.0f);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
+	case UI_SAKURA:
+		SetPolygonUV(uv.U / 7.0f, 1.0f);
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
+	case UI_TUTORIAL_MESSAGE:
+		SetPolygonUV(uv.U / 2.0f, uv.V / 1.0f);
+		Polygon2D::DrawPolygon(GetDeviceContext());
+		break;
 	default:
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
+
 	}
 
 }
@@ -661,6 +745,11 @@ void C_Ui::SetRankTop(XMFLOAT2 Pos, int Scorenum)
 bool C_Ui::IsOwariMessageDone()
 {
 	return bOwariAnimationisOver;
+}
+
+void C_Ui::SetTutorialMessage(int Tut)
+{
+	nTutorialMessage = Tut;
 }
 
 

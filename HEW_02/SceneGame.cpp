@@ -4,6 +4,7 @@
 #include "Camera3D.h"
 #include "Sound.h"
 #include "InputManager.h"
+#include "EventBox3D.h"
 #include "RankManager.h"
 #define RENDER_BOX_CAMERA { 0,0,0, 200,200,120 };
 
@@ -18,7 +19,7 @@ enum PAUSE_OPTION
 
 SceneGame*		CurrentGame = nullptr;
 static int		nScore;
-C_Ui* pVisualRank;
+
 
 SceneGame::SceneGame(int type): SceneBase()
 {
@@ -69,6 +70,7 @@ void SceneGame::Init()
 	Goals = new Go_List();
 	Mirrors = new Go_List();
 	Enemies = new Go_List();
+	Events = new Go_List();
 	SceneCamera->Init();
 	SceneLight->Init();
 
@@ -81,11 +83,10 @@ void SceneGame::Init()
 	pHP_UI_FRONT = new C_Ui("data/texture/HP001.png", UI_HP01);
 	// Mp
 	pMP_UI = new C_Ui("data/texture/MP000.png", UI_MP);
-	
 	pScore_UI = new C_Ui("data/texture/jNum.tga", UI_NUMBER);
 	// Score
 	pScore_Frame_UI = new C_Ui("data/texture/frame_score.png", UI_SCORE);
-
+	pTutorialMessage = nullptr;
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
 		pSakuraleaf[i] = new C_Ui("data/texture/LeafTexture.tga", UI_SAKURALEAF);
 
@@ -102,6 +103,7 @@ void SceneGame::Init()
 	pContinue_UI = new C_Ui("data/texture/PauseMenu/Continue.png", UI_MENU_OPTION);
 	pContinue_UI->SetPolygonPos(250, 0);
 	pGiveUp_UI = new C_Ui("data/texture/PauseMenu/GiveUp.png", UI_MENU_OPTION);
+	pEventNum_UI = new C_Ui("data/texture/UI_LEVEL_EDITOR_NUM.tga", UI_LEVEL_EDITOR_NUMEVENT);
 	pGiveUp_UI->SetPolygonPos(-250, 0);
 	pGiveUp_UI->SetRotationY(90);
 	pContinue_UI->SetRotationY(90);
@@ -125,6 +127,7 @@ void SceneGame::Init()
 		Spikes->Load("HELL/Spikes_Level", GO_SPIKE);
 		Mirrors->Load("HELL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("HELL/Enemies_Level", GO_ENEMY);
+		Events->Load("HELL/Events_Level", GO_EVENT);
 		nSceneType = SCENE_HELL_GAME;
 		return;
 	case SCENE_GAMENORMAL:
@@ -137,10 +140,12 @@ void SceneGame::Init()
 		Spikes->Load("HEWLEVEL/Spikes_Level", GO_SPIKE);
 		Mirrors->Load("HEWLEVEL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("HEWLEVEL/Enemies_Level", GO_ENEMY);
+		Events->Load("HEWLEVEL/Events_Level", GO_EVENT);
 		nSceneType = SCENE_GAME;
 		return;
 	case SCENE_TUTORIAL_GAME:
 		printf("\nNORMAL\n");
+		pPlayer->SetPosition({ -49.500648f, -96.109612f, 0.000000f });
 		SkySphere = new Sphere3D("data/texture/haikei2.jpg");
 		Walls->Load("TUTORIAL/Walls_Level", GO_WALL);
 		Fields->Load("TUTORIAL/Fields_Level", GO_FLOOR);
@@ -149,7 +154,9 @@ void SceneGame::Init()
 		Spikes->Load("TUTORIAL/Spikes_Level", GO_SPIKE);
 		Mirrors->Load("TUTORIAL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("TUTORIAL/Enemies_Level", GO_ENEMY);
+		Events->Load("TUTORIAL/Events_Level", GO_EVENT);
 		nSceneType = SCENE_TUTORIAL_GAME;
+		pTutorialMessage = new C_Ui("None", UI_TUTORIAL_MESSAGE);
 		return;
 	}
 }
@@ -264,6 +271,7 @@ int SceneGame::Update()
 	pLevel_Editor_UI->Update();//レベルエディター更新
 	pLevel_Editor_MOVEMODE_UI->Update();
 	pLevel_Editor_STATICMODE_UI->Update();
+	pEventNum_UI->Update();
 	pSpeed_MoveObject_UI->Update();
 	pDelay_MoveObject_UI->Update();
 	pZoomAttack_UI->Update();
@@ -272,7 +280,6 @@ int SceneGame::Update()
 	pMP_UI->Update();// Mp更新
 	pScore_Frame_UI->Update();// Score更新
 	pBG_UI->Update();
-
 
 	//背景にかんする
 	SkySphere->Update();//スカイスフィア
@@ -359,9 +366,11 @@ int SceneGame::Update()
 	Enemies->Update();//敵
 	Goals->Update();//ゴール
 	pOwari->Update();
+	Events->Update();
 	//ランクマネージャ
 	RankManager::Update();
-
+	if (pTutorialMessage)
+		pTutorialMessage->Update();
 	//桜の葉
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
 		pSakuraleaf[i]->Update();
@@ -379,7 +388,6 @@ void SceneGame::Draw()
 	
 
 	// モデル描画
-	SetCullMode(CULLMODE_NONE);
 	Items->Draw();
 	pPlayer->Draw();
 	pDeviceContext->RSSetState(pMainWindow->GetRasterizerState(1));
@@ -396,11 +404,11 @@ void SceneGame::Draw()
 	Spikes->Draw();
 	Fields->Draw();
 	
-	
 
 	Mirrors->Draw();
 	
 	SceneCamera->DrawRenderZone();
+	Events->Draw();
 	// Zバッファ無効
 	SetZBuffer(false);
 	// Hp描画
@@ -418,12 +426,15 @@ void SceneGame::Draw()
 
 	//レベルエディター更新
 	pLevel_Editor_UI->Draw();
+	pEventNum_UI->Draw();
 	pLevel_Editor_MOVEMODE_UI->Draw();
 	pLevel_Editor_STATICMODE_UI->Draw();
 	pSpeed_MoveObject_UI->Draw();
 	pDelay_MoveObject_UI->Draw();
 	pOwari->Draw();
 	pZoomAttack_UI->Draw();
+	if (pTutorialMessage)
+		pTutorialMessage->Draw();
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
 		pSakuraleaf[i]->Draw();
 	for (int i = 0; i < MAX_HIT_EFFECT; i++)
@@ -473,6 +484,11 @@ Go_List * SceneGame::GetMirrors()
 Go_List * SceneGame::GetEnemies()
 {
 	return Enemies;
+}
+
+Go_List * SceneGame::GetEvents()
+{
+	return Events;
 }
 
 int SceneGame::GetScore()
@@ -591,6 +607,12 @@ void SceneGame::ActivateOwariMessage()
 {
 	if (pOwari)
 		pOwari->SetUse(true);
+}
+
+void SceneGame::SwitchTutorialMessage(int tut)
+{
+	if (pTutorialMessage)
+		pTutorialMessage->SetTutorialMessage(tut);
 }
 
 SceneGame * GetCurrentGame()

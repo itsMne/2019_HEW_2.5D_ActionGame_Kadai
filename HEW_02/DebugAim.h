@@ -6,6 +6,7 @@
 #include "Goal3D.h"
 #include "Spike3D.h"
 #include "Mirror3D.h"
+#include "EventBox3D.h"
 #include "Enemy3D.h"
 
 enum DEBUG_AIM_OBJECTYPES
@@ -27,6 +28,7 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_ENEMY_ONID,
 	DA_ENEMY_WARRIOR,
 	DA_ENEMY_ONIBOSS,
+	DA_EVENT,
 	DA_MAX
 };
 
@@ -42,6 +44,7 @@ private:
 	Goal3D* pDA_Goal;
 	Enemy3D* pDA_Enemy;
 	Mirror3D* pDA_Mirror;
+	EventBox3D* pDA_EventBox;
 	void* pCurrentGame;
 	bool bStaticObject;
 	bool bSetStart;
@@ -57,6 +60,7 @@ private:
 	Model3D* ModelPosTeleport;
 	XMFLOAT3 TeleportDestination;
 	XMFLOAT3 TeleportPosition;
+	int EventNum;
 public:
 	DebugAim();
 	~DebugAim();
@@ -72,5 +76,7 @@ public:
 	bool IsStaticMode();
 	int GetMoveSpeedInt();
 	int GetDelayObj();
+	int GetNumEvent();
+	bool IsEventSet();
 };
 

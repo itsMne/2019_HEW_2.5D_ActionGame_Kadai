@@ -31,6 +31,7 @@ enum UITYPE
 	UI_LEVEL_EDITOR_STATICMODE,
 	UI_LEVEL_EDITOR_OBJSPEED,
 	UI_LEVEL_EDITOR_DELAY,
+	UI_LEVEL_EDITOR_NUMEVENT,
 	UI_TITLE,
 	UI_MENU,
 	UI_MENUFRAME,
@@ -50,7 +51,23 @@ enum UITYPE
 	UI_RANKING_SCORE,
 	UI_RANKING_TOP,
 	UI_OWARI,
+	UI_SAKURA,
+	UI_TUTORIAL_MESSAGE,
 	MAXUITYPE,
+};
+
+enum eTUTORIAL_MESSAGES
+{
+	TUTORIAL_MESSAGE_MOVE,
+	TUTORIAL_MESSAGE_JUMP,
+	TUTORIAL_MESSAGE_MOVEUP,
+	TUTORIAL_MESSAGE_GEISHA_A,
+	TUTORIAL_MESSAGE_GEISHA_B,
+	TUTORIAL_MESSAGE_GEISHA_C,
+	TUTORIAL_MESSAGE_ATTACK,
+	TUTORIAL_MESSAGE_SAMURAI_A,
+	TUTORIAL_MESSAGE_SAMURAI_B,
+	MAX_TUTORIAL_MESSAGES
 };
 class C_Ui :public Polygon2D
 {
@@ -76,6 +93,7 @@ private:
 	int nCounterOwariOnScreen;
 	float fOffsetY;
 	int hpDamageCooloff;
+	int nTutorialMessage;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
@@ -97,6 +115,7 @@ public:
 	void SetFrameUse(int frames);
 	void SetRankTop(XMFLOAT2 Pos, int Scorenum);
 	bool IsOwariMessageDone();
+	void SetTutorialMessage(int Tut);
 };
 
 void SetFramesForZoomUse(int frames);

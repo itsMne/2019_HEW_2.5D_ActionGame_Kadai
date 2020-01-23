@@ -107,7 +107,7 @@ void Enemy3D::Init()
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(ONI_IDLE);
 		fSpeed = 0.4f;
-		hitbox = { 0,22.5f,0,5,13,10 };
+		hitbox = { 0,22.5f,0,5,10,10 };
 		hbAttack = { 10,22.5f,0,10,13,10 };
 		nDelayFramesBeforeAttack = 20;
 		nMinAttackFrame = 917;
@@ -535,7 +535,6 @@ void Enemy3D::EnemyStatesControl()
 		pModel->SwitchAnimation(nAnimations[ENEMY_ATTACKING]);
 		if (pModel->GetLoops() > 0)
 			nState = ENEMY_IDLE;
-		//printf("a");
 		break;
 	case ENEMY_SENDOFF:
 		if (pGame)
@@ -555,7 +554,6 @@ void Enemy3D::EnemyStatesControl()
 		}
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_SENDOFF]);
 		pModel->SwitchAnimation(nAnimations[ENEMY_SENDOFF]);
-		printf("SO\n");
 		fSendOffAcceleration += 1.5f;
 		Position.x -= fSendOffAcceleration * nDirection;
 		break;
@@ -637,7 +635,6 @@ void Enemy3D::DamageControl()
 		return;
 	if (pPlayerAttack->Animation == GEISHA_BLOCK)
 		return;
-	printf("enrcount: %d\n", nEnragedMeter);
 	GameObject3D* pWall = nullptr;
 	if(!bIsBoss || (bIsBoss && nSuperArmor==0))
 		nDirection = -1*pPlayer->GetDirection();
@@ -934,7 +931,6 @@ void Enemy3D::Draw()
 			return;
 	}
 #endif
-	//printf("%d\n", pModel->GetCurrentFrame());
 	GameObject3D::Draw();
 }
 

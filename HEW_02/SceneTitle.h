@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "C_Ui.h"
+#define MAX_SAKURA 15
 class SceneTitle :
 	public SceneBase
 {
@@ -11,6 +12,7 @@ private:
 	C_Ui* Effect1;
 	C_Ui* Effect2;
 	C_Ui* Kanji[4];
+	C_Ui* sakura[MAX_SAKURA];
 	int nRotatingKanji;
 	float fAccelerationRot;
 	float alpha1, alpha2;

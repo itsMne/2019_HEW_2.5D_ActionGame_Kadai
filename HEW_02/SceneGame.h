@@ -29,6 +29,7 @@ private:
 	Go_List*		Goals;
 	Go_List*		Mirrors;
 	Go_List*		Enemies;
+	Go_List*		Events;
 	Sphere3D*		SkySphere;
 	DXWindow3D*		MainWindow;
 	
@@ -43,6 +44,7 @@ private:
 	C_Ui*			pLevel_Editor_STATICMODE_UI;
 	C_Ui*			pSpeed_MoveObject_UI;
 	C_Ui*			pDelay_MoveObject_UI;
+	C_Ui*			pEventNum_UI;
 	C_Ui*			pZoomAttack_UI;
 	//É|Å[ÉXÇÃUI
 	C_Ui*			pBG_UI;
@@ -51,6 +53,8 @@ private:
 	C_Ui*			HitEffect_UI[MAX_HIT_EFFECT];
 	C_Ui*			pSakuraleaf[MAX_SAKURA_LEAVES];
 	C_Ui*			pOwari;
+	C_Ui*			pVisualRank;
+	C_Ui*			pTutorialMessage;
 	float			fPauseOptionsAcceleration;
 	int				nCurrentPauseSelection;
 	bool			bGameIsPaused;
@@ -83,6 +87,7 @@ public:
 	Go_List* GetGoals();
 	Go_List* GetMirrors();
 	Go_List* GetEnemies();
+	Go_List* GetEvents();
 	int GetScore();
 	void RaiseScore(int rais);
 	void RaiseScoreWithRank(int rais);
@@ -98,6 +103,7 @@ public:
 	int GetSceneType();
 	bool IsOwariMessageOver();
 	void ActivateOwariMessage();
+	void SwitchTutorialMessage(int tut);
 };
 SceneGame* GetCurrentGame();
 int GetScore();

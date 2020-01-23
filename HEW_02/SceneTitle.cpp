@@ -45,7 +45,10 @@ SceneTitle::SceneTitle()
 	nRotatingKanji = 0;
 	fAccelerationRot = 0;
 	alpha2 = -1;
-	
+	for (int i = 0; i < MAX_SAKURA; i++)
+	{
+		sakura[i] = new C_Ui("data/texture/sakura.tga", UI_SAKURA); //÷ particle@‚ÅŒŸõ +÷‚Ì‰Ô‚Ñ‚ç LeafTexture.tga
+	}
 }
 
 
@@ -109,6 +112,10 @@ int SceneTitle::Update()
 		PlaySoundGame(SOUND_LABEL_SE_GAMESTART);
 		return SCENE_MENU;
 	}
+	for (int i = 0; i < MAX_SAKURA; i++)
+	{
+		sakura[i]->Update();
+	}
 	return SCENE_TITLE;
 }
 
@@ -121,6 +128,10 @@ void SceneTitle::Draw()
 		Title->Draw();
 		Effect1->Draw();
 		Effect2->Draw();
+		for (int i = 0; i < MAX_SAKURA; i++)
+		{
+			sakura[i]->Draw();
+		}
 	}
 	SlashEffect->Draw();
 }

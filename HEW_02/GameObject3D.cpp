@@ -9,6 +9,7 @@
 #include "SceneGame.h"
 #include "Mirror3D.h"
 #include "Enemy3D.h"
+#include "EventBox3D.h"
 #include "String.h"
 
 GameObject3D::GameObject3D()
@@ -102,6 +103,10 @@ void GameObject3D::Update()
 				break;
 			case GO_MIRROR:
 				List = pS_Game->GetMirrors();
+				List->DeleteObject(this);
+				break;
+			case GO_EVENT:
+				List = pS_Game->GetEvents();
 				List->DeleteObject(this);
 				break;
 			default:
@@ -627,11 +632,43 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 	else {
 		HeadNode = new go_node();
 		HeadNode->Object = new Enemy3D(EnemyType);
-		Enemy3D* thisMirror = (Enemy3D*)(HeadNode->Object);
-		thisMirror->SetPosition(newPosition, true);
+		Enemy3D* thisEnemy = (Enemy3D*)(HeadNode->Object);
+		thisEnemy->SetPosition(newPosition, true);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		if (Moveable)
-			thisMirror->SetMovement(Start, End);
+			thisEnemy->SetMovement(Start, End);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+}
+
+GameObject3D * Go_List::AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int EventType)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new EventBox3D(EventType);
+		EventBox3D* thisEvent = (EventBox3D*)(pWorkList->Object);
+		thisEvent->SetPosition(newPosition, true);
+		thisEvent->SetHitbox(hitbox);
+		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
+
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new EventBox3D(EventType);
+		EventBox3D* thisEvent = (EventBox3D*)(HeadNode->Object);
+		thisEvent->SetPosition(newPosition, true);
+		thisEvent->SetHitbox(hitbox);
+		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
@@ -1062,6 +1099,46 @@ void Go_List::SaveEnemies(const char * szFilename)
 	fclose(pFile);
 }
 
+void Go_List::SaveEvents(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+
+		if (pPositionList == nullptr)
+			break;
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_EVENT)
+			{
+				EventContainer thisEvent;
+				EventBox3D* thisObject = (EventBox3D*)pPositionList->Object;
+				thisEvent.Pos = thisObject->GetInitialPosition();
+				Hitbox3D hbox = thisObject->GetHitBox();
+				hbox.x = 0;
+				hbox.y = 0;
+				hbox.z = 0;
+				thisEvent.hitbox = hbox;
+				thisEvent.EventType = thisObject->GetEvenType();
+				fwrite(&thisEvent, sizeof(EventContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
+
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
@@ -1079,6 +1156,7 @@ void Go_List::Load(const char * szFilename, int nType)
 	SpikesContainer* spike_container = new SpikesContainer();
 	MirrorContainer* mirror_container = new MirrorContainer();
 	EnemyContainer* enemy_container = new EnemyContainer();
+	EventContainer* event_container = new EventContainer();
 	switch (nType)
 	{
 	case GO_FLOOR: 
@@ -1108,6 +1186,9 @@ void Go_List::Load(const char * szFilename, int nType)
 		while ((fread(enemy_container, sizeof(EnemyContainer), 1, pFile)))
 			AddEnemy(enemy_container->Pos, enemy_container->EnemyType, enemy_container->bMoveable, enemy_container->MoveStartPos, enemy_container->MoveEndPos);
 		break;
+	case GO_EVENT:
+		while ((fread(event_container, sizeof(EventContainer), 1, pFile)))
+			AddEvent(event_container->Pos, event_container->hitbox, event_container->EventType);
 		break;
 	default:
 		break;
