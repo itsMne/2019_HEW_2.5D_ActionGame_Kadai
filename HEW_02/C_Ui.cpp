@@ -207,10 +207,12 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		}
 		SetPolygonSize(405, 720);
 		SetPolygonPos(400, -200);
+		SetRotationY(180);
 		uv = { 0,0 };
 		SetPolygonFrameSize(1.0f / 2.0f, 1.0f / 1.0f);
 		nTutorialMessage = 0;
 		g_pTexture = TutorialTextures[nTutorialMessage];
+		bShowTutorial = false;
 		break;
 	}
 	fAcceleration = 0;
@@ -509,6 +511,31 @@ void C_Ui::Update()
 				uv.U = 0;
 			}
 		}
+		if (bShowTutorial)
+		{
+			if (GetRotationY() > 0) {
+				fAcceleration++;
+				RotateAroundY(-fAcceleration);
+				if (GetRotationY() < 0)
+				{
+					fAcceleration = 0;
+					SetRotationY(0);
+				}
+			}
+		}
+		else 
+		{
+			if (GetRotationY() < 180) {
+				fAcceleration++;
+				RotateAroundY(fAcceleration);
+				if (GetRotationY() > 180)
+				{
+					fAcceleration = 0;
+					SetRotationY(180);
+				}
+			}
+		}
+		bShowTutorial = false;
 		break;
 	}
 
@@ -749,6 +776,7 @@ bool C_Ui::IsOwariMessageDone()
 
 void C_Ui::SetTutorialMessage(int Tut)
 {
+	bShowTutorial = true;
 	nTutorialMessage = Tut;
 }
 

@@ -94,6 +94,7 @@ private:
 	float fOffsetY;
 	int hpDamageCooloff;
 	int nTutorialMessage;
+	bool bShowTutorial;
 public:
 	C_Ui();
 	C_Ui(const char*, int);
