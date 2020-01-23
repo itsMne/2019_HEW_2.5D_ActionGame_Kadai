@@ -97,7 +97,7 @@ void Player3D::Init()
 	pPlayerModels[MODEL_SAMURAI]->SetRotationY(90 - (XM_PI*0.65f));
 	pPlayerModels[MODEL_GEISHA]->SetRotationY(90 - (XM_PI*0.65f));
 	nMaxHP = nHP = INIT_HP;
-	nMaxStamina = nStamina = INIT_STAMINA;
+	nMaxStamina = fStamina = INIT_STAMINA;
 	RightWall = nullptr;
 	LeftWall = nullptr;
 	WallAttachedTo = nullptr;
@@ -261,28 +261,28 @@ void Player3D::Update()
 		static int framecontrol=0;
 		if (++framecontrol > 30)
 		{
-			nStamina -= 2;
+			fStamina -= 2;
 			framecontrol = 0;
-			if (nStamina < 0)
-				nStamina = 0;
+			if (fStamina < 0)
+				fStamina = 0;
 		}
 	}
 	else {
 		static int framecontrol = 0;
 		if (++framecontrol > 20)
 		{
-			nStamina += 1;
+			fStamina += 1;
 			framecontrol = 0;
 		}
-		if (nStamina > nMaxStamina)
-			nStamina = nMaxStamina;
+		if (fStamina > nMaxStamina)
+			fStamina = nMaxStamina;
 	}
-	if (nStamina <= 0)
+	if (fStamina <= 0)
 	{
-		nStamina = 0;
+		fStamina = 0;
 		bStaminaCoolDown = true;
 	}
-	if (nStamina >= nMaxStamina)
+	if (fStamina >= nMaxStamina)
 		bStaminaCoolDown = false;
 	// ƒJƒƒ‰‚ÌŒü‚«Žæ“¾
 	rotCamera = pMainCamera->GetCameraAngle();
@@ -522,7 +522,7 @@ void Player3D::AttackingStateControl()
 		case SAMURAI_STINGER:
 			if(++nStingerFrames>30)
 				pCurrentAttackPlaying = nullptr;
-			nStamina-=0.5f;
+			fStamina-=0.5f;
 			bIsAttacking = true;
 			Position.x += 7 * nDirection;
 			if (nAttackFrame > 490)
@@ -807,19 +807,19 @@ void Player3D::PlayerInputsControl(bool bIsLocked)
 	}
 	if (nState == PLAYER_TRANSFORMING || bIsLocked)
 		return;
-	if (GetInput(TRANSFORM_GEISHA) && nStamina>0 && !bStaminaCoolDown)
+	if (GetInput(TRANSFORM_GEISHA) && fStamina>0 && !bStaminaCoolDown)
 	{
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
 		nNextTransform = MODEL_GEISHA;
 	}
-	else if (GetInput(TRANSFORM_SAMURAI) && nStamina > 0 && !bStaminaCoolDown)
+	else if (GetInput(TRANSFORM_SAMURAI) && fStamina > 0 && !bStaminaCoolDown)
 	{
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
 		nNextTransform = MODEL_SAMURAI;
 	}
-	else if(!GetInput(TRANSFORM_GEISHA) || !GetInput(TRANSFORM_SAMURAI) || nStamina <= 0 || bStaminaCoolDown){
+	else if(!GetInput(TRANSFORM_GEISHA) || !GetInput(TRANSFORM_SAMURAI) || fStamina <= 0 || bStaminaCoolDown){
 		nNextTransform = MODEL_NINJA;
 		if (nNextTransform != nCurrentTransformation)
 			nState = PLAYER_TRANSFORMING;
@@ -1238,7 +1238,7 @@ int Player3D::GetPlayerMaxHp()
 
 int Player3D::GetPlayerMp()
 {
-	return nStamina;
+	return fStamina;
 }
 
 int Player3D::GetPlayerMaxMp()
@@ -1356,7 +1356,7 @@ int Player3D::GetCurrentTransformation()
 
 void Player3D::ReduceStamina(int red)
 {
-	nStamina -= red;
+	fStamina -= red;
 }
 
 void Player3D::SetPlayerState(int newState)
@@ -1379,4 +1379,9 @@ int Player3D::GetDamage()
 int Player3D::GetToRecover()
 {
 	return nToRecover;
+}
+
+void Player3D::ReduceStamina(float red)
+{
+	fStamina -= red;
 }

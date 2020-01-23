@@ -20,6 +20,7 @@ void Goal3D::Init()
 {
 	InitModel(GOAL_MODEL_PATH);
 	pModel->SetScale(0.025f);
+	pModel->SetRotationY(180);
 	hitbox = {0,25,0,3,12,3};
 	nType = GO_GOAL;
 }
@@ -30,7 +31,7 @@ void Goal3D::Update()
 	Player3D* pPlayer = GetMainPlayer();
 #if USE_IN_RENDERZONE
 	if (pPlayer) {
-		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())))
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && pPlayer->GetState()!=PLAYER_OVER)
 			return;
 		if (pPlayer->IsDebugAimOn())
 			return;

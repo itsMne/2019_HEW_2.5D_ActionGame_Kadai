@@ -118,7 +118,7 @@ private:
 	int nHP;//体力
 	int nMaxHP;//マックス体力
 	int nDamage;
-	float nStamina;//スタミナ
+	float fStamina;//スタミナ
 	int nMaxStamina;//スタミナ
 	PLAYER_ATTACK_MOVE* pCurrentAttackPlaying;
 	Wall3D* RightWall;
@@ -203,6 +203,7 @@ public:
 	void CancelAttack();
 	int GetDamage();
 	int GetToRecover();
+	void ReduceStamina(float red);
 };
 
 Player3D* GetMainPlayer();

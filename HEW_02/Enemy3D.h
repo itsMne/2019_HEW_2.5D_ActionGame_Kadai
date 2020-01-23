@@ -35,6 +35,7 @@ private:
 	Field3D* pCurrentFloor;
 	bool bUseGravity; 
 	bool bUse;
+	bool bEndStageAfterDeath;
 	int nState;
 	void* pPlayerPointer;
 	int nCancelGravityFrames;
@@ -64,6 +65,10 @@ private:
 	int nEnragedMeter;
 	int nStuntFrames;
 	int nAttackHitSound;
+	int nSuperArmor;
+	int nSuperArmorMax;
+	int RecoverySuperArmorFrames;
+	int RecoverySuperArmorFramesCounter;
 	bool bIsBoss;
 public:
 	Enemy3D(int enemyType);

@@ -219,8 +219,10 @@ void Field3D::Update(void)
 	if (pPlayer)
 	{
 #if USE_IN_RENDERZONE
-		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn())
-			return;
+		if (!(GetMainCamera()->IsOnRenderZone(GetHitBox())) && !pPlayer->IsDebugAimOn()) {
+			if(!(pPlayer->GetState()==PLAYER_OVER && pPlayer->GetFloor()==this))
+				return;
+		}
 #endif
 		if (pPlayer->GetFloor() == nullptr)
 		{

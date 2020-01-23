@@ -87,6 +87,7 @@ void Enemy3D::Init()
 	pGame = nullptr;
 	bUseGravity = false;
 	bUse = true;
+	bEndStageAfterDeath = false;
 	bIsBoss = false;
 	nState = ENEMY_IDLE;
 	fSpeed = 1;
@@ -94,6 +95,8 @@ void Enemy3D::Init()
 	nDelayFramesBeforeAttack = 0;
 	bUnlit = false;
 	nAttackHitSound = SOUND_LABEL_SE_ENEMYATTACK1;
+	nSuperArmor = 0;
+	RecoverySuperArmorFramesCounter=RecoverySuperArmorFrames=0;
 	switch (nEnemyType)
 	{
 	case TYPE_ONI_A:
@@ -278,19 +281,21 @@ void Enemy3D::Init()
 	case TYPE_BOSS_ONI:
 		bIsBoss = true;
 		bUseGravity = true;
-		nHP = 150;
+		nHP = 600;
+		nSuperArmorMax=nSuperArmor = 300;
+		RecoverySuperArmorFrames = 60*7;
 		InitModel(ENEMY_BOSS_MODEL_PATH);
 		pModel->SetScale({ 0.25f,0.25f,0.25f });
 		pModel->SetPositionZ(-10);
 		pModel->SwitchAnimation(WARRIOR_IDLE);
 		fSpeed = 1.0f;
-		fSpeed = 0.0f;//DEL
+		fSpeed = 0.15f;//DEL
 		hitbox = { 0,22.5f,0,15,29,10 };
 		hbAttack = { 40,22.5f,0,40,29,10 };
-		nDelayFramesBeforeAttack = 20;
+		nDelayFramesBeforeAttack = 30;
 		nMinAttackFrame = 215;
 		nMaxAttackFrame = 235;
-		nDamageAgainstPlayer = 30;
+		nDamageAgainstPlayer = 15;
 		nAnimations[ENEMY_IDLE] = ONI_BOSS_IDLE;
 		nAnimations[ENEMY_DAMAGED] = ONI_BOSS_DAMAGEA;
 		nAnimations[ENEMY_DAMAGEDALT] = ONI_BOSS_DAMAGEB;
@@ -299,7 +304,6 @@ void Enemy3D::Init()
 		nAnimations[ENEMY_ATTACKING] = ONI_BOSS_ATTACKA;
 		nAnimations[ENEMY_SENDUP] = WARRIOR_SENDUP;
 		nAnimations[ENEMY_SENDOFF] = WARRIOR_SENDOFF;
-
 		fAnimationSpeeds[ENEMY_IDLE] = 2;
 		fAnimationSpeeds[ENEMY_DAMAGED] = 5;
 		fAnimationSpeeds[ENEMY_DAMAGEDALT] = 5;
@@ -308,10 +312,11 @@ void Enemy3D::Init()
 		fAnimationSpeeds[ENEMY_ATTACKING] = 0.7f;
 		fAnimationSpeeds[ENEMY_SENDUP] = 4;
 		fAnimationSpeeds[ENEMY_SENDOFF] = 3;
-		nEnragedHitCountMax = 5;
+		nEnragedHitCountMax = 0;
 		nTopSendOffFrame = 828;
 		nMidSendOffFrame = 897;
 		nEnragedFrames = 180;
+		bEndStageAfterDeath = true;
 		break;
 	default:
 		break;
@@ -360,12 +365,26 @@ void Enemy3D::Update()
 			GetMainCamera()->CancelShake();
 			GetMainCamera()->ShakeCamera({ 3.95f,3.95f,2.75f }, 30, 15);
 			bUse = false;
+			if(bEndStageAfterDeath)
+				pPlayer->SetPlayerState(PLAYER_OVER);
 			PlaySoundGame(SOUND_LABEL_SE_DISSAPPEARED);
 		}
 		return;
 	}
 	if (bUseGravity)
 		GravityControl();
+	if (nSuperArmorMax > 0)
+	{
+		if (nSuperArmor <= 0 && !pPlayer->PlayerIsTransforming())
+		{
+			if (++RecoverySuperArmorFramesCounter > RecoverySuperArmorFrames)
+			{
+				nSuperArmor = nSuperArmorMax;
+				RecoverySuperArmorFramesCounter = 0;
+
+			}
+		}
+	}
 	Go_List* Spikes = GetCurrentGame()->GetSpikes();
 	if (!Spikes)
 		return;
@@ -482,6 +501,7 @@ void Enemy3D::EnemyStatesControl()
 						PlaySoundGame(SOUND_LABEL_SE_GEISHADODGED);
 						VibrateXinput(65535, 65535, 30);
 						nStuntFrames = 240;
+						nSuperArmor = 0;
 						pGame->ZoomPause(70, 120, 3, false, true);
 						pGame->SetPetalsFrames(240);
 						pGame->SetHitEffect();
@@ -494,6 +514,8 @@ void Enemy3D::EnemyStatesControl()
 						PlaySoundGame(SOUND_LABEL_SE_GEISHADODGED);
 						VibrateXinput(65535/3, 65535/3, 30);
 						nStuntFrames = 120;
+						nSuperArmor = 0;
+						RecoverySuperArmorFramesCounter = RecoverySuperArmorFrames / 2;
 						pGame->ZoomPause(70, 120, 3, false, true);
 						pGame->SetPetalsFrames(120);
 						pPlayer->SetPlayerState(PLAYER_GEISHA_DODGE);
@@ -554,6 +576,10 @@ void Enemy3D::EnemyMovingControl()
 	}
 	if (IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_LEFT)) || IsInCollision3D(GetHitBox(), pPlayer->GetHitBox(HB_RIGHT))) {
 		nState = ENEMY_ATTACKING;
+		if(pPlayer->GetPosition().x>Position.x)
+			nDirection = 1;
+		else
+			nDirection = -1;
 		nDelayCounter = 0;
 		return;
 	}
@@ -612,14 +638,16 @@ void Enemy3D::DamageControl()
 	if (pPlayerAttack->Animation == GEISHA_BLOCK)
 		return;
 	printf("enrcount: %d\n", nEnragedMeter);
-
 	GameObject3D* pWall = nullptr;
-	nDirection = -1*pPlayer->GetDirection();
+	if(!bIsBoss || (bIsBoss && nSuperArmor==0))
+		nDirection = -1*pPlayer->GetDirection();
 	pGame->ZoomPause(60, 30, 3, false, true);
+	if (bDoDamage && pPlayerAttack->Animation == SAMURAI_STINGER)
+		pPlayer->ReduceStamina(10);
 	SetFramesForZoomUse(35);
-	if (pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && 
+	if ((pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && 
 		pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH
-		&& pPlayerAttack->Animation != SAMURAI_STINGER && !bIsBoss)
+		&& pPlayerAttack->Animation != SAMURAI_STINGER && !bIsBoss) || (bIsBoss && nSuperArmor>0))
 	{
 		if (bDoDamage) {
 			AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 30);
@@ -629,21 +657,27 @@ void Enemy3D::DamageControl()
 			nHP -= 5;
 			
 		}
-		Position.x = AttackHitbox.x;
-		if (!(pPlayer->GetFloor()) && pPlayer->GetState() != PLAYER_TELEPORTING) {
-			pPlayer->TranslateX(1.5f* nPlayerDirection);
-			if (!pCurrentFloor)
-				Position.y = AttackHitbox.y - 20;
-			nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
-		}
-		pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
-		if (pWall) {
-			while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
-			{
-				pPlayer->TranslateX(1 * -nPlayerDirection);
-				Position.x += 1 * nDirection;
+		if (!bIsBoss) {
+			Position.x = AttackHitbox.x;
+			if (!(pPlayer->GetFloor()) && pPlayer->GetState() != PLAYER_TELEPORTING) {
+				pPlayer->TranslateX(1.5f* nPlayerDirection);
+				if (!pCurrentFloor)
+					Position.y = AttackHitbox.y - 20;
+				nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
+			}
+			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
+			if (pWall) {
+				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+				{
+					pPlayer->TranslateX(1 * -nPlayerDirection);
+					Position.x += 1 * nDirection;
+				}
 			}
 		}
+		if (pPlayer->GetCurrentTransformation() == MODEL_SAMURAI)
+			nSuperArmor -= 10;
+		else if (pPlayer->GetCurrentTransformation() == MODEL_NINJA)
+			nSuperArmor -= 2;
 		if (bDoDamage)
 			pGame->RaiseScoreWithRank(5); 
 		return;
@@ -657,6 +691,8 @@ void Enemy3D::DamageControl()
 			Position.x = AttackHitbox.x;
 			Position.y = AttackHitbox.y - 20;
 		}
+		if(bIsBoss && nSuperArmor==0)
+			Position.y = AttackHitbox.y - 20;
 		if(nEnragedMeter>0)
 			nEnragedMeter = 0;
 		fYForce = 0;
@@ -669,6 +705,8 @@ void Enemy3D::DamageControl()
 			nHP -= 10;
 			pGame->SetHitEffect();
 			AddMoveToRankMeter(pPlayerAttack->Animation, 40);
+			if (bIsBoss)
+				nHP -= 5;
 		}
 		nCancelGravityFrames = CANCEL_GRAVITY_FRAMES;
 		if (pModel->GetAnimation() == nAnimations[ENEMY_SENDUP]) {
@@ -721,12 +759,16 @@ void Enemy3D::DamageControl()
 			pGame->SetHitEffect();
 			if (nEnragedHitCountMax > 0 && nEnragedCounter==0)
 				nEnragedMeter++;
+			if (bIsBoss)
+				nHP -= 5;
 		}
 		break;
 	default:
 		
 		pModel->SwitchAnimationSpeed(fAnimationSpeeds[ENEMY_DAMAGED]);
 		if (bDoDamage) {
+			if (bIsBoss)
+				nHP -= 5;
 			if(pPlayerAttack->Animation != SAMURAI_STINGER)
 				PlaySoundGame(SOUND_LABEL_SE_NINJA_REGULARSLASH);
 			else
@@ -830,11 +872,11 @@ void Enemy3D::RegularCollisionWithPlayer()
 		if (!bIsBoss)
 			Position.x += 0.5f * nPlayerDirection;
 		if (nPlayerDirection == LEFT_DIR) {
-			while ((pPlayer->GetState() == PLAYER_WALKING && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox())))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
+			while (((pPlayer->GetState() == PLAYER_WALKING || bIsBoss) && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox())))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
 				pPlayer->TranslateX(1);
 		}
 		else {
-			while (pPlayer->GetState() == PLAYER_WALKING && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
+			while ((pPlayer->GetState() == PLAYER_WALKING || bIsBoss) && IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))//|| (!(pPlayer->GetFloor()) && IsInCollision3D(pPlayer->GetHitBox(HB_FEET), GetHitBox())))
 				pPlayer->TranslateX(-1);
 		}
 	}
