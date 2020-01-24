@@ -642,6 +642,44 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 		return HeadNode->Object;
 	}
 }
+void Go_List::SaveBgObject(const char * szFilename)
+{
+	FILE *pFile;
+	char szFinalfilename[256] = "data/levels/";
+	strcat(szFinalfilename, szFilename);
+	strcat(szFinalfilename, ".bin");
+	if (strcmp(szFilename, "") == 0)
+	{
+		strcpy(szFinalfilename, "Default.bin");
+	}
+	pFile = fopen(szFinalfilename, "wb");
+	
+	if (HeadNode == nullptr)
+		return;
+	go_node* pPositionList = HeadNode;
+	while (true) {
+		if (pPositionList == nullptr)
+			break;
+		
+		if (pPositionList->Object != nullptr)
+		{
+			if (pPositionList->Object->GetType() == GO_BGOBJ)
+			{
+				BgObjectContainer thisBgObjec;
+				BgObject* thisObject = (BgObject*)pPositionList->Object;
+				thisBgObjec.Pos = thisObject->GetPosition();
+				thisBgObjec.bMoveable = thisObject->IsMoveableObject();
+				thisBgObjec.MoveStartPos = thisObject->GetMoveStartPosition();
+				thisBgObjec.MoveEndPos = thisObject->GetMoveEndPosition();
+				thisBgObjec.nBgObjectType = thisObject->GetBgObjectType();
+				fwrite(&thisBgObjec, sizeof(BgObjectContainer), 1, pFile);
+			}
+		}
+		pPositionList = pPositionList->next;
+	}
+	printf("SAVED OK: %s\n", szFinalfilename);
+	fclose(pFile);
+}
 
 GameObject3D * Go_List::AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int EventType)
 {
@@ -669,6 +707,42 @@ GameObject3D * Go_List::AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int Even
 		thisEvent->SetPosition(newPosition, true);
 		thisEvent->SetHitbox(hitbox);
 		printf("{%f, %f, %f}\n", newPosition.x, newPosition.y, newPosition.z);
+		HeadNode->next = nullptr;
+		nObjectCount++;
+		return HeadNode->Object;
+	}
+}
+
+GameObject3D * Go_List::AddBgObject(XMFLOAT3 newPosition, int nType)
+{
+	return AddBgObject(newPosition, nType, false, { 0,0,0 }, { 0,0,0 });
+}
+
+GameObject3D * Go_List::AddBgObject(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
+{
+	go_node* pPositionList = HeadNode;
+	if (HeadNode != nullptr) {
+		while (pPositionList->next != nullptr) {
+			pPositionList = pPositionList->next;
+		}
+		go_node* pWorkList = new go_node();
+		pWorkList->Object = new BgObject(nType);
+		BgObject* thisBgObject = (BgObject*)(pWorkList->Object);
+		thisBgObject->SetPosition(newPosition);
+		pWorkList->next = nullptr;
+		pPositionList->next = pWorkList;
+		if (Moveable)
+			thisBgObject->SetMovement(Start, End);
+		nObjectCount++;
+		return pWorkList->Object;
+	}
+	else {
+		HeadNode = new go_node();
+		HeadNode->Object = new BgObject(nType);
+		BgObject* thisBgObject = (BgObject*)(HeadNode->Object);
+		thisBgObject->SetPosition(newPosition);
+		if (Moveable)
+			thisBgObject->SetMovement(Start, End);
 		HeadNode->next = nullptr;
 		nObjectCount++;
 		return HeadNode->Object;
@@ -1157,6 +1231,7 @@ void Go_List::Load(const char * szFilename, int nType)
 	MirrorContainer* mirror_container = new MirrorContainer();
 	EnemyContainer* enemy_container = new EnemyContainer();
 	EventContainer* event_container = new EventContainer();
+	BgObjectContainer* bgobject_container = new BgObjectContainer();
 	switch (nType)
 	{
 	case GO_FLOOR: 
@@ -1189,6 +1264,10 @@ void Go_List::Load(const char * szFilename, int nType)
 	case GO_EVENT:
 		while ((fread(event_container, sizeof(EventContainer), 1, pFile)))
 			AddEvent(event_container->Pos, event_container->hitbox, event_container->EventType);
+		break;
+	case GO_BGOBJ:
+		while ((fread(bgobject_container, sizeof(BgObjectContainer), 1, pFile)))
+			AddBgObject(bgobject_container->Pos, bgobject_container->nBgObjectType, bgobject_container->bMoveable, bgobject_container->MoveStartPos, bgobject_container->MoveEndPos);
 		break;
 	default:
 		break;

@@ -13,6 +13,7 @@ enum goType
 	GO_ENEMY,
 	GO_DEBUG_AIM,
 	GO_EVENT,
+	GO_BGOBJ,
 	MAX_TYPE
 };
 class GameObject3D
@@ -126,7 +127,13 @@ typedef struct EventContainer {
 	Hitbox3D hitbox;
 	int EventType;
 };
-
+typedef struct BgObjectContainer {
+	XMFLOAT3 Pos;
+	int nBgObjectType;
+	bool bMoveable = false;
+	XMFLOAT3 MoveStartPos;
+	XMFLOAT3 MoveEndPos;
+};
 class Go_List
 {
 private:
@@ -151,6 +158,8 @@ public:
 	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType);
 	GameObject3D* AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int EventType);
+	GameObject3D * AddBgObject(XMFLOAT3 newPosition, int nType);
+	GameObject3D * AddBgObject(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End);
 	GameObject3D* CheckCollision(Hitbox3D hb);
 	void DeleteLastPosObject();
 	void DeleteObject(GameObject3D*);
@@ -165,5 +174,6 @@ public:
 	void SaveMirrors(const char* szFilename);
 	void SaveEnemies(const char* szFilename);
 	void SaveEvents(const char* szFilename);
+	void SaveBgObject(const char * szFilename);
 	void Load(const char* szFilename, int nType);
 };

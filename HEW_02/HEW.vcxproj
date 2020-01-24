@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BgObject.cpp" />
     <ClCompile Include="Billboard2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Cube3D.cpp" />
@@ -201,6 +202,7 @@
     <ClCompile Include="Wall3D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BgObject.h" />
     <ClInclude Include="Billboard2D.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Cube3D.h" />

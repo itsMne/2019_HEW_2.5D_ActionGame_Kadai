@@ -7,6 +7,7 @@
 #include "Spike3D.h"
 #include "Mirror3D.h"
 #include "EventBox3D.h"
+#include "BgObject.h"
 #include "Enemy3D.h"
 
 enum DEBUG_AIM_OBJECTYPES
@@ -29,6 +30,20 @@ enum DEBUG_AIM_OBJECTYPES
 	DA_ENEMY_WARRIOR,
 	DA_ENEMY_ONIBOSS,
 	DA_EVENT,
+	DA_BGOBJ_HIGANBANA,
+	DA_BGOBJ_HIGANBANAS,
+	DA_BGOBJ_HICHIFUKUZIN,
+	DA_BGOBJ_BONSAI,
+	DA_BGOBJ_TREE00,
+	DA_BGOBJ_TREE01,
+	DA_BGOBJ_TREE02,
+	DA_BGOBJ_TREE03,
+	DA_BGOBJ_SASA,
+	DA_BGOBJ_HANABI,
+	DA_BGOBJ_BUMBUKUTYAGAMA,
+	DA_BGOBJ_KOMA,
+	DA_BGOBJ_UTIMIZU,
+	DA_BGOBJ_FURIN,
 	DA_MAX
 };
 
@@ -45,6 +60,7 @@ private:
 	Enemy3D* pDA_Enemy;
 	Mirror3D* pDA_Mirror;
 	EventBox3D* pDA_EventBox;
+	BgObject* pDA_BgObject;
 	void* pCurrentGame;
 	bool bStaticObject;
 	bool bSetStart;

@@ -30,6 +30,7 @@ private:
 	Go_List*		Mirrors;
 	Go_List*		Enemies;
 	Go_List*		Events;
+	Go_List*		BgObjects;
 	Sphere3D*		SkySphere;
 	DXWindow3D*		MainWindow;
 	
@@ -104,6 +105,7 @@ public:
 	bool IsOwariMessageOver();
 	void ActivateOwariMessage();
 	void SwitchTutorialMessage(int tut);
+	Go_List * GetBgObjects();
 };
 SceneGame* GetCurrentGame();
 int GetScore();

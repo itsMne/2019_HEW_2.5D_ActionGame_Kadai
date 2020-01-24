@@ -266,6 +266,13 @@ void Billboard2D::SetUVFrames(int nX, int nY)
 
 }
 
+void Billboard2D::SetUV(int nU, int nV)
+{
+	uv.U = nU;
+	uv.V = nV;
+
+}
+
 void Billboard2D::SetScale(float nScale)
 {
 	fHeight = nScale;

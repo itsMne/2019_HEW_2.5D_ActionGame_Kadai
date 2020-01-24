@@ -30,6 +30,7 @@ void DebugAim::Init()
 	pDA_Mirror = nullptr;
 	pDA_Enemy = nullptr;
 	pDA_EventBox = nullptr;
+	pDA_BgObject = nullptr;
 	nObjectType = DA_DEBUGAIM;
 	InitModel("data/model/DebugAim.fbx");
 	hitbox = { 0,10.0f,0,2,2,9 };
@@ -196,6 +197,42 @@ void DebugAim::Update()
 			if (GetInput(INPUT_DEBUGAIM_DELETE))
 			{
 				p_sCurrentGame->GetFields()->DeleteLastPosObject();
+			}
+		}
+		break;
+	case DA_BGOBJ_HIGANBANA:case DA_BGOBJ_HIGANBANAS:case DA_BGOBJ_HICHIFUKUZIN:case DA_BGOBJ_BONSAI:case DA_BGOBJ_TREE00:case DA_BGOBJ_TREE01:
+	case DA_BGOBJ_TREE02:case DA_BGOBJ_TREE03:case DA_BGOBJ_SASA:case DA_BGOBJ_HANABI:case DA_BGOBJ_BUMBUKUTYAGAMA:case DA_BGOBJ_KOMA:case DA_BGOBJ_UTIMIZU:
+	case DA_BGOBJ_FURIN:
+		if (!pDA_BgObject) {
+			pDA_BgObject = new BgObject(nObjectType - DA_BGOBJ_HIGANBANA);
+			pDA_BgObject->SetIgnoreRenderingZone(true);
+			Scale = { 1,1,1 };
+			pDA_BgObject->SetPosition(Position);
+			return;
+		}
+		else {
+			pDA_BgObject->SetPosition(Position);
+			pDA_BgObject->Update();
+			pDA_BgObject->SetUse(true);
+			if (GetInput(INPUT_DEBUGAIM_ACCEPT))
+			{
+				if (bStaticObject) {
+					if (p_sCurrentGame)
+						p_sCurrentGame->GetBgObjects()->AddBgObject(Position, nObjectType - DA_BGOBJ_HIGANBANA);
+					printf("GetBgObjects->AddBgObject({ %ff ,%ff ,%ff}, %d);\n", Position.x, Position.y, Position.z, nObjectType - DA_BGOBJ_HIGANBANA);
+				}
+				else {
+					if (bSetStart && bSetEnd) {
+						bSetStart = false;
+						bSetEnd = false;
+						printf("動けるオブジェクト置いた\n");
+						p_sCurrentGame->GetBgObjects()->AddBgObject(Position, nObjectType - DA_BGOBJ_HIGANBANA, true, x3Start, x3End);
+					}
+				}
+			}
+			if (GetInput(INPUT_DEBUGAIM_DELETE))
+			{
+				p_sCurrentGame->GetBgObjects()->DeleteLastPosObject();
 			}
 		}
 		break;
@@ -492,7 +529,8 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetSpikes()->SaveSpikes("HELL/Spikes_Level");
 			p_sCurrentGame->GetGoals()->SaveMisc("HELL/Goals_Level");
 			p_sCurrentGame->GetMirrors()->SaveMirrors("HELL/Mirrors_Level");
-			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
+			p_sCurrentGame->GetEvents()->SaveEvents("HELL/Events_Level");
+			p_sCurrentGame->GetBgObjects()->SaveBgObject("HELL/BgObjects_Level");
 			return;
 		case SCENE_GAME:
 			p_sCurrentGame->GetFields()->SaveFields("HEWLEVEL/Fields_Level");
@@ -503,7 +541,8 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetGoals()->SaveMisc("HEWLEVEL/Goals_Level");
 			p_sCurrentGame->GetMirrors()->SaveMirrors("HEWLEVEL/Mirrors_Level");
 			p_sCurrentGame->GetEnemies()->SaveEnemies("HEWLEVEL/Enemies_Level");
-			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
+			p_sCurrentGame->GetEvents()->SaveEvents("HEWLEVEL/Events_Level");
+			p_sCurrentGame->GetBgObjects()->SaveBgObject("HEWLEVEL/BgObjects_Level");
 			return;
 		case SCENE_TUTORIAL_GAME:
 			p_sCurrentGame->GetFields()->SaveFields("TUTORIAL/Fields_Level");
@@ -515,6 +554,7 @@ void DebugAim::SaveAllControl()
 			p_sCurrentGame->GetMirrors()->SaveMirrors("TUTORIAL/Mirrors_Level");
 			p_sCurrentGame->GetEnemies()->SaveEnemies("TUTORIAL/Enemies_Level");
 			p_sCurrentGame->GetEvents()->SaveEvents("TUTORIAL/Events_Level");
+			p_sCurrentGame->GetBgObjects()->SaveBgObject("TUTORIAL/BgObjects_Level");
 
 			return;
 		default:
@@ -563,6 +603,7 @@ void DebugAim::SwitchObjectTypeControl()
 	SAFE_DELETE(pDA_Mirror);
 	SAFE_DELETE(pDA_Enemy);
 	SAFE_DELETE(pDA_EventBox);
+	SAFE_DELETE(pDA_BgObject);
 	Scale = { 1,1,1 };
 }
 
@@ -680,6 +721,12 @@ void DebugAim::Draw()
 	case DA_EVENT:
 		if (pDA_EventBox)
 			pDA_EventBox->Draw();
+		break;
+	case DA_BGOBJ_HIGANBANA:case DA_BGOBJ_HIGANBANAS:case DA_BGOBJ_HICHIFUKUZIN:case DA_BGOBJ_BONSAI:case DA_BGOBJ_TREE00:case DA_BGOBJ_TREE01:
+	case DA_BGOBJ_TREE02:case DA_BGOBJ_TREE03:case DA_BGOBJ_SASA:case DA_BGOBJ_HANABI:case DA_BGOBJ_BUMBUKUTYAGAMA:case DA_BGOBJ_KOMA:case DA_BGOBJ_UTIMIZU:
+	case DA_BGOBJ_FURIN:
+		if (pDA_BgObject)
+			pDA_BgObject->Draw();
 		break;
 	default:
 		break;

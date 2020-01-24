@@ -43,6 +43,7 @@ public:
 	void SetWidth(float newWidth);
 	void SetHeight(float newHeight);
 	void SetUVFrames(int nX, int nY);
+	void SetUV(int nX, int nY);
 	void SetScale(float nScale);
 	void ScaleUp(float nS_Up);
 	float GetAlpha();

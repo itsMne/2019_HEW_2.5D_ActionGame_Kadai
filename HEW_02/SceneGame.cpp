@@ -71,6 +71,7 @@ void SceneGame::Init()
 	Mirrors = new Go_List();
 	Enemies = new Go_List();
 	Events = new Go_List();
+	BgObjects = new Go_List();
 	SceneCamera->Init();
 	SceneLight->Init();
 
@@ -128,6 +129,7 @@ void SceneGame::Init()
 		Mirrors->Load("HELL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("HELL/Enemies_Level", GO_ENEMY);
 		Events->Load("HELL/Events_Level", GO_EVENT);
+		BgObjects->Load("HELL/BgObjects_Level", GO_BGOBJ);
 		nSceneType = SCENE_HELL_GAME;
 		return;
 	case SCENE_GAMENORMAL:
@@ -141,6 +143,7 @@ void SceneGame::Init()
 		Mirrors->Load("HEWLEVEL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("HEWLEVEL/Enemies_Level", GO_ENEMY);
 		Events->Load("HEWLEVEL/Events_Level", GO_EVENT);
+		BgObjects->Load("HEWLEVEL/BgObjects_Level", GO_BGOBJ);
 		nSceneType = SCENE_GAME;
 		return;
 	case SCENE_TUTORIAL_GAME:
@@ -155,6 +158,7 @@ void SceneGame::Init()
 		Mirrors->Load("TUTORIAL/Mirrors_Level", GO_MIRROR);
 		Enemies->Load("TUTORIAL/Enemies_Level", GO_ENEMY);
 		Events->Load("TUTORIAL/Events_Level", GO_EVENT);
+		BgObjects->Load("TUTORIAL/BgObjects_Level", GO_BGOBJ);
 		nSceneType = SCENE_TUTORIAL_GAME;
 		pTutorialMessage = new C_Ui("None", UI_TUTORIAL_MESSAGE);
 		return;
@@ -280,7 +284,7 @@ int SceneGame::Update()
 	pMP_UI->Update();// Mp更新
 	pScore_Frame_UI->Update();// Score更新
 	pBG_UI->Update();
-
+	
 	//背景にかんする
 	SkySphere->Update();//スカイスフィア
 	SceneCamera->Update();//カメラ
@@ -367,6 +371,7 @@ int SceneGame::Update()
 	Goals->Update();//ゴール
 	pOwari->Update();
 	Events->Update();
+	BgObjects->Update();
 	//ランクマネージャ
 	RankManager::Update();
 	if (pTutorialMessage)
@@ -433,6 +438,7 @@ void SceneGame::Draw()
 	pDelay_MoveObject_UI->Draw();
 	pOwari->Draw();
 	pZoomAttack_UI->Draw();
+	BgObjects->Draw();
 	if (pTutorialMessage)
 		pTutorialMessage->Draw();
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)
@@ -564,6 +570,11 @@ bool SceneGame::IsUsingPauseFrames()
 bool SceneGame::IsGamePaused()
 {
 	return bGameIsPaused;
+}
+
+Go_List * SceneGame::GetBgObjects()
+{
+	return BgObjects;
 }
 
 void SceneGame::SetHitEffect()

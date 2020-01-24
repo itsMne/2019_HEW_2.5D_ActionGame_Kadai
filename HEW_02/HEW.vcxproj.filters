@@ -139,6 +139,7 @@
       <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
     </ClCompile>
     <ClCompile Include="EventBox3D.cpp" />
+    <ClCompile Include="BgObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -259,6 +260,7 @@
       <Filter>H\ゲームH\ゲームオブジェクト</Filter>
     </ClInclude>
     <ClInclude Include="EventBox3D.h" />
+    <ClInclude Include="BgObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">
