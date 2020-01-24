@@ -134,6 +134,7 @@ void SceneGame::Init()
 		return;
 	case SCENE_GAMENORMAL:
 		printf("\nNORMAL\n");
+		pPlayer->SetPosition({ 61.500000, 2.706932, 0.000000f });
 		SkySphere = new Sphere3D("data/texture/haikei.jpg");
 		Walls->Load("HEWLEVEL/Walls_Level", GO_WALL);
 		Fields->Load("HEWLEVEL/Fields_Level", GO_FLOOR);

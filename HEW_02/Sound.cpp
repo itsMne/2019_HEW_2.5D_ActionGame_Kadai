@@ -64,6 +64,7 @@ SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
 	{ L"data/SE/SE_ENEMYATTACK1.wav", 0 },
 	{ L"data/SE/SE_BLOCKGEISHA.wav", 0 },
 	{ L"data/SE/SE_GEISHADODGED.wav", 0 },
+	{ L"data/SE/SE_RECOVERED.wav", 0 },
 };
 
 //=============================================================================

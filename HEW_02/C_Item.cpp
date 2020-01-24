@@ -1,5 +1,6 @@
 #include "C_Item.h"
 #include "Player3D.h"
+#include "Sound.h"
 #include "Texture.h"
 #include "SceneGame.h"
 
@@ -101,6 +102,7 @@ void C_Item::Update()
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && pPlayer->GetState()!=PLAYER_TELEPORTING)
 	{
 		bUse = false;
+		PlaySoundGame(SOUND_LABEL_SE_RECOVER);
 		switch (nItemType)
 		{
 		case TYPE_SUSHI:
