@@ -11,7 +11,7 @@
 #define HITBOX_Z_POS -10
 #define GRAVITY_FORCE 0.4f
 #define SHOW_HITBOX	false
-#define USE_CONSOLE true
+#define USE_CONSOLE false
 #define DEBUG_MODE true
 #define USE_IN_RENDERZONE true
 #ifndef SAFE_RELEASE

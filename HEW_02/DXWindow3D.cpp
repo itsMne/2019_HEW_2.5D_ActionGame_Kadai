@@ -10,7 +10,7 @@
 #pragma comment(lib, "imm32")
 #pragma comment(lib, "d3d11")
 #define CLASS_NAME		_T("AppClass")		// ウインドウのクラス名
-#define WINDOW_NAME		_T("HEW")	// ウインドウのキャプション名
+#define WINDOW_NAME		_T("連撃夜行")	// ウインドウのキャプション名
 
 DXWindow3D* pMainWindow = nullptr;
 

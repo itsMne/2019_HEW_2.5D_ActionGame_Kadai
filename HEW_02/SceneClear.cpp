@@ -1,16 +1,19 @@
 #include "SceneClear.h"
+#include "Sound.h"
 #include "InputManager.h"
 
 
 SceneClear::SceneClear()
 {
 	Clear = new C_Ui("data/texture/clear.jpg", UI_CLEAR);
-	Score = new C_Ui("data/texture/number.png", UI_RESULT_SCORE);
+	Score = new C_Ui("data/texture/number.png", UI_RESULT_SCORE); 
+	PlaySoundGame(SOUND_LABEL_BGM_CLEAR);
 }
 
 
 SceneClear::~SceneClear()
 {
+	StopSound();
 	Uninit();
 }
 

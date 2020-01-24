@@ -640,13 +640,22 @@ void Enemy3D::DamageControl()
 		nDirection = -1*pPlayer->GetDirection();
 	pGame->ZoomPause(60, 30, 3, false, true);
 	if (bDoDamage && pPlayerAttack->Animation == SAMURAI_STINGER)
-		pPlayer->ReduceStamina(10);
+		pPlayer->ReduceStamina(2);
 	SetFramesForZoomUse(35);
 	if ((pCurrentFloor && nEnragedCounter != 0 && nEnragedHitCountMax!=0 && 
 		pPlayerAttack->Animation!= NINJA_AIR_DOWN && pPlayerAttack->Animation != NINJA_UPPER_SLASH
 		&& pPlayerAttack->Animation != SAMURAI_STINGER && !bIsBoss) || (bIsBoss && nSuperArmor>0))
 	{
 		if (bDoDamage) {
+
+			if (pPlayerAttack->Animation == SAMURAI_STINGER || 
+				pPlayerAttack->Animation == NINJA_ATTACK_COMBOAIR_D ||
+				pPlayerAttack->Animation == NINJA_ATTACK_COMBO_E ||
+				pPlayerAttack->Animation == NINJA_AIR_DOWN)
+				PlaySoundGame(SOUND_LABEL_SE_BIGSLASH2);
+			else
+				PlaySoundGame(SOUND_LABEL_SE_NINJA_REGULARSLASH);
+
 			AddMoveToRankMeter(NINJA_ATTACK_COMBOAIR_A, 30);
 			GetMainCamera()->ShakeCamera({ 1.85f,1.85f,0.75f }, 25, 15);
 			pGame->SetPauseFrames(PAUSE_FRAMES_PER_ATTACK*1.5f);
@@ -798,7 +807,7 @@ void Enemy3D::DamageControl()
 			}
 			pWall = pGame->GetWalls()->CheckCollision(GetHitBox());
 			if (pWall) {
-				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()))
+				while (IsInCollision3D(GetHitBox(), pWall->GetHitBox()) && !IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), pWall->GetHitBox()))
 				{
 					pPlayer->TranslateX(1 * -nPlayerDirection);
 					Position.x += 1 * nDirection;

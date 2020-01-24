@@ -5,6 +5,7 @@
 #define MAX_KOMA			256
 #define MAX_UTIMIZU			256
 #define MAX_FURIN			256
+#define MAX_HANABI			256
 
 enum BgObjectType
 {
@@ -40,6 +41,11 @@ typedef struct TFURIN {
 	int			nAinmCnt;	// カウンタ
 };
 
+typedef struct tHANABI {
+	int			nAnimeIdx;	// フレームNo.
+	int			nAinmCnt;	// カウンタ
+};
+
 class BgObject :
 	public GameObject3D
 {
@@ -51,6 +57,7 @@ private:
 	TKOMA g_koma[MAX_KOMA];
 	TUTIMIZU g_utimizu[MAX_UTIMIZU];
 	TFURIN g_furin[MAX_FURIN];
+	tHANABI g_hanabi[MAX_HANABI];
 public:
 	BgObject(int ty);
 	~BgObject();

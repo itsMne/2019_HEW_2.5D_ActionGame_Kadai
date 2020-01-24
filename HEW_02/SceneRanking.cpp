@@ -1,5 +1,6 @@
 #include "SceneRanking.h"
 #include "InputManager.h"
+#include "Sound.h"
 #include "SceneGame.h"
 
 
@@ -31,6 +32,7 @@ SceneRanking::SceneRanking()
 		top[2] = score;
 	}
 	SaveRank();
+	PlaySoundGame(SOUND_LABEL_BGM_RANKING);
 }
 
 void SceneRanking::SaveRank()
@@ -73,7 +75,7 @@ SceneRanking::~SceneRanking()
 
 void SceneRanking::Init()
 {
-
+	
 }
 
 void SceneRanking::Uninit()
@@ -81,6 +83,7 @@ void SceneRanking::Uninit()
 	SAFE_DELETE(Ranking);
 	SAFE_DELETE(Score);
 	SAFE_DELETE(Top);
+	StopSound();
 }
 
 int SceneRanking::Update()

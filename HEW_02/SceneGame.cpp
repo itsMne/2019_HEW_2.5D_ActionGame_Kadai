@@ -120,6 +120,7 @@ void SceneGame::Init()
 	{
 	case SCENE_GAMEHELL:
 		printf("\nHELL\n");
+		PlaySoundGame(SOUND_LABEL_BGM_HELL);
 		SkySphere = new Sphere3D("data/texture/haikei3.jpg");
 		Walls->Load("HELL/Walls_Level", GO_WALL);
 		Fields->Load("HELL/Fields_Level", GO_FLOOR);
@@ -134,6 +135,7 @@ void SceneGame::Init()
 		return;
 	case SCENE_GAMENORMAL:
 		printf("\nNORMAL\n");
+		PlaySoundGame(SOUND_LABEL_BGM_NORMAL);
 		pPlayer->SetPosition({ 61.500000, 2.706932, 0.000000f });
 		SkySphere = new Sphere3D("data/texture/haikei.jpg");
 		Walls->Load("HEWLEVEL/Walls_Level", GO_WALL);
@@ -149,6 +151,7 @@ void SceneGame::Init()
 		return;
 	case SCENE_TUTORIAL_GAME:
 		printf("\nNORMAL\n");
+		PlaySoundGame(SOUND_LABEL_BGM_TUTORIAL);
 		pPlayer->SetPosition({ -49.500648f, -96.109612f, 0.000000f });
 		SkySphere = new Sphere3D("data/texture/haikei2.jpg");
 		Walls->Load("TUTORIAL/Walls_Level", GO_WALL);
@@ -190,7 +193,7 @@ void SceneGame::Uninit()
 	SAFE_DELETE(pSpeed_MoveObject_UI);
 	SAFE_DELETE(pDelay_MoveObject_UI);
 	SAFE_DELETE(pZoomAttack_UI);
-
+	StopSound();
 
 	// デバッグ文字列表示終了処理
 	//UninitDebugProc();
@@ -415,9 +418,11 @@ void SceneGame::Draw()
 	
 	SceneCamera->DrawRenderZone();
 	Events->Draw();
+	BgObjects->Draw();
 	// Zバッファ無効
 	SetZBuffer(false);
 	// Hp描画
+
 	pHP_UI_BACK->Draw();
 	pHP_UI_FRONT->Draw();
 
@@ -426,8 +431,6 @@ void SceneGame::Draw()
 
 	// Number描画
 	pScore_UI->Draw();
-
-	 //Score描画
 	pScore_Frame_UI->Draw();
 
 	//レベルエディター更新
@@ -439,7 +442,6 @@ void SceneGame::Draw()
 	pDelay_MoveObject_UI->Draw();
 	pOwari->Draw();
 	pZoomAttack_UI->Draw();
-	BgObjects->Draw();
 	if (pTutorialMessage)
 		pTutorialMessage->Draw();
 	for (int i = 0; i < MAX_SAKURA_LEAVES; i++)

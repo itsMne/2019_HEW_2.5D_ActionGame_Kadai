@@ -43,6 +43,12 @@ SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
 {
 	{L"data/BGM/BGM_TITLE.wav", -1},
 	{L"data/BGM/BGM_MENU.wav", -1},
+	{L"data/BGM/BGM_RANKING.wav", -1},
+	{L"data/BGM/BGM_TUTORIAL.wav", -1},
+	{L"data/BGM/BGM_NORMAL.wav", -1},
+	{L"data/BGM/BGM_HELL.wav", -1},
+	{L"data/BGM/BGM_GAMEOVER.wav", -1},
+	{L"data/BGM/BGM_CLEAR.wav", -1},
 	{ L"data/SE/SE_SHINE.wav", 0 },
 	{ L"data/SE/SE_BIGSLASH.wav", 0 },
 	{ L"data/SE/SE_SWING.wav", 0 },

@@ -42,9 +42,9 @@ PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 	{"UA", MODEL_NINJA, NINJA_UPPER_SLASH, true,  GROUND_MOVE,		1480 },
 	{"DA", MODEL_NINJA, NINJA_AIR_DOWN, true,  AIR_MOVE,		1480 },
 	//Ž˜
-	{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		263 },
-	{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		348 },
-	{"FA",  MODEL_SAMURAI, SAMURAI_STINGER,		  true,  BOTH_MOVE,		1000 },
+	//{"A",   MODEL_SAMURAI, SAMURAI_COMBOA,		  false, BOTH_MOVE,		263 },
+	//{"AA",  MODEL_SAMURAI, SAMURAI_COMBOB,		  true,  BOTH_MOVE,		348 },
+	{"A",  MODEL_SAMURAI, SAMURAI_STINGER,		  true,  BOTH_MOVE,		1000 },
 	//Œ|ŽÒ														  
 	{"A",   MODEL_GEISHA, GEISHA_BLOCK,			  true,  BOTH_MOVE,		323 },
 };
@@ -188,6 +188,14 @@ void Player3D::Update()
 	}
 	if (nHP < 0)
 		nHP = 0;
+	SceneGame* pGame = GetCurrentGame();
+	if (pGame) {
+		if (pGame->GetSceneType() == SCENE_TUTORIAL_GAME)
+		{
+			if (nHP == 0)
+				nHP = 1;
+		}
+	}
 	if (nHP >= nMaxHP)
 		nHP = nMaxHP;
 	WallAttachedTo = nullptr;
@@ -254,7 +262,6 @@ void Player3D::Update()
 	else {
 		nFrameCountForSafePos = 0;
 	}
-	SceneGame* pGame = GetCurrentGame();
 	XMFLOAT3 rotCamera;
 	if (nCurrentTransformation == MODEL_SAMURAI || nCurrentTransformation == MODEL_GEISHA)
 	{

@@ -12,6 +12,8 @@
 #define UTIMIZU_FRAME_Y		1	// 打ち水の縦フレーム数
 #define FURIN_FRAME_X		9	// 風鈴の横フレーム数
 #define FURIN_FRAME_Y		1	// 風鈴の縦フレーム数
+#define FURIN_HANABI_X		7	// 花火の横フレーム数
+#define FURIN_HANABI_Y		1	// 風鈴の縦フレーム数
 
 ID3D11ShaderResourceView* pBgObjectTextures[MAX_BGOBJECTTYPE];
 
@@ -239,6 +241,23 @@ void BgObject::Update()
 			}
 		}
 		break;
+	case HANABI:
+		for (int i = 0; i < MAX_HANABI; ++i) {
+			if (!bUse) {
+				continue;
+			}
+			--g_hanabi[i].nAinmCnt;
+			if (g_hanabi[i].nAinmCnt <= 0) {
+				++g_hanabi[i].nAnimeIdx;
+				if (g_hanabi[i].nAnimeIdx >= FURIN_HANABI_X) {
+					g_hanabi[i].nAnimeIdx = 0;
+					continue;
+				}
+				g_hanabi[i].nAinmCnt = 10;
+			}
+		}
+		break;
+
 	}
 }
 
@@ -278,6 +297,15 @@ void BgObject::Draw()
 			}
 			bBgObject->SetUVFrames(FURIN_FRAME_X, FURIN_FRAME_Y);
 			bBgObject->SetUV(g_furin[i].nAnimeIdx % FURIN_FRAME_X, g_furin[i].nAnimeIdx / FURIN_FRAME_X);
+		}
+		break;
+	case HANABI:
+		for (int i = 0; i < MAX_HANABI; ++i) {
+			if (!bUse) {
+				continue;
+			}
+			bBgObject->SetUVFrames(FURIN_HANABI_X, FURIN_HANABI_Y);
+			bBgObject->SetUV(g_hanabi[i].nAnimeIdx % FURIN_HANABI_X, g_hanabi[i].nAnimeIdx / FURIN_HANABI_X);
 		}
 		break;
 	}
