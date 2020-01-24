@@ -67,6 +67,10 @@ void SceneTitle::Uninit()
 	SAFE_DELETE(SlashEffect);
 	SAFE_DELETE(Effect1);
 	SAFE_DELETE(Effect2);
+	for (int i = 0; i < 4; i++)
+		SAFE_DELETE(Kanji[i]);
+	for (int i = 0; i < MAX_SAKURA; i++)
+		SAFE_DELETE(sakura[i]);
 }
 
 int SceneTitle::Update()

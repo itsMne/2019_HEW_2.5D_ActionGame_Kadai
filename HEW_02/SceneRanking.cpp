@@ -79,6 +79,8 @@ void SceneRanking::Init()
 void SceneRanking::Uninit()
 {
 	SAFE_DELETE(Ranking);
+	SAFE_DELETE(Score);
+	SAFE_DELETE(Top);
 }
 
 int SceneRanking::Update()

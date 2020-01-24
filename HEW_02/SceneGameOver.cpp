@@ -21,6 +21,7 @@ void SceneGameOver::Init()
 void SceneGameOver::Uninit()
 {
 	SAFE_DELETE(GameOver);
+	SAFE_DELETE(Score);
 }
 
 int SceneGameOver::Update()

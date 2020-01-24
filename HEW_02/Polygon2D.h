@@ -44,7 +44,6 @@ protected:
 	int nFrameCounter;
 
 public:
-	ID3D11ShaderResourceView * gpTexture;
 	Polygon2D();
 	Polygon2D(const char * TexturePath);
 	virtual ~Polygon2D();

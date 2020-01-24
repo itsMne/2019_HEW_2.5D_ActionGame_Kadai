@@ -181,9 +181,6 @@
     <ClInclude Include="SceneGame.h">
       <Filter>H\ゲームH\シーン</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere3D.h">
-      <Filter>H\ゲームH\シーン</Filter>
-    </ClInclude>
     <ClInclude Include="UniversalStructures.h">
       <Filter>H</Filter>
     </ClInclude>
@@ -261,6 +258,9 @@
     </ClInclude>
     <ClInclude Include="EventBox3D.h" />
     <ClInclude Include="BgObject.h" />
+    <ClInclude Include="Sphere3D.h">
+      <Filter>H\ゲームH\ゲームオブジェクト</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CPP">

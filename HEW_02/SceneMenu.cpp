@@ -49,6 +49,7 @@ void SceneMenu::Uninit()
 	SAFE_DELETE(pStart);
 	SAFE_DELETE(pRanking);
 	SAFE_DELETE(pHard);
+	SAFE_DELETE(pTutorial);
 }
 
 int SceneMenu::Update()

@@ -491,8 +491,8 @@ void Player3D::AttackingStateControl()
 				pPlayerModels[MODEL_NINJA]->SetFrame(1746);
 			if (!pCurrentFloor) {
 				f_yForce += GRAVITY_FORCE*2.0f;
-				if (f_yForce > 17.5f)
-					f_yForce = 17.5f;
+				if (f_yForce > 16.5f)
+					f_yForce = 16.5f;
 				Position.y -= f_yForce;
 			}
 			else {

@@ -29,7 +29,7 @@ private:
 	float						g_fPower;	// スペキュラ強度
 	XMFLOAT4						g_Ke;		// エミッシブ
 	Light3D*					pSceneLight;
-	Cube3D* pVisualHitbox;
+	//Cube3D* pVisualHitbox;
 	char szTexturePath[256];
 public:
 	Field3D(const char* TexturePath);

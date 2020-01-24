@@ -24,8 +24,8 @@ struct SHADER_GLOBAL {
 Polygon2D::Polygon2D()
 {
 	InitPolygon(GetDevice());
-	gpTexture = nullptr;
-	SetPolygonTexture(gpTexture);
+	g_pTexture = nullptr;
+	SetPolygonTexture(g_pTexture);
 	InitedPolygons++;
 }
 
@@ -33,8 +33,8 @@ Polygon2D::Polygon2D(const char * TexturePath)
 {
 	printf("%s\n", TexturePath);
 	InitPolygon(GetDevice());
-	CreateTextureFromFile(GetDevice(), TexturePath, &gpTexture);
-	SetPolygonTexture(gpTexture);
+	CreateTextureFromFile(GetDevice(), TexturePath, &g_pTexture);
+	SetPolygonTexture(g_pTexture);
 	InitedPolygons++;
 }
 
@@ -126,6 +126,8 @@ void Polygon2D::UninitPolygon(void)
 	SAFE_RELEASE(g_pInputLayout);
 	// 頂点シェーダ解放
 	SAFE_RELEASE(g_pVertexShader);
+	// 頂点シェーダ解放
+	SAFE_RELEASE(g_pTexture);
 }
 
 //=============================================================================
