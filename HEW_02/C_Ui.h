@@ -92,9 +92,10 @@ private:
 	int nFrameUse;
 	int nCounterOwariOnScreen;
 	float fOffsetY;
-	int hpDamageCooloff;
+	int nYOffsetCooloff;
 	int nTutorialMessage;
 	bool bShowTutorial;
+	float fSizeOffset;
 public:
 	C_Ui();
 	C_Ui(const char*, int);

@@ -140,6 +140,7 @@ private:
 	int nToRecover;
 	float fAccelerationOver;
 	bool bNinjaOnWall;
+	bool bIsUsingStamina;
 public:
 	Player3D();
 	~Player3D();
@@ -204,6 +205,8 @@ public:
 	int GetDamage();
 	int GetToRecover();
 	void ReduceStamina(float red);
+	bool IsPlayerUsingStamina();
+	bool GetStaminaCoolDown();
 };
 
 Player3D* GetMainPlayer();

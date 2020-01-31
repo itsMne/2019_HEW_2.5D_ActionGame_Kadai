@@ -63,6 +63,7 @@ void Player3D::Init()
 {
 	strcpy(szInputs, "********");
 	MainPlayer = this;
+	bIsUsingStamina = false;
 	nStingerFrames = 0;
 	nDamage = 0;
 	pCurrentAttackPlaying = nullptr;
@@ -128,6 +129,7 @@ void Player3D::Init()
 
 void Player3D::Update()
 {
+	bIsUsingStamina = false;
 	if (nState == PLAYER_OVER)
 	{
 		StageClearControl();
@@ -266,6 +268,7 @@ void Player3D::Update()
 	if (nCurrentTransformation == MODEL_SAMURAI || nCurrentTransformation == MODEL_GEISHA)
 	{
 		static int framecontrol=0;
+		bIsUsingStamina = true;
 		if (++framecontrol > 30)
 		{
 			fStamina -= 2;
@@ -1392,4 +1395,14 @@ int Player3D::GetToRecover()
 void Player3D::ReduceStamina(float red)
 {
 	fStamina -= red;
+}
+
+bool Player3D::IsPlayerUsingStamina()
+{
+	return bIsUsingStamina;
+}
+
+bool Player3D::GetStaminaCoolDown()
+{
+	return bStaminaCoolDown;
 }

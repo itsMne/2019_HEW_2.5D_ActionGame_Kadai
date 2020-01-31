@@ -63,6 +63,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 	nFramesToUseZoom = 0;
 	fScaleOffset = 0;
 	nFrameUse = 0;
+	fSizeOffset = 0;
 	fOffsetY = 5;
 	vScorePos = XMFLOAT2(SCORE_POS_X, SCORE_POS_Y);
 	bSelected = false;
@@ -216,7 +217,7 @@ C_Ui::C_Ui(const char *Path, int Type) :Polygon2D(Path)
 		break;
 	}
 	fAcceleration = 0;
-	hpDamageCooloff = 0;
+	nYOffsetCooloff = 0;
 	nCounterOwariOnScreen = 0;
 	bDoorInPos = false;
 	bOwariAnimationisOver = false;
@@ -260,9 +261,9 @@ void C_Ui::Update()
 			return;
 		nHP = pPlayer->GetPlayerHp();
 		nMaxHP = pPlayer->GetPlayerMaxHp();
-		if (++hpDamageCooloff > 4) {
+		if (++nYOffsetCooloff > 4) {
 			fOffsetY *= -1;
-			hpDamageCooloff = 0;
+			nYOffsetCooloff = 0;
 		}
 		if (nHP > 0)
 			SetPolygonColor(1, (nHP / (float)nMaxHP), (nHP / (float)nMaxHP));
@@ -280,14 +281,13 @@ void C_Ui::Update()
 			return;
 		nHP = pPlayer->GetPlayerHp();
 		nMaxHP = pPlayer->GetPlayerMaxHp();
-		//printf("hp: %d, max: %d\n", nHP, nMaxHP);
 		if (nMaxHP == 0)
 		{
 			break;
 		}
-		if (++hpDamageCooloff > 4) {
+		if (++nYOffsetCooloff > 4) {
 			fOffsetY *= -1;
-			hpDamageCooloff = 0;
+			nYOffsetCooloff = 0;
 		}
 		SetPolygonSize((float)HP_SIZE_X * (nHP / (float)nMaxHP), HP_SIZE_Y);
 		if(pPlayer->GetDamage()>0)
@@ -299,12 +299,34 @@ void C_Ui::Update()
 		pPlayer = GetMainPlayer();
 		nMP = pPlayer->GetPlayerMp();
 		nMaxMP = pPlayer->GetPlayerMaxMp();
+		fAcceleration++;
+		if (pPlayer->GetStaminaCoolDown() && ++nYOffsetCooloff > 4)
+		{
+			fOffsetY *= -1;
+			nYOffsetCooloff = 0;
+		}
+		if (pPlayer->IsPlayerUsingStamina()) {
+			fSizeOffset+= fAcceleration;
+			if (fSizeOffset > 40) 
+			{
+				fAcceleration = 0;
+				fSizeOffset = 40;
+			}
+		}
+		else {
+			fSizeOffset-= fAcceleration;
+			if (fSizeOffset < 0) 
+			{
+				fAcceleration = 0;
+				fSizeOffset = 0;
+			}
+		}
 		if (nMaxMP == 0)
 		{
 			break;
 		}
-		SetPolygonSize((260.0f * (nMP / (float)nMaxMP)) + 40, 100);
-		SetPolygonPos(MP_POS_X - ((nMaxMP - nMP)*4.25f), MP_POS_Y);
+		SetPolygonSize((260.0f * (nMP / (float)nMaxMP)) + 40+ fSizeOffset, 100 + (fSizeOffset*0.5f));
+		SetPolygonPos(MP_POS_X - ((nMaxMP - nMP)*4.25f)+ fSizeOffset, MP_POS_Y- (fSizeOffset/2)+ fOffsetY);
 		nHP = pPlayer->GetPlayerHp();
 		if (nHP > 0)
 			SetPolygonColor(1, (nMP / (float)nMaxMP), (nMP / (float)nMaxMP));
@@ -555,7 +577,7 @@ void C_Ui::Draw()
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
 	case UI_MP:
-		SetPolygonFrameSize((Scale.x / HP_SIZE_X), Scale.y / HP_SIZE_Y);
+		SetPolygonFrameSize(((300*((Scale.x-fSizeOffset)/300)) / HP_SIZE_X), (100 / HP_SIZE_Y));
 		SetPolygonUV(1, 1);
 		Polygon2D::DrawPolygon(GetDeviceContext());
 		break;
