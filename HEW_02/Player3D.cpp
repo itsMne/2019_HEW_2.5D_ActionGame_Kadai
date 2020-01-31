@@ -1290,6 +1290,7 @@ void Player3D::SetDamageTeleport(int Damage)
 	ResetRanks();
 	nState = PLAYER_TELEPORTING_DAMAGED;
 	nDamage += Damage;
+	PlaySoundGame(SOUND_LABEL_SE_SPIKES_HIT);
 	SwitchAnimation(MODEL_NINJA, NINJA_DAMAGEDALT);
 	GetCurrentGame()->ZoomPause(80, 30, 3, true, false);
 	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);

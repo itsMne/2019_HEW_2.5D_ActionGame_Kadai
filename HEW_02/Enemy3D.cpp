@@ -365,8 +365,11 @@ void Enemy3D::Update()
 			GetMainCamera()->CancelShake();
 			GetMainCamera()->ShakeCamera({ 3.95f,3.95f,2.75f }, 30, 15);
 			bUse = false;
-			if(bEndStageAfterDeath)
+			if (bEndStageAfterDeath) {
 				pPlayer->SetPlayerState(PLAYER_OVER);
+				StopSound();
+				PlaySoundGame(SOUND_LABEL_SE_END_REACHED);
+			}
 			PlaySoundGame(SOUND_LABEL_SE_DISSAPPEARED);
 		}
 		return;

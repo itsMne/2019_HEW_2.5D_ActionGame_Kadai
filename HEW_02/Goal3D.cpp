@@ -1,5 +1,6 @@
 #include "Goal3D.h"
 #include "Player3D.h"
+#include "Sound.h"
 #include "SceneGame.h"
 #define GOAL_MODEL_PATH "data/model/Goal.fbx"
 
@@ -41,11 +42,12 @@ void Goal3D::Update()
 		return;
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()))
 	{
+		if (pPlayer->GetState() != PLAYER_OVER) {
+			StopSound();
+			PlaySoundGame(SOUND_LABEL_SE_END_REACHED);
+		}
 		pPlayer->SetPlayerState(PLAYER_OVER);
-		//SceneGame* pGame = GetCurrentGame();
-		//if (!pGame)
-		//	return;
-		//pGame->SetGoalReached();
+		
 	}
 }
 
