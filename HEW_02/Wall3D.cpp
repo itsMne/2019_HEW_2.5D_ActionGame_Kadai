@@ -42,6 +42,14 @@ void Wall3D::Update()
 	if (!pPlayer)
 		return;
 
+	PLAYER_ATTACK_MOVE* pAttack = pPlayer->GetPlayerAttack();
+	if (pAttack && pAttack->Animation == SAMURAI_STINGER)
+	{
+		while (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetHitBox())) {
+			pPlayer->TranslateX(-(pPlayer->GetDirection())*0.01f);
+			pPlayer->CancelAttack();
+		}
+	}
 	if (IsInCollision3D(pPlayer->GetHitBox(HB_HEAD), GetHitBox()))
 	{
 		pPlayer->SetYForce(0);

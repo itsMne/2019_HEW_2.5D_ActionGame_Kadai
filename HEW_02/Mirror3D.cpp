@@ -38,8 +38,15 @@ void Mirror3D::Update()
 #endif
 	if (!pPlayer)
 		return;
-	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && !(pPlayer->IsDebugAimOn()))
+	if (IsInCollision3D(pPlayer->GetHitBox(HB_BODY), GetHitBox()) && !(pPlayer->IsDebugAimOn())) {
+		PLAYER_ATTACK_MOVE* pAttack = pPlayer->GetPlayerAttack();
+		if (pAttack)
+		{
+			if (pAttack->Animation == SAMURAI_STINGER)
+				pPlayer->CancelAttack();
+		}
 		pPlayer->SetPlayerTeleporting(x3DestinationPos);
+	}
 }
 
 void Mirror3D::Draw()

@@ -227,10 +227,24 @@ void Field3D::Update(void)
 		if (pPlayer->GetFloor() == nullptr)
 		{
 			Hitbox3D hbField = GetHitBox();
+			bool bHighIntensity = false;
+			PLAYER_ATTACK_MOVE* pAttack = pPlayer->GetPlayerAttack();
+			if (pAttack && pAttack->Animation == NINJA_AIR_DOWN)
+			{
+				if (pPlayer->GetYForce() == 16.5f) {
+					hbField.SizeY *= 2.8f;
+					bHighIntensity = true;
+				}
+			}
 			if (!IsInCollision3D(hbField, pPlayer->GetHitBox(HB_FEET)))
 				return;
 			while (IsInCollision3D(hbField, pPlayer->GetHitBox(HB_FEET)))
 				pPlayer->TranslateY(0.01f);
+			if (pAttack && pAttack->Animation == NINJA_AIR_DOWN)
+				if(!bHighIntensity)
+					GetMainCamera()->ShakeCamera({ 2,2,2 }, 15, 5);
+				else
+					GetMainCamera()->ShakeCamera({ 3,3,3 }, 30, 5);
 			pPlayer->TranslateY(-0.01f);
 			pPlayer->SetFloor(this);
 		}

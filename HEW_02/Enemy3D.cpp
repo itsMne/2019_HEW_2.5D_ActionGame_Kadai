@@ -848,7 +848,12 @@ void Enemy3D::DamageControl()
 			pGame->RaiseScoreWithRank(5);
 		fYForce = 0;
 		if (pPlayerAttack->Animation == SAMURAI_STINGER)
-			pPlayer->CancelAttack();
+		{
+			while (IsInCollision3D(pPlayer->GetHitBox(HB_ATTACK), GetHitBox())) {
+				pPlayer->TranslateX(-(pPlayer->GetDirection())*0.01f);
+				pPlayer->CancelAttack();
+			}
+		}
 		break;
 	}
 	if ((nEnragedCounter == 0 || nEnragedHitCountMax == 0) && nState != ENEMY_SENDOFF && nState != ENEMY_FALLING) {
