@@ -29,7 +29,7 @@
 #define SCREEN_CENTER_X	(SCREEN_WIDTH/2)	// ウインドウの中心Ｘ座標
 #define SCREEN_CENTER_Y	(SCREEN_HEIGHT/2)	// ウインドウの中心Ｙ座標
 #define NUM_VERTEX 4
-
+#define SHOWFPS false
 #define CULLMODE_NONE	0					// カリングしない
 #define CULLMODE_CW		1					// 前面カリング
 #define CULLMODE_CCW	2					// 背面カリング

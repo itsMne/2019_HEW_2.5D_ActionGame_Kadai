@@ -1,8 +1,16 @@
+//*****************************************************************************
+// Camera3D.cpp
+// ビルボードのオブジェクトの管理
+//*****************************************************************************
 #include "Camera3D.h"	
 #include "input.h"
 #include "debugproc.h"
 #include "GameObject3D.h"
 #include <stdio.h>
+
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
 #define POS_CAMERA_P_X		(0.0f)
 #define POS_CAMERA_P_Y		(100.0f)
 #define POS_CAMERA_P_Z		(-200.0f)
@@ -19,7 +27,15 @@
 #define VALUE_ROTATE_CAMERA	(XM_PI*0.01f)	
 #define OFFSET_VALUE	{0,20,-50}
 #define SHOW_RENDER_ZONE false
+
+//*****************************************************************************
+// グローバル変数
+//*****************************************************************************
 Camera3D* MainCamera = nullptr;
+
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 Camera3D::Camera3D(): FocalPoint(nullptr)
 {
 	MainCamera = this;
@@ -37,6 +53,12 @@ Camera3D::~Camera3D()
 	Uninit();
 }
 
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
 HRESULT Camera3D::Init()
 {
 	g_posCameraP = XMFLOAT3(POS_CAMERA_P_X, POS_CAMERA_P_Y, POS_CAMERA_P_Z);
@@ -62,6 +84,12 @@ HRESULT Camera3D::Init()
 	return S_OK;
 }
 
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::Update()
 {
 	GameObject3D* FocusPoint = nullptr;
@@ -91,11 +119,9 @@ void Camera3D::Update()
 		XMMATRIX mtxWorld = XMLoadFloat4x4(FocusPoint->GetModelWorld());
 		XMMATRIX identity = XMMatrixIdentity();
 		//視点
-		//XMStoreFloat3(&g_posCameraP, XMVector3TransformCoord(XMLoadFloat3(&vEye), mtxWorld));
 		XMStoreFloat3(&g_posCameraP, XMVector3TransformCoord(XMLoadFloat3(&vEye), identity));
 
 		//注視点
-		//XMStoreFloat3(&g_posCameraR, XMVector3TransformCoord(XMLoadFloat3(&vLookAt), mtxWorld));
 		XMStoreFloat3(&g_posCameraR, XMVector3TransformCoord(XMLoadFloat3(&vLookAt), identity));
 
 		g_rotCamera = FocusPoint->GetRotation();
@@ -107,13 +133,25 @@ void Camera3D::Update()
 		pRenderZone->SetScale({ hbRenderZone.SizeX , hbRenderZone.SizeY, hbRenderZone.SizeZ });
 		pRenderZone->Update();
 	}
-	//PrintDebugProc("[ｶﾒﾗ ｲﾁ:(%f, %f, %f)]\n", g_posCameraP.x, g_posCameraP.y, g_posCameraP.z);
 }
 
+//*****************************************************************************
+//Uninit関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::Uninit()
 {
+	//なし
 }
 
+//*****************************************************************************
+//SetCamera関数
+//現在のフレームにカメラの拠点と回転を設定する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::SetCamera()
 {
 	XMStoreFloat4x4(&g_mtxView, XMMatrixLookAtLH(
@@ -125,26 +163,56 @@ void Camera3D::SetCamera()
 	XMStoreFloat4x4(&g_mtxProjection, XMMatrixPerspectiveFovLH(VIEW_ANGLE, VIEW_ASPECT, VIEW_NEAR, VIEW_FAR));
 }
 
+//*****************************************************************************
+//GetCameraPos関数
+//カメラの拠点を戻す
+//引数：void
+//戻：XMFLOAT3&
+//*****************************************************************************
 XMFLOAT3& Camera3D::GetCameraPos()
 {
 	return g_posCameraP;
 }
 
+//*****************************************************************************
+//GetCameraAngle関数
+//カメラの回転を戻す
+//引数：void
+//戻：XMFLOAT3&
+//*****************************************************************************
 XMFLOAT3& Camera3D::GetCameraAngle(void)
 {
 	return g_rotCamera;
 }
 
+//*****************************************************************************
+//GetViewMatrix関数
+//カメラのビューマトリックスを戻す
+//引数：void
+//戻：XMFLOAT4X4&
+//*****************************************************************************
 XMFLOAT4X4 & Camera3D::GetViewMatrix()
 {
 	return g_mtxView;
 }
 
+//*****************************************************************************
+//GetProjMatrix関数
+//カメラのプロジェクションマトリックスを戻す
+//引数：void
+//戻：XMFLOAT4X4&
+//*****************************************************************************
 XMFLOAT4X4 & Camera3D::GetProjMatrix()
 {
 	return g_mtxProjection;
 }
 
+//*****************************************************************************
+//GetForwardCameraVector関数
+//カメラのフォーワードベクトルを戻す
+//引数：void
+//戻：XMFLOAT3
+//*****************************************************************************
 XMFLOAT3 Camera3D::GetForwardCameraVector()
 {
 	float pitch = g_rotCamera.y;
@@ -152,11 +220,23 @@ XMFLOAT3 Camera3D::GetForwardCameraVector()
 	return { cosf(pitch)*cosf(yaw),cosf(pitch)*sinf(yaw),sinf(pitch) };
 }
 
+//*****************************************************************************
+//SetFocalPoint関数
+//カメラの焦点を設定する
+//引数：void*
+//戻：void
+//*****************************************************************************
 void Camera3D::SetFocalPoint(void * newFocalPoint)
 {
 	FocalPoint = newFocalPoint;
 }
 
+//*****************************************************************************
+//ZoomOutZ関数
+//カメラのズームアウト（Z座標）を設定する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Camera3D::ZoomOutZ(float redZ)
 {
 	Offset.z -= redZ;
@@ -170,9 +250,14 @@ void Camera3D::ZoomOutZ(float redZ)
 	}
 	hbRenderZone.SizeX += redZ*2;
 	hbRenderZone.SizeY += redZ*2;
-	printf("%f\n", Offset.z);
 }
 
+//*****************************************************************************
+//ZoomInZ関数
+//カメラのズームアイン（Z座標）を設定する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Camera3D::ZoomInZ(float incZ)
 {
 	Offset.z += incZ;
@@ -186,9 +271,14 @@ void Camera3D::ZoomInZ(float incZ)
 	}
 	hbRenderZone.SizeX -= incZ * 2;
 	hbRenderZone.SizeY -= incZ * 2;
-	printf("%f\n", Offset.z);
 }
 
+//*****************************************************************************
+//SetZoomZ関数
+//カメラのズーム（Z座標）を設定する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Camera3D::SetZoomZ(float incZ)
 {
 	Offset.z = incZ;
@@ -202,27 +292,57 @@ void Camera3D::SetZoomZ(float incZ)
 	}
 }
 
+//*****************************************************************************
+//ResetZoom関数
+//カメラのズーム（Z座標）をリセットする
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::ResetZoom()
 {
 	Offset = OFFSET_VALUE;
 }
 
+//*****************************************************************************
+//SetRenderZone関数
+//レンダリング場所を設定する
+//引数：Hitbox3D
+//戻：void
+//*****************************************************************************
 void Camera3D::SetRenderZone(Hitbox3D hb)
 {
 	hbRenderZone = hb;
 }
 
+//*****************************************************************************
+//DrawRenderZone関数
+//レンダリング場所を表示する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::DrawRenderZone()
 {
 	if(pRenderZone)
 		pRenderZone->Draw();
 }
 
+//*****************************************************************************
+//IsOnRenderZone関数
+//レンダリングにあることを確認する
+//引数：Hitbox3D
+//戻：void
+//*****************************************************************************
 bool Camera3D::IsOnRenderZone(Hitbox3D hb)
 {
 	return IsInCollision3D(hbRenderZone, hb);
 }
 
+//*****************************************************************************
+//ShakeCamera関数
+//カメラに揺らせる
+//引数：XMFLOAT3, int, int
+//戻：void
+//*****************************************************************************
 void Camera3D::ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake)
 {
 	if (nFrameShaking > 0)
@@ -232,26 +352,56 @@ void Camera3D::ShakeCamera(XMFLOAT3 ShakeForce, int Frames, int FramesPerShake)
 	nFramesPerShake = FramesPerShake;
 }
 
+//*****************************************************************************
+//CancelShake関数
+//カメラに揺ることをキャンセルする
+//引数：void
+//戻：void
+//*****************************************************************************
 void Camera3D::CancelShake()
 {
 	nFrameShaking = 0;
 }
 
+//*****************************************************************************
+//GetCurrentZoom関数
+//カメラのズームを戻す
+//引数：float
+//戻：void
+//*****************************************************************************
 float Camera3D::GetCurrentZoom()
 {
 	return Offset.z;
 }
 
+//*****************************************************************************
+//GetRenderZone関数
+//レンダリング場所を戻す
+//引数：void
+//戻：Hitbox3D
+//*****************************************************************************
 Hitbox3D Camera3D::GetRenderZone()
 {
 	return hbRenderZone;
 }
 
+//*****************************************************************************
+//GetFocalPoint関数
+//焦点のアドレスを戻す
+//引数：void
+//戻：void*
+//*****************************************************************************
 void * Camera3D::GetFocalPoint()
 {
 	return FocalPoint;
 }
 
+//*****************************************************************************
+//GetMainCamera関数
+//メインカメラを戻す
+//引数：void
+//戻：Camera3D*
+//*****************************************************************************
 Camera3D * GetMainCamera()
 {
 	return MainCamera;

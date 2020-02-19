@@ -1,4 +1,8 @@
-#pragma once
+//*****************************************************************************
+//SceneBase.h
+//*****************************************************************************
+#ifndef SCENEBASE_H
+#define SCENEBASE_H
 #include "DXWindow3D.h"
 #include "debugproc.h"
 #include "Camera3D.h"
@@ -8,6 +12,10 @@
 #include "Billboard2D.h"
 #include "UniversalStructures.h"
 #include "Polygon2D.h"
+
+//*****************************************************************************
+//エナム
+//*****************************************************************************
 enum SceneType
 {
 	SCENE_TITLE=1,
@@ -20,6 +28,10 @@ enum SceneType
 	SCENE_TUTORIAL_GAME,
 	SCENE_MAX
 };
+
+//*****************************************************************************
+//クラス
+//*****************************************************************************
 class SceneBase
 {
 protected:
@@ -33,3 +45,4 @@ public:
 	virtual void Uninit()=0;
 };
 
+#endif

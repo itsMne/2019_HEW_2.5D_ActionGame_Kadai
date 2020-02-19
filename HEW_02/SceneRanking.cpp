@@ -1,9 +1,15 @@
+//*****************************************************************************
+// SceneRanking.cpp
+// ランクのシーン
+//*****************************************************************************
 #include "SceneRanking.h"
 #include "InputManager.h"
 #include "Sound.h"
 #include "SceneGame.h"
 
-
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 SceneRanking::SceneRanking()
 {
 	Ranking = new C_Ui("data/texture/ranking.jpg", UI_RANKING);
@@ -35,6 +41,80 @@ SceneRanking::SceneRanking()
 	PlaySoundGame(SOUND_LABEL_BGM_RANKING);
 }
 
+SceneRanking::~SceneRanking()
+{
+	Uninit();
+}
+
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
+void SceneRanking::Init()
+{
+	//なし
+}
+
+//*****************************************************************************
+//Uninit関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
+void SceneRanking::Uninit()
+{
+	SAFE_DELETE(Ranking);
+	SAFE_DELETE(Score);
+	SAFE_DELETE(Top);
+	StopSound();
+}
+
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
+int SceneRanking::Update()
+{
+	Ranking->Update();
+
+	if (GetInput(INPUT_JUMP)) {
+		return SCENE_TITLE;
+	}
+
+	return SCENE_RANKING;
+}
+
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
+void SceneRanking::Draw()
+{
+	SetZBuffer(false);
+	Ranking->Draw();
+
+	Score->Draw();
+	for (int i = 0; i < 3; i++)
+	{
+		Top->SetRankTop({ -SCORE_SIZE_X * 8, (float)(275 - (i*155))}, top[i]);
+		Top->Draw();
+	}
+	
+	
+}
+
+//*****************************************************************************
+//SaveRank関数
+//保存の関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void SceneRanking::SaveRank()
 {
 	FILE *pFile;
@@ -44,13 +124,19 @@ void SceneRanking::SaveRank()
 
 	pFile = fopen(szFinalfilename, "wb");
 
-	if(pFile)
+	if (pFile)
 		fwrite(top, sizeof(top[3]), 1, pFile);
 
 	printf("SAVED OK: %s\n", szFinalfilename);
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//LoadFile関数
+//ロードの関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void SceneRanking::LoadFile()
 {
 	FILE *pFile;
@@ -65,49 +151,4 @@ void SceneRanking::LoadFile()
 	while ((fread(top, sizeof(top[3]), 1, pFile)));
 
 	fclose(pFile);
-}
-
-
-SceneRanking::~SceneRanking()
-{
-	Uninit();
-}
-
-void SceneRanking::Init()
-{
-	
-}
-
-void SceneRanking::Uninit()
-{
-	SAFE_DELETE(Ranking);
-	SAFE_DELETE(Score);
-	SAFE_DELETE(Top);
-	StopSound();
-}
-
-int SceneRanking::Update()
-{
-	Ranking->Update();
-
-	if (GetInput(INPUT_JUMP)) {
-		return SCENE_TITLE;
-	}
-
-	return SCENE_RANKING;
-}
-
-void SceneRanking::Draw()
-{
-	SetZBuffer(false);
-	Ranking->Draw();
-
-	Score->Draw();
-	for (int i = 0; i < 3; i++)
-	{
-		Top->SetRankTop({ -SCORE_SIZE_X * 8, (float)(275 - (i*155))}, top[i]);
-		Top->Draw();
-	}
-	
-	
 }

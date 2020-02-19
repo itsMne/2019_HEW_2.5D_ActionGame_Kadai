@@ -1,11 +1,8 @@
-//=============================================================================
-//
-// デバッグ表示処理 [debugproc.h]
-// Author : HIROHIKO HAMAYA
-//
-//=============================================================================
-#pragma once
-
+//*****************************************************************************
+//debugproc.h
+//*****************************************************************************
+#ifndef DEBUGPROC_H
+#define DEBUGPROC_H
 #include "main.h"
 
 //*****************************************************************************
@@ -15,7 +12,8 @@ HRESULT InitDebugProc(void);
 void UninitDebugProc(void);
 void UpdateDebugProc(void);
 void DrawDebugProc(void);
-
 void StartDebugProc(bool hiragana = false);
 void PrintDebugProc(const char *fmt, ...);
 bool SetHiragana(bool hiragana = true);
+
+#endif

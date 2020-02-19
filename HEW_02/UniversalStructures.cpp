@@ -1,6 +1,16 @@
+//*****************************************************************************
+// UniversalStructures.cpp
+// ゲームの構造体と変数を管理する
+//*****************************************************************************
 #include "UniversalStructures.h"
 #include "stdio.h"
 
+//*****************************************************************************
+//IsInCollision3D関数
+//当たり判定を確認する
+//引数：Hitbox3D, Hitbox3D
+//戻：bool
+//*****************************************************************************
 bool IsInCollision3D(Hitbox3D a, Hitbox3D b)
 {
 	//check the X axis
@@ -31,6 +41,12 @@ bool IsInCollision3D(Hitbox3D a, Hitbox3D b)
 	return false;
 }
 
+//*****************************************************************************
+//IsInCollision2D関数
+//2D当たり判定を確認する
+//引数：Hitbox2D, Hitbox2D
+//戻：bool
+//*****************************************************************************
 bool IsInCollision2D(Hitbox2D hbA, Hitbox2D hbB)
 {
 	if (hbA.h == 0 || hbA.w == 0 || hbB.w == 0 || hbB.h == 0)
@@ -44,6 +60,12 @@ bool IsInCollision2D(Hitbox2D hbA, Hitbox2D hbB)
 	return (((a.x + a.w) >= b.x) && (a.x) <= (b.x + b.w) && (a.y + a.h) >= b.y && a.y <= (b.y + b.h));
 }
 
+//*****************************************************************************
+//IsVectorZero関数
+//ベクトルの中身は0を確認する
+//引数：XMFLOAT3
+//戻：bool
+//*****************************************************************************
 bool IsVectorZero(XMFLOAT3 vec)
 {
 	if (vec.x != 0)
@@ -55,6 +77,12 @@ bool IsVectorZero(XMFLOAT3 vec)
 	return true;
 }
 
+//*****************************************************************************
+//CompVector関数
+//ベクトルの中身は同じを確認する
+//引数：XMFLOAT3, XMFLOAT3
+//戻：bool
+//*****************************************************************************
 bool CompVector(XMFLOAT3 a, XMFLOAT3 b)
 {
 	if (a.x != b.x)

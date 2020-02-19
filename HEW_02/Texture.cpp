@@ -7,7 +7,7 @@
 
 using namespace DirectX;
 
-// ƒƒ‚ƒŠ‚©‚ç¶¬
+// ƒƒ‚ƒŠ‚©‚ç¶¬ 
 HRESULT CreateTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 	_In_bytecount_(wicDataSize) const uint8_t* wicData,
 	_In_ size_t wicDataSize,

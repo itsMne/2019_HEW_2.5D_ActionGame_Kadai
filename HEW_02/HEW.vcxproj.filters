@@ -63,9 +63,6 @@
     <ClCompile Include="SceneGame.cpp">
       <Filter>CPP\ゲームCPP\シーン</Filter>
     </ClCompile>
-    <ClCompile Include="Sphere3D.cpp">
-      <Filter>CPP\ゲームCPP\シーン</Filter>
-    </ClCompile>
     <ClCompile Include="Cube3D.cpp">
       <Filter>CPP\エンジンCPP</Filter>
     </ClCompile>
@@ -140,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="EventBox3D.cpp" />
     <ClCompile Include="BgObject.cpp" />
+    <ClCompile Include="Sphere3D.cpp">
+      <Filter>CPP\ゲームCPP\ゲームオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

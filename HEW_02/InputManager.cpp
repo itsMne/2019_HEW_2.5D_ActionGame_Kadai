@@ -1,12 +1,27 @@
+//*****************************************************************************
+// GameInputManager.cpp
+// インプットの管理
+//*****************************************************************************
 #include "InputManager.h"
 #include "input.h"
 #include "C_XInput.h"
 #include "stdio.h"
+
+//*****************************************************************************
+// グローバル変数
+//*****************************************************************************
 bool bInputs[MAX_INPUTS];
 C_XInput* Player1 = nullptr;
 bool bXinputConnected;
 bool bHoldingXinput[MAX_INPUTS];
 void XinputTriggerControl(bool BeforeInputs);
+
+//*****************************************************************************
+//InitInputManager関数
+//初期化の関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void InitInputManager()
 {
 	InitInput();
@@ -15,6 +30,12 @@ void InitInputManager()
 	for (int i = 0; i < MAX_INPUTS; bHoldingXinput[i] = false, i++);
 }
 
+//*****************************************************************************
+//UpdateInputManager関数
+//アップデートの関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void UpdateInputManager()
 {
 	UpdateInput();
@@ -57,18 +78,35 @@ void UpdateInputManager()
 	XinputTriggerControl(false);
 }
 
+//*****************************************************************************
+//EndInputManager関数
+//終了の関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void EndInputManager()
 {
 	UninitInput();
 
 }
 
+//*****************************************************************************
+//GetInput関数
+//インプットの状態を戻す
+//引数：int
+//戻：bool
+//*****************************************************************************
 bool GetInput(int nInput)
 {
 	return bInputs[nInput];
 }
 
-
+//*****************************************************************************
+//IsXInputConnected関数
+//XBOXのコントローラーを使っていることを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 void XinputTriggerControl(bool BeforeInputs)
 {
 	if (BeforeInputs) {
@@ -92,6 +130,12 @@ void XinputTriggerControl(bool BeforeInputs)
 	}
 }
 
+//*****************************************************************************
+//VibrateXinput関数
+//XBOXのコントローラーに揺らせる
+//引数：float, float, int
+//戻：void
+//*****************************************************************************
 void VibrateXinput(float vivbrationL, float VibrationR, int FrameNumbers)
 {
 	if (!bXinputConnected)

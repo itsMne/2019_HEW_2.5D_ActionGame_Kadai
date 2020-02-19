@@ -1,9 +1,7 @@
-//=============================================================================
-//
-// 地面処理 [field.cpp]
-// Author : HIROHIKO HAMAYA
-//
-//=============================================================================
+//*****************************************************************************
+// Cube3D.cpp
+// キューブのオブジェクト
+//*****************************************************************************
 #include "Cube3D.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -13,11 +11,11 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-//#define	TEXTURE_FIELD	L"data/texture/field000.jpg"	// 読み込むテクスチャファイル名
 #define M_DIFFUSE		XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR		XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
 #define M_AMBIENT		XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 #define M_EMISSIVE		XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
+
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
@@ -47,10 +45,8 @@ struct SHADER_GLOBAL2 {
 static HRESULT MakeVertexField(ID3D11Device* pDevice);
 
 //*****************************************************************************
-// グローバル変数
+// コンストラクタ関数
 //*****************************************************************************
-
-
 Cube3D::Cube3D()
 {
 	pSceneLight = nullptr;
@@ -72,10 +68,12 @@ Cube3D::~Cube3D()
 	End();
 }
 
-
-//=============================================================================
-// 初期化処理
-//=============================================================================
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
 HRESULT Cube3D::Init(const char* TexturePath)
 {
 	SetLight(GetMainLight());
@@ -146,9 +144,12 @@ HRESULT Cube3D::Init(const char* TexturePath)
 	return hr;
 }
 
-//=============================================================================
-// 終了処理
-//=============================================================================
+//*****************************************************************************
+//End関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Cube3D::End(void)
 {
 	// テクスチャ解放
@@ -169,17 +170,23 @@ void Cube3D::End(void)
 	SAFE_RELEASE(g_pVertexShader);
 }
 
-//=============================================================================
-// 更新処理
-//=============================================================================
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Cube3D::Update(void)
 {
-
+	//なし
 }
 
-//=============================================================================
-// 描画処理
-//=============================================================================
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Cube3D::Draw(void)
 {
 	Camera3D* pMainCamera = GetMainCamera();
@@ -257,60 +264,25 @@ void Cube3D::Draw(void)
 
 }
 
+//*****************************************************************************
+//SetLight関数
+//光を設定する
+//引数：Light3D*
+//戻：void
+//*****************************************************************************
 void Cube3D::SetLight(Light3D * SceneLight)
 {
 	pSceneLight = SceneLight;
 }
 
-//=============================================================================
-// 頂点の作成
-//=============================================================================
+//*****************************************************************************
+//MakeVertex関数
+//頂点の作成関数
+//引数：ID3D11Device*
+//戻：HRESULT
+//*****************************************************************************
 HRESULT Cube3D::MakeVertex(ID3D11Device* pDevice)
 {
-	// 頂点座標の設定
-	/*g_vertexWk[0].vtx = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	g_vertexWk[1].vtx = XMFLOAT3(1.0f, -1.0f, -1.0f);
-	g_vertexWk[2].vtx = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	g_vertexWk[3].vtx = XMFLOAT3(1.0f, 1.0f, -1.0f);
-
-	g_vertexWk[4].vtx = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	g_vertexWk[5].vtx = XMFLOAT3(1.0f, -1.0f, 1.0f);
-	g_vertexWk[6].vtx = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	g_vertexWk[7].vtx = XMFLOAT3(1.0f, 1.0f, 1.0f);
-
-	g_CubeVertex[0].Position = nn::util:: XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	g_CubeVertex[1].Position = nn::util:: XMFLOAT3(1.0f, -1.0f, 1.0f);
-	g_CubeVertex[2].Position = nn::util:: XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	g_CubeVertex[3].Position = nn::util:: XMFLOAT3(1.0f, 1.0f, 1.0f);
-	g_CubeVertex[4].Position = nn::util:: XMFLOAT3(1.0f, -1.0f, 1.0f);
-	g_CubeVertex[5].Position = nn::util:: XMFLOAT3(1.0f, -1.0f, -1.0f);
-	g_CubeVertex[6].Position = nn::util:: XMFLOAT3(1.0f, 1.0f, 1.0f);
-	g_CubeVertex[7].Position = nn::util:: XMFLOAT3(1.0f, 1.0f, -1.0f);
-	g_CubeVertex[8].Position = nn::util:: XMFLOAT3(1.0f, -1.0f, -1.0f);
-	g_CubeVertex[9].Position = nn::util:: XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	g_CubeVertex[10].Position = nn::util::XMFLOAT3(1.0f, 1.0f, -1.0f);
-	g_CubeVertex[11].Position = nn::util::XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	g_CubeVertex[12].Position = nn::util::XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	g_CubeVertex[13].Position = nn::util::XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	g_CubeVertex[14].Position = nn::util::XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	g_CubeVertex[15].Position = nn::util::XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	g_CubeVertex[16].Position = nn::util::XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	g_CubeVertex[17].Position = nn::util::XMFLOAT3(1.0f, -1.0f, -1.0f);
-	g_CubeVertex[18].Position = nn::util::XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	g_CubeVertex[19].Position = nn::util::XMFLOAT3(1.0f, -1.0f, 1.0f);
-	g_CubeVertex[20].Position = nn::util::XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	g_CubeVertex[21].Position = nn::util::XMFLOAT3(1.0f, 1.0f, 1.0f);
-	g_CubeVertex[22].Position = nn::util::XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	g_CubeVertex[23].Position = nn::util::XMFLOAT3(1.0f, 1.0f, -1.0f);
-	*/
-	/*g_vertexWk[0].vtx = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	g_vertexWk[1].vtx = XMFLOAT3(1.0f, 1.0f, -1.0f);
-	g_vertexWk[2].vtx = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	g_vertexWk[3].vtx = XMFLOAT3(1.0f, -1.0f, -1.0f);
-	g_vertexWk[4].vtx = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	g_vertexWk[5].vtx = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	g_vertexWk[6].vtx = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	g_vertexWk[7].vtx = XMFLOAT3(1.0f, -1.0f, 1.0f);*/
 	if (bIsPlane) {
 		g_vertexWk[0].vtx = XMFLOAT3(-1.0f, -1.0f, -1.0f);
 		g_vertexWk[1].vtx = XMFLOAT3(1.0f, -1.0f, -1.0f);
@@ -349,33 +321,6 @@ HRESULT Cube3D::MakeVertex(ID3D11Device* pDevice)
 		g_vertexWk[22].vtx = XMFLOAT3(1.0f, 1.0f, 1.0f);
 		g_vertexWk[23].vtx = XMFLOAT3(1.0f, -1.0f, 1.0f);
 
-		/*
-				// Front Face
-		XMFLOAT3(-1.0f, -1.0f, -1.0f),
-		XMFLOAT3(-1.0f,  1.0f, -1.0f),
-		XMFLOAT3(1.0f,  1.0f, -1.0f),
-		XMFLOAT3(1.0f, -1.0f, -1.0f),
-		XMFLOAT3(-1.0f, -1.0f, 1.0f),
-		XMFLOAT3(1.0f, -1.0f, 1.0f),
-		XMFLOAT3(1.0f,  1.0f, 1.0f),
-		XMFLOAT3(-1.0f,  1.0f, 1.0f),
-		XMFLOAT3(-1.0f, 1.0f, -1.0f),
-		XMFLOAT3(-1.0f, 1.0f,  1.0f),
-		XMFLOAT3(1.0f, 1.0f,  1.0f),
-		XMFLOAT3(1.0f, 1.0f, -1.0f),
-		XMFLOAT3(-1.0f, -1.0f, -1.0f),
-		XMFLOAT3(1.0f, -1.0f, -1.0f),
-		XMFLOAT3(1.0f, -1.0f,  1.0f),
-		XMFLOAT3(-1.0f, -1.0f,  1.0f),
-		XMFLOAT3(-1.0f, -1.0f,  1.0f),
-		XMFLOAT3(-1.0f,  1.0f,  1.0f),
-		XMFLOAT3(-1.0f,  1.0f, -1.0f),
-		XMFLOAT3(-1.0f, -1.0f, -1.0f),
-		XMFLOAT3(1.0f, -1.0f, -1.0f),
-		XMFLOAT3(1.0f,  1.0f, -1.0f),
-		XMFLOAT3(1.0f,  1.0f,  1.0f),
-		XMFLOAT3(1.0f, -1.0f,  1.0f),
-		*/
 		for (int i = 0; i < NUM_VERTEX_CUBE; i++)
 		{
 			switch (i)
@@ -404,16 +349,12 @@ HRESULT Cube3D::MakeVertex(ID3D11Device* pDevice)
 		}
 	}
 	// 拡散反射光の設定
-	//g_vertexWk[0].diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	//g_vertexWk[1].diffuse = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	//g_vertexWk[2].diffuse = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 	for (int i = 0; i < NUM_VERTEX_CUBE; i++)
 	{
 		g_vertexWk[i].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// テクスチャ座標の設定
-
 	if (bIsPlane) {
 		for (int i = 0; i < NUM_VERTEX_CUBE; i += 4)
 		{
@@ -455,30 +396,23 @@ HRESULT Cube3D::MakeVertex(ID3D11Device* pDevice)
 
 	HRESULT hr = pDevice->CreateBuffer(&vbd, &initData, &g_pVertexBuffer);
 
-
 	const unsigned short indices[] =
 	{
-		// Front Face
 		0,  1,  2,
 		0,  2,  3,
 
-		// Back Face
 		4,  5,  6,
 		4,  6,  7,
 
-		// Top Face
 		8,  9, 10,
 		8, 10, 11,
 
-		// Bottom Face
 		12, 13, 14,
 		12, 14, 15,
 
-		// Left Face
 		16, 17, 18,
 		16, 18, 19,
 
-		// Right Face
 		20, 21, 22,
 		20, 22, 23
 	};
@@ -491,42 +425,82 @@ HRESULT Cube3D::MakeVertex(ID3D11Device* pDevice)
 	ibd.StructureByteStride = sizeof(unsigned short);
 	D3D11_SUBRESOURCE_DATA isd = {};
 	isd.pSysMem = indices;
-	//GetDeviceContext()->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R16_UINT, 0u);
-	//GetDeviceContext()->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	hr = pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer);
 	return hr;
 }
 
+//*****************************************************************************
+//SetPosition関数
+//拠点を設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void Cube3D::SetPosition(XMFLOAT3 newPos)
 {
 	Position = newPos;
 }
 
+//*****************************************************************************
+//SetRotation関数
+//回転を設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void Cube3D::SetRotation(XMFLOAT3 newRot)
 {
 	Rotation = newRot;
 }
 
+//*****************************************************************************
+//SetScale関数
+//大きさを設定する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Cube3D::SetScale(float newScale)
 {
 	Scale = { newScale ,newScale ,newScale };
 }
 
+//*****************************************************************************
+//SetScale関数
+//大きさを設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void Cube3D::SetScale(XMFLOAT3 newScale)
 {
 	Scale = newScale;
 }
 
+//*****************************************************************************
+//SetTextureSubdivisions関数
+//テクスチャのUVを設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void Cube3D::SetTextureSubdivisions(int newSubs)
 {
 	nTextureSubDivisions = newSubs;
 }
 
+//*****************************************************************************
+//GetHitbox関数
+//ヒットボックスを戻す
+//引数：void
+//戻：Hitbox3D
+//*****************************************************************************
 Hitbox3D Cube3D::GetHitbox()
 {
 	return { Position.x, Position.y, Position.z, Scale.x, Scale.y, Scale.z };
 }
 
+//*****************************************************************************
+//SetAsPlane関数
+//オブジェクトはプレインとしてを設定する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void Cube3D::SetAsPlane(bool isPlane)
 {
 	bIsPlane = isPlane;

@@ -1,6 +1,12 @@
+//*****************************************************************************
+//InputManager.h
+//*****************************************************************************
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+//*****************************************************************************
+//エナム
+//*****************************************************************************
 enum EINPUTS
 {
 	INPUT_LEFT = 0,
@@ -36,9 +42,14 @@ enum EINPUTS
 	INPUT_MOVEABLE_OBJECT_DELAY_DOWN,
 	MAX_INPUTS
 };
+
+//*****************************************************************************
+//プロトタイプ宣言
+//*****************************************************************************
 void InitInputManager();
 void UpdateInputManager();
 void EndInputManager();
 bool GetInput(int nInput);
 void VibrateXinput(float vivbrationL, float VibrationR, int FrameNumbers);
+
 #endif

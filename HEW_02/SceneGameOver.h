@@ -1,6 +1,14 @@
-#pragma once
+//*****************************************************************************
+//SceneGameOver.h
+//*****************************************************************************
+#ifndef SCENEGAMEOVER_H
+#define SCENEGAMEOVER_H
 #include "SceneBase.h"
 #include "C_Ui.h"
+
+//*****************************************************************************
+//ƒNƒ‰ƒX
+//*****************************************************************************
 class SceneGameOver :
 	public SceneBase
 {
@@ -10,10 +18,10 @@ private:
 public:
 	SceneGameOver();
 	~SceneGameOver();
-
 	void Init();
 	void Uninit();
 	int Update();
 	void Draw();
 };
 
+#endif

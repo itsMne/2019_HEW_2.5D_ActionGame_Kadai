@@ -1,3 +1,7 @@
+//*****************************************************************************
+// C_Item.cpp
+// アイテムオブジェクトの管理
+//*****************************************************************************
 #include "C_Item.h"
 #include "Player3D.h"
 #include "Sound.h"
@@ -5,6 +9,9 @@
 #include "SceneGame.h"
 
 
+//*****************************************************************************
+// グローバル変数
+//*****************************************************************************
 ID3D11ShaderResourceView* pItemTextures[MAX_ITEMTYPE];
 char pItemTexturesPaths[MAX_ITEMTYPE][256] = 
 {
@@ -15,6 +22,9 @@ char pItemTexturesPaths[MAX_ITEMTYPE][256] =
 	"data/texture/Tai.png",
 };
 
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 C_Item::C_Item(int Type)
 {
 	nItemType = Type;
@@ -27,6 +37,12 @@ C_Item::~C_Item()
 	SAFE_DELETE(bbItem);
 }
 
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Item::Init()
 {
 	hitbox = { 0,5,0, 5,5,5 };
@@ -40,31 +56,31 @@ void C_Item::Init()
 	}
 	switch (nItemType)
 	{
-	case TYPE_SUSHI:
+	case TYPE_SUSHI://寿司
 		bbItem = new Billboard2D(pItemTextures[TYPE_SUSHI]);
 		bbItem->SetVertex(590 / 40, 366 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
-	case TYPE_UDON:
+	case TYPE_UDON://うどん
 		bbItem = new Billboard2D(pItemTextures[TYPE_UDON]);
 		bbItem->SetVertex(591 / 40, 513 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
-	case TYPE_ODEN:
+	case TYPE_ODEN://おでん
 		bbItem = new Billboard2D(pItemTextures[TYPE_ODEN]);
 		bbItem->SetVertex(589 / 40, 519 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
-	case TYPE_DANGO:
+	case TYPE_DANGO://団子
 		bbItem = new Billboard2D(pItemTextures[TYPE_DANGO]);
 		bbItem->SetVertex(500 / 40, 550 / 40);
 		nType = GO_ITEM;
 		bUse = true;
 		break;
-	case TYPE_TAI:
+	case TYPE_TAI://タイ
 		bbItem = new Billboard2D(pItemTextures[TYPE_TAI]);
 		bbItem->SetVertex(550 / 40, 452 / 40);
 		nType = GO_ITEM;
@@ -74,6 +90,12 @@ void C_Item::Init()
 
 }
 
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Item::Update()
 {
 	GameObject3D::Update();
@@ -135,6 +157,12 @@ void C_Item::Update()
 	}
 }
 
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Item::Draw()
 {
 #if USE_IN_RENDERZONE
@@ -150,16 +178,34 @@ void C_Item::Draw()
 	bbItem->Draw();
 }
 
+//*****************************************************************************
+//Uninit関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Item::Uninit()
 {
 	SAFE_DELETE(bbItem);
 }
 
+//*****************************************************************************
+//SetUse関数
+//使っていることを設定する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void C_Item::SetUse(bool use)
 {
 	bUse = use;
 }
 
+//*****************************************************************************
+//GetItemType関数
+//アイテムの種類を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int C_Item::GetItemType()
 {
 	return nItemType;

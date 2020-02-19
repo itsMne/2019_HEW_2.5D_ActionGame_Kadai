@@ -1,3 +1,7 @@
+//*****************************************************************************
+// C_Ui.cpp
+// UIの管理
+//*****************************************************************************
 #include "C_Ui.h"
 #include "Player3D.h"
 #include "SceneGame.h"
@@ -5,36 +9,34 @@
 #include "Texture.h"
 #include "input.h"
 
+//*****************************************************************************
 // マクロ定義
+//*****************************************************************************
 #define HP_SIZE_X 300
 #define HP_SIZE_Y 100
 #define HP_POS_X (-SCREEN_WIDTH / 2 + 150)
 #define HP_POS_Y (SCREEN_HEIGHT / 2 - 50)
-
 #define MP_SIZE_X 300
 #define MP_SIZE_Y 100
 #define MP_POS_X (-SCREEN_WIDTH / 2 + 150)
 #define MP_POS_Y (SCREEN_HEIGHT / 2 - 150)
-
 #define NUMBER_FRAME_X		10	// 横フレーム数
 #define NUMBER_FRAME_Y		1	// 縦フレーム数
-
 #define FRAME_SIZE_X		340							// 枠のサイズ
 #define FRAME_SIZE_Y		80							// 枠のサイズ
 #define FRAME_POS_X			(SCREEN_WIDTH/2-FRAME_SIZE_X/2)	// 枠の表示位置
 #define FRAME_POS_Y			(SCREEN_HEIGHT/2-FRAME_SIZE_Y/2)	// 枠の表示位置
-
 #define SCORE_WIDTH			8							// 表示桁数
-
-
 #define SCORE_POS_X			(FRAME_POS_X-SCORE_SIZE_X*(SCORE_WIDTH/2))+13	// 文字の表示位置
 #define SCORE_POS_Y			(FRAME_POS_Y+SCORE_SIZE_Y/2-8)+15	// 文字の表示位置
-
 #define MAIN_POS_DOOR_RIGHT 40
 #define MAIN_POS_DOOR_LEFT -20
-
 #define OPTION_SIZE_X 743/4
 #define OPTION_SIZE_Y 1433/4
+
+//*****************************************************************************
+// グローバル変数
+//*****************************************************************************
 C_Ui* pZoomEffect = nullptr;
 ID3D11ShaderResourceView* TutorialTextures[MAX_TUTORIAL_MESSAGES] = {nullptr};
 char TutorialPathTex[MAX_TUTORIAL_MESSAGES][256] =
@@ -49,6 +51,10 @@ char TutorialPathTex[MAX_TUTORIAL_MESSAGES][256] =
 	"data/texture/TUTORIAL/TUTORIAL_SAMURAI_A.tga",
 	"data/texture/TUTORIAL/TUTORIAL_SAMURAI_B.tga",
 };
+
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 C_Ui::C_Ui()
 {
 }
@@ -232,19 +238,37 @@ C_Ui::~C_Ui()
 	Uninit();
 }
 
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Ui::Init()
 {
+	//なし
 }
 
+//*****************************************************************************
+//Uninit関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Ui::Uninit()
 {
 	if (nType == UI_ZOOM_ATTACK)
 		pZoomEffect = nullptr;
 }
 
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Ui::Update()
 {
-	//if (GetKeyPress(VK_Z))
 	SceneGame* pCurrentGame = GetCurrentGame();
 	if (!pCurrentGame && 
 		nType != UI_SLASH_EFFECT && nType != UI_DOOR_LEFT
@@ -563,6 +587,12 @@ void C_Ui::Update()
 
 }
 
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Ui::Draw()
 {
 	int nCurrentRank = 1;
@@ -721,6 +751,12 @@ void C_Ui::Draw()
 
 }
 
+//*****************************************************************************
+//Draw関数
+//レンダリング関数(数字)
+//引数：XMFLOAT2*, unsigned, int, float, float
+//戻：void
+//*****************************************************************************
 void C_Ui::Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 	float fSizeX, float fSizeY)
 {
@@ -742,27 +778,57 @@ void C_Ui::Draw(XMFLOAT2* pPos, unsigned uNumber, int nWidth,
 
 }
 
+//*****************************************************************************
+//SetFramesForZoomUse関数
+//ズームインフレーム
+//引数：int
+//戻：void
+//*****************************************************************************
 void C_Ui::SetFramesForZoomUse(int frames)
 {
 	nFramesToUseZoom = frames;
 }
 
+//*****************************************************************************
+//IsDoorInPosition関数
+//シーンを変える時のドアが設定されていることを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool C_Ui::IsDoorInPosition()
 {
 	return bDoorInPos;
 }
 
+//*****************************************************************************
+//SetDoorOpen関数
+//シーンを変える時のドアを設定する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void C_Ui::SetDoorOpen(bool bset)
 {
 	bDoorOpen = bset;
 	fAcceleration = 0;
 }
 
+//*****************************************************************************
+//SetAsSelectedOption関数
+//決めたオプションとしてを設定する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void C_Ui::SetAsSelectedOption(bool sel)
 {
 	bSelected = sel;
 }
 
+//*****************************************************************************
+//SetHitEffectUse関数
+//ヒットエフェクトを設定する
+//引数：void
+//戻：void
+//*****************************************************************************
 void C_Ui::SetHitEffectUse()
 {
 	bIsInUse = true;
@@ -770,39 +836,80 @@ void C_Ui::SetHitEffectUse()
 	SetPolygonSize(0, 0);
 }
 
+//*****************************************************************************
+//GetUse関数
+//使っていることを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool C_Ui::GetUse()
 {
 	return bIsInUse;
 }
 
+//*****************************************************************************
+//SetUse関数
+//使っていることを設定する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void C_Ui::SetUse(bool use)
 {
 	bIsInUse = use;
 }
 
+//*****************************************************************************
+//SetFrameUse関数
+//いくつフレームで使っていることを設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void C_Ui::SetFrameUse(int frames)
 {
 	nFrameUse = frames;
 }
 
+//*****************************************************************************
+//SetRankTop関数
+//トップランクとしてを設定する
+//引数：XMFLOAT2, int
+//戻：void
+//*****************************************************************************
 void C_Ui::SetRankTop(XMFLOAT2 Pos, int Scorenum)
 {
 	vScorePos = Pos;
 	nScore = Scorenum;
 }
 
+//*****************************************************************************
+//IsOwariMessageDone関数
+//「終わり」のメッセージが終わったを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool C_Ui::IsOwariMessageDone()
 {
 	return bOwariAnimationisOver;
 }
 
+//*****************************************************************************
+//SetTutorialMessage関数
+//チュートリアルのメッセージを設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void C_Ui::SetTutorialMessage(int Tut)
 {
 	bShowTutorial = true;
 	nTutorialMessage = Tut;
 }
 
-
+//*****************************************************************************
+//SetFramesForZoomUse関数
+//ズームのフレームを設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void SetFramesForZoomUse(int frames)
 {
 	if (!pZoomEffect)

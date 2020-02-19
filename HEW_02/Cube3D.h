@@ -1,14 +1,25 @@
-#pragma once
+//*****************************************************************************
+//Cube3D.h
+//*****************************************************************************
+ #ifndef CUBE3D_H
+ #define CUBE3D_H
 #include "main.h"
 #include "UniversalStructures.h"
 #include "Light3D.h"
+
+//*****************************************************************************
+//マクロ定義
+//*****************************************************************************
 #define NUM_VERTEX_CUBE 24
+
+//*****************************************************************************
+//クラス
+//*****************************************************************************
 class Cube3D
 {
 private:
 	ID3D11ShaderResourceView*	g_pTexture;				// テクスチャへのポインタ
 	VERTEX_3D					g_vertexWk[NUM_VERTEX_CUBE];	// 頂点情報格納ワーク
-
 	ID3D11Buffer*				g_pConstantBuffer[2];	// 定数バッファ
 	ID3D11Buffer*				g_pVertexBuffer;		// 頂点バッファ
 	ID3D11SamplerState*			g_pSamplerState;		// テクスチャ サンプラ
@@ -16,13 +27,11 @@ private:
 	ID3D11InputLayout*			g_pInputLayout;			// 頂点フォーマット
 	ID3D11PixelShader*			g_pPixelShader;			// ピクセルシェーダ
 	ID3D11Buffer* pIndexBuffer;
-
 	XMFLOAT4X4					g_mtxWorldField;		// ワールドマトリックス
 	XMFLOAT4X4					g_mtxTexture;			// テクスチャマトリックス
 	XMFLOAT3					Position;				// 現在の位置
 	XMFLOAT3					Rotation;				// 現在の向き
 	XMFLOAT3					Scale;				// 現在の向き
-
 	// マテリアル
 	XMFLOAT4						g_Ka;		// アンビエント
 	XMFLOAT4						g_Kd;		// ディフューズ
@@ -51,3 +60,4 @@ public:
 	void SetAsPlane(bool);
 };
 
+#endif

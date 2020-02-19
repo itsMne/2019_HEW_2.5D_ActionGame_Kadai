@@ -1,3 +1,7 @@
+//*****************************************************************************
+// Player3D.cpp
+// プレイヤーの管理
+//*****************************************************************************
 #include "Player3D.h"
 #include "debugproc.h"
 #include "InputManager.h"
@@ -7,6 +11,9 @@
 #include "string.h"
 #include "Sound.h"
 
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
 #define PLAYER_SPEED	(5.0f)					// 移動速度
 #define JUMP_FORCE 7.0f
 #define SCALE_NINJA	  1.0f
@@ -19,14 +26,20 @@
 #define TRANSFORM_ACCELERATION 0.55f
 #define ATTACK_HITBOX_SCALE { 3,8,6 }
 #define ATTACK_ANIMATION_SPEED 2.8f
-Player3D* MainPlayer;
 
+//*****************************************************************************
+// エナム
+//*****************************************************************************
 enum MOVEMENT_LOCKED
 {
 	M_LOCKED = 0,
 	M_UNLOCKED = 1
 };
 
+//*****************************************************************************
+// グローバル変数
+//*****************************************************************************
+Player3D* MainPlayer;
 PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 {
 	//忍者
@@ -48,6 +61,10 @@ PLAYER_ATTACK_MOVE stAllMoves[MAX_ATTACKS] =
 	//芸者														  
 	{"A",   MODEL_GEISHA, GEISHA_BLOCK,			  true,  BOTH_MOVE,		323 },
 };
+
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 Player3D::Player3D() :GameObject3D()
 {
 	Init();
@@ -59,6 +76,12 @@ Player3D::~Player3D()
 	Uninit();
 }
 
+//*****************************************************************************
+//Init関数
+//初期化関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::Init()
 {
 	strcpy(szInputs, "********");
@@ -127,6 +150,12 @@ void Player3D::Init()
 #endif
 }
 
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::Update()
 {
 	bIsUsingStamina = false;
@@ -424,6 +453,12 @@ void Player3D::Update()
 	HitboxControl();
 }
 
+//*****************************************************************************
+//AttackingStateControl関数
+//攻撃状態の管理
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::AttackingStateControl()
 {
 	SwitchAnimationSpeed(ATTACK_ANIMATION_SPEED);
@@ -584,6 +619,12 @@ void Player3D::AttackingStateControl()
 	}
 }
 
+//*****************************************************************************
+//TeleportControl関数
+//テレポートの状態の管理
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::TeleportControl()
 {
 	static float acceleration;
@@ -653,6 +694,12 @@ void Player3D::TeleportControl()
 		acceleration = 0;
 }
 
+//*****************************************************************************
+//DebugAimControl関数
+//デバッグアイムの管理
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::DebugAimControl()
 {
 	if (bUsingDebugAim)
@@ -675,6 +722,12 @@ bool Player3D::DebugAimControl()
 	return false;
 }
 
+//*****************************************************************************
+//DeadStateControl関数
+//死んだ状態の管理
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::DeadStateControl()
 {
 	pPlayerModels[MODEL_NINJA]->SetCanLoop(false);
@@ -694,6 +747,12 @@ void Player3D::DeadStateControl()
 	printf("%d\n", pPlayerModels[nCurrentTransformation]->GetCurrentFrame());
 }
 
+//*****************************************************************************
+//StageClearControl関数
+//ステージクリアの管理
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::StageClearControl()
 {
 	Rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -751,6 +810,12 @@ void Player3D::StageClearControl()
 	}
 }
 
+//*****************************************************************************
+//DamagedTeleportingControl関数
+//ダメージをもらって、テレポートを設定する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::DamagedTeleportingControl()
 {
 	nNextTransform = MODEL_NINJA;
@@ -790,6 +855,12 @@ void Player3D::DamagedTeleportingControl()
 	}
 }
 
+//*****************************************************************************
+//PlayerInputsControl関数
+//プレイヤーのインプットを管理する
+//引数：bool
+//戻：void
+//*****************************************************************************
 void Player3D::PlayerInputsControl(bool bIsLocked)
 {
 	if (nState == PLAYER_KICK_WALL_STATE)
@@ -856,6 +927,12 @@ void Player3D::PlayerInputsControl(bool bIsLocked)
 	}
 }
 
+//*****************************************************************************
+//TransformingStateControl関数
+//変化の状態を管理する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::TransformingStateControl()
 {
 	if (nCurrentTransformation == nNextTransform) {
@@ -910,6 +987,12 @@ void Player3D::TransformingStateControl()
 		nState = PLAYER_TELEPORTING_DAMAGED;
 }
 
+//*****************************************************************************
+//Jump関数
+//ジャンプを実行する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::Jump(float fJumpForce)
 {
 	if (pCurrentFloor) {
@@ -922,6 +1005,12 @@ void Player3D::Jump(float fJumpForce)
 	pCurrentFloor = nullptr;
 }
 
+//*****************************************************************************
+//GravityControl関数
+//重力を管理する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::GravityControl()
 {
 	if (nCancelGravityFrames > 0)
@@ -976,6 +1065,12 @@ void Player3D::GravityControl()
 	}
 }
 
+//*****************************************************************************
+//HitboxControl関数
+//ヒットボックスを管理する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::HitboxControl()
 {
 	if(pCurrentFloor)
@@ -997,6 +1092,12 @@ void Player3D::HitboxControl()
 #endif // USE_HITBOX
 }
 
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::Draw()
 {
 	if (nRecoveryFrames % 2 == 0 && nRecoveryFrames > 0)
@@ -1028,6 +1129,12 @@ void Player3D::Draw()
 	
 }
 
+//*****************************************************************************
+//DrawHitboxes関数
+//ヒットボックスを表示する
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::DrawHitboxes()
 {
 	if (pVisualHitbox) {
@@ -1045,6 +1152,12 @@ void Player3D::DrawHitboxes()
 	}
 }
 
+//*****************************************************************************
+//Uninit関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::Uninit()
 {
 	GameObject3D::Uninit();
@@ -1056,6 +1169,12 @@ void Player3D::Uninit()
 	
 }
 
+//*****************************************************************************
+//SwitchAnimation関数
+//モデルのアニメーションを変えること
+//引数：int, int
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimation(int nModel, int nAnimation)
 {
 	pPlayerModels[nModel]->SwitchAnimation(nAnimation);
@@ -1063,6 +1182,12 @@ void Player3D::SwitchAnimation(int nModel, int nAnimation)
 
 }
 
+//*****************************************************************************
+//SwitchAnimation関数
+//モデルのアニメーションを変えること
+//引数：int
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimation(int nAnimation)
 {
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
@@ -1070,63 +1195,135 @@ void Player3D::SwitchAnimation(int nAnimation)
 	nCurrentAnimation = nAnimation;
 }
 
+//*****************************************************************************
+//SwitchAnimationSlowness関数
+//アニメーションの速さを変える
+//引数：int, float
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimationSlowness(int nModel, float fSpeed)
 {
 	pPlayerModels[nModel]->SwitchAnimationSlowness(fSpeed);
 }
 
+//*****************************************************************************
+//SwitchAnimationSlowness関数
+//アニメーションの速さを変える
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimationSlowness(float fSpeed)
 {
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
 		pPlayerModels[i]->SwitchAnimationSlowness(fSpeed);
 }
 
+//*****************************************************************************
+//SwitchAnimationSpeed関数
+//アニメーションの速さを変える
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimationSpeed(float fSpeed)
 {
 	for (int i = 0; i < PLAYER_MODELS_MAX; i++)
 		pPlayerModels[i]->SwitchAnimationSpeed(fSpeed);
 }
 
+//*****************************************************************************
+//SwitchAnimationSpeed関数
+//アニメーションの速さを変える
+//引数：int, float
+//戻：void
+//*****************************************************************************
 void Player3D::SwitchAnimationSpeed(int Model, float fSpeed)
 {
 	pPlayerModels[Model]->SwitchAnimationSpeed(fSpeed);
 }
 
+//*****************************************************************************
+//GetHitBox関数
+//プレイヤーのヒットボックスを戻す
+//引数：int
+//戻：Hitbox3D
+//*****************************************************************************
 Hitbox3D Player3D::GetHitBox(int hitbox)
 {
 	return { Hitboxes[hitbox].x + Position.x, Hitboxes[hitbox].y +Position.y, Hitboxes[hitbox].z + Position.z, Hitboxes[hitbox].SizeX, Hitboxes[hitbox].SizeY, Hitboxes[hitbox].SizeZ };
 }
 
+//*****************************************************************************
+//GetFloor関数
+//プレイヤーの床のアドレスを戻す
+//引数：void
+//戻：Field3D*
+//*****************************************************************************
 Field3D * Player3D::GetFloor()
 {
 	return pCurrentFloor;
 }
 
+//*****************************************************************************
+//GetDirection関数
+//プレイヤーの方向を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetDirection()
 {
 	return nDirection;
 }
 
+//*****************************************************************************
+//TranslateX関数
+//プレイヤーに動かせる（X座標）
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::TranslateX(float x)
 {
 	Position.x += x;
 }
 
+//*****************************************************************************
+//TranslateY関数
+//プレイヤーに動かせる（Y座標）
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::TranslateY(float y)
 {
 	Position.y += y;
 }
 
+//*****************************************************************************
+//SetFloor関数
+//床を設定する
+//引数：Field3D*
+//戻：void
+//*****************************************************************************
 void Player3D::SetFloor(Field3D * floor)
 {
 	pCurrentFloor = floor;
 }
 
+//*****************************************************************************
+//GetMainPlayer関数
+//プレイヤーのアドレスを戻す
+//引数：void
+//戻：Player*
+//*****************************************************************************
 Player3D * GetMainPlayer()
 {
 	return MainPlayer;
 }
 
+//*****************************************************************************
+//AddInput関数
+//プレイヤーのインプットキャラを行列に入れる
+//引数：char
+//戻：void
+//*****************************************************************************
 void Player3D::AddInput(char A)
 {
 	if (A == 'S' && szInputs[0] == '*')
@@ -1150,6 +1347,12 @@ void Player3D::AddInput(char A)
 	}
 }
 
+//*****************************************************************************
+//GetLastInputInserted関数
+//最後の入れたインプットを戻す
+//引数：void
+//戻：char
+//*****************************************************************************
 char Player3D::GetLastInputInserted()
 {
 	for (int i = 0; i < MAX_PLAYER_INPUT; i++)
@@ -1160,12 +1363,24 @@ char Player3D::GetLastInputInserted()
 	return szInputs[MAX_PLAYER_INPUT-1];
 }
 
+//*****************************************************************************
+//ResetInputs関数
+//インプットの行列をリセットする
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::ResetInputs()
 {
 	strcpy(szInputs, "********");
 	
 }
 
+//*****************************************************************************
+//Attack関数
+//攻撃動作を行う
+//引数：const char*
+//戻：void
+//*****************************************************************************
 void Player3D::Attack(const char * atkInput)
 {
 	if (bNinjaOnWall)
@@ -1188,6 +1403,12 @@ void Player3D::Attack(const char * atkInput)
 	Attack(szAtkInput, MAX_PLAYER_INPUT);
 }
 
+//*****************************************************************************
+//Attack関数
+//攻撃動作を行う
+//引数：const char*, int
+//戻：void
+//*****************************************************************************
 void Player3D::Attack(const char * atkInput, int recursions)
 {
 	if (recursions <= 0)
@@ -1226,46 +1447,100 @@ void Player3D::Attack(const char * atkInput, int recursions)
 	Attack(szAtkInput, recursions - 1);
 }
 
+//*****************************************************************************
+//SetLeftWall関数
+//左の方、壁と当たり判定を設定する
+//引数：Wall3D*
+//戻：void
+//*****************************************************************************
 void Player3D::SetLeftWall(Wall3D* wall)
 {
 	LeftWall = wall;
 }
 
+//*****************************************************************************
+//SetRightWall関数
+//右の方、壁と当たり判定を設定する
+//引数：Wall3D*
+//戻：void
+//*****************************************************************************
 void Player3D::SetRightWall(Wall3D* wall)
 {
 	RightWall = wall;
 }
 
+//*****************************************************************************
+//GetPlayerHp関数
+//プレイヤーのHPを戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetPlayerHp()
 {
 	return nHP;
 }
 
+//*****************************************************************************
+//GetPlayerMaxHp関数
+//プレイヤーのマックスHPを戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetPlayerMaxHp()
 {
 	return nMaxHP;
 }
 
+//*****************************************************************************
+//GetPlayerMp関数
+//プレイヤーのMPを戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetPlayerMp()
 {
 	return fStamina;
 }
 
+//*****************************************************************************
+//GetPlayerMaxMp関数
+//プレイヤーのマックスMPを戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetPlayerMaxMp()
 {
 	return nMaxStamina;
 }
 
+//*****************************************************************************
+//RiseHP関数
+//HPを増える
+//引数：int
+//戻：void
+//*****************************************************************************
 void Player3D::RiseHP(int nhprise)
 {
 	nToRecover += nhprise;
 }
 
+//*****************************************************************************
+//IsStaminaCooldownOn関数
+//クールダウンの状態を確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::IsStaminaCooldownOn()
 {
 	return bStaminaCoolDown;
 }
 
+//*****************************************************************************
+//SetDamage関数
+//ダメージを設定する
+//引数：int
+//戻：bool
+//*****************************************************************************
 bool Player3D::SetDamage(int Damage)
 {
 	if (nState == PLAYER_OVER)
@@ -1285,6 +1560,12 @@ bool Player3D::SetDamage(int Damage)
 	return true;
 }
 
+//*****************************************************************************
+//SetDamageTeleport関数
+//ダメージとテレポートの状態を設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void Player3D::SetDamageTeleport(int Damage)
 {
 	if (nState == PLAYER_TELEPORTING_DAMAGED)
@@ -1299,36 +1580,78 @@ void Player3D::SetDamageTeleport(int Damage)
 	GetMainCamera()->ShakeCamera({ 2.85f,2.85f,1.75f }, 30, 10);
 }
 
+//*****************************************************************************
+//GetYForce関数
+//YForce（重力）を戻す
+//引数：void
+//戻：float
+//*****************************************************************************
 float Player3D::GetYForce()
 {
 	return f_yForce;
 }
 
+//*****************************************************************************
+//SetYForce関数
+//YForce（重力）を設定する
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::SetYForce(float fyforce)
 {
 	f_yForce = fyforce;
 }
 
+//*****************************************************************************
+//GetState関数
+//状態を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetState()
 {
 	return nState;
 }
 
+//*****************************************************************************
+//GetDebugAim関数
+//デバッグアイムのアドレスを戻す
+//引数：void
+//戻：DebugAim*
+//*****************************************************************************
 DebugAim * Player3D::GetDebugAim()
 {
 	return pDebugAim;
 }
 
+//*****************************************************************************
+//IsDebugAimOn関数
+//デバッグアイムが有効を確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::IsDebugAimOn()
 {
 	return bUsingDebugAim;
 }
 
+//*****************************************************************************
+//GetWallCrawling関数
+//使っている壁のアドレスを戻す
+//引数：void
+//戻：GameObject*
+//*****************************************************************************
 GameObject3D * Player3D::GetWallCrawling()
 {
 	return WallAttachedTo;
 }
 
+//*****************************************************************************
+//SetPlayerTeleporting関数
+//テレポートの状態を設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
 {
 	if (nState == PLAYER_TELEPORTING || nState == PLAYER_TELEPORTING_DAMAGED)
@@ -1338,6 +1661,12 @@ void Player3D::SetPlayerTeleporting(XMFLOAT3 Destination)
 	x3TeleportDestination.z = Position.z;
 }
 
+//*****************************************************************************
+//PlayerGameOver関数
+//ゲームオーバー状態を設定する
+//引数：void
+//戻：void
+//*****************************************************************************
 bool Player3D::PlayerGameOver()
 {
 	if (pPlayerModels[nCurrentTransformation]->GetCurrentFrame() >= 226 && nState == PLAYER_DEAD && bDeadAnimation)
@@ -1345,36 +1674,78 @@ bool Player3D::PlayerGameOver()
 	return false;
 }
 
+//*****************************************************************************
+//PlayerIsFalling関数
+//プレイヤーが落ちていることを確認する
+//引数：void
+//戻：void
+//*****************************************************************************
 bool Player3D::PlayerIsFalling()
 {
 	return f_yForce>0;
 }
 
+//*****************************************************************************
+//PlayerIsTransforming関数
+//プレイヤーが変化していることを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::PlayerIsTransforming()
 {
 	return nNextTransform != nCurrentTransformation;
 }
 
+//*****************************************************************************
+//GetPlayerAttack関数
+//現在の攻撃動作を戻す
+//引数：void
+//戻：PLAYER_ATTACK_MOVE*
+//*****************************************************************************
 PLAYER_ATTACK_MOVE * Player3D::GetPlayerAttack()
 {
 	return pCurrentAttackPlaying;
 }
 
+//*****************************************************************************
+//GetCurrentTransformation関数
+//現在の変化を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetCurrentTransformation()
 {
 	return nCurrentTransformation;
 }
 
+//*****************************************************************************
+//ReduceStamina関数
+//気力を減らす
+//引数：int
+//戻：void
+//*****************************************************************************
 void Player3D::ReduceStamina(int red)
 {
 	fStamina -= red;
 }
 
+//*****************************************************************************
+//SetPlayerState関数
+//プレイヤーの状態を設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void Player3D::SetPlayerState(int newState)
 {
 	nState = newState;
 }
 
+//*****************************************************************************
+//CancelAttack関数
+//攻撃動作をキャンセルする
+//引数：void
+//戻：void
+//*****************************************************************************
 void Player3D::CancelAttack()
 {
 	pCurrentAttackPlaying = nullptr;
@@ -1382,26 +1753,56 @@ void Player3D::CancelAttack()
 	nStingerFrames = 0;
 }
 
+//*****************************************************************************
+//nDamage関数
+//もらったダメージを戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetDamage()
 {
 	return nDamage;
 }
 
+//*****************************************************************************
+//GetToRecover関数
+//HPを増えるつもりの変数を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Player3D::GetToRecover()
 {
 	return nToRecover;
 }
 
+//*****************************************************************************
+//ReduceStamina関数
+//気力を減らす
+//引数：float
+//戻：void
+//*****************************************************************************
 void Player3D::ReduceStamina(float red)
 {
 	fStamina -= red;
 }
 
+//*****************************************************************************
+//IsPlayerUsingStamina関数
+//気力を使っている状態を確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::IsPlayerUsingStamina()
 {
 	return bIsUsingStamina;
 }
 
+//*****************************************************************************
+//GetStaminaCoolDown関数
+//気力のクールダウンを確認する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool Player3D::GetStaminaCoolDown()
 {
 	return bStaminaCoolDown;

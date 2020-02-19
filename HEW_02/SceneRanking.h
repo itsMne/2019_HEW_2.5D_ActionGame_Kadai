@@ -1,6 +1,14 @@
-#pragma once
+//*****************************************************************************
+//SceneRanking.h
+//*****************************************************************************
+#ifndef SCENERANKING_H
+#define SCENERANKING_H
 #include "SceneBase.h"
 #include "C_Ui.h"
+
+//*****************************************************************************
+//ƒNƒ‰ƒX
+//*****************************************************************************
 class SceneRanking :
 	public SceneBase
 {
@@ -14,10 +22,10 @@ public:
 	void SaveRank();
 	void LoadFile();
 	~SceneRanking();
-
 	void Init();
 	void Uninit();
 	int Update();
 	void Draw();
 };
 
+#endif

@@ -1,11 +1,8 @@
-//=============================================================================
-//
-// ì¸óÕèàóù [input.h]
-// Author : HIROHIKO HAMAYA
-//
-//=============================================================================
-#pragma once
-
+//*****************************************************************************
+//input.h
+//*****************************************************************************
+#ifndef INPUT_H
+#define INPUT_H
 #include "main.h"
 
 //*****************************************************************************
@@ -75,12 +72,10 @@
 HRESULT InitInput();
 void UninitInput();
 void UpdateInput();
-
 bool GetKeyPress(int nKey);
 bool GetKeyTrigger(int nKey);
 bool GetKeyRelease(int nKey);
 bool GetKeyRepeat(int nKey);
-
 DWORD GetJoyCount();
 JOYINFOEX *GetJoyState(DWORD dwJoy);
 LONG GetJoyX(DWORD dwJoy);
@@ -89,8 +84,9 @@ LONG GetJoyZ(DWORD dwJoy);
 bool GetJoyButton(DWORD dwJoy, DWORD dwBtn);
 bool GetJoyTrigger(DWORD dwJoy, DWORD dwBtn);
 bool GetJoyRelease(DWORD dwJoy, DWORD dwBtn);
-
 POINT *GetMousePosition();
 bool GetMouseButton(DWORD dwBtn);
 bool GetMouseTrigger(DWORD dwBtn);
 bool GetMouseRelease(DWORD dwBtn);
+
+#endif

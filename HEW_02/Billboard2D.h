@@ -1,11 +1,16 @@
-#pragma once
-
+//*****************************************************************************
+// Billboard2D.h
+//*****************************************************************************
+#ifndef BILLBOARD_H
+#define BILLBOARD_H
 #include "main.h"
 #include "Mesh3D.h"
 #include "UniversalStructures.h"
 
 
-
+//*****************************************************************************
+// ƒNƒ‰ƒX
+//*****************************************************************************
 class Billboard2D :
 	public Mesh3D
 {
@@ -53,3 +58,4 @@ public:
 	void SetUnusableAfterAnimation(bool inv);
 };
 
+#endif // !
