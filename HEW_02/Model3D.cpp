@@ -192,7 +192,7 @@ void Model3D::SwitchAnimation(int nNewAnimNum)
 }
 
 //*****************************************************************************
-//Draw関数
+//DrawModel関数
 //レンダリング関数
 //引数：void
 //戻：void
