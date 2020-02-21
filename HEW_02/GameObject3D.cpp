@@ -309,6 +309,12 @@ XMFLOAT3 GameObject3D::GetScale()
 	return Scale;
 }
 
+//*****************************************************************************
+//GetScale関数
+//ワールドマトリックスのアドレスを戻す
+//引数：void
+//戻：XMFLOAT4X4*
+//*****************************************************************************
 XMFLOAT4X4 * GameObject3D::GetModelWorld()
 {
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate, mtxScale;
@@ -328,11 +334,23 @@ XMFLOAT4X4 * GameObject3D::GetModelWorld()
 	return &WorldMatrix;
 }
 
+//*****************************************************************************
+//SetPosition関数
+//拠点を設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetPosition(XMFLOAT3 pos)
 {
 	Position = pos;
 }
 
+//*****************************************************************************
+//SetPosition関数
+//拠点を設定する
+//引数：XMFLOAT3, bool
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetPosition(XMFLOAT3 pos, bool isinitial)
 {
 	Position = pos;
@@ -340,16 +358,34 @@ void GameObject3D::SetPosition(XMFLOAT3 pos, bool isinitial)
 		x3InitialPosition = pos;
 }
 
+//*****************************************************************************
+//SetRotation関数
+//回転を設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetRotation(XMFLOAT3 rot)
 {
 	Rotation = rot;
 }
 
+//*****************************************************************************
+//SetScale関数
+//大きさを設定する
+//引数：XMFLOAT3
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetScale(XMFLOAT3 scale)
 {
 	Scale = scale;
 }
 
+//*****************************************************************************
+//InitModel関数
+//モデルの初期化
+//引数：const char*
+//戻：void
+//*****************************************************************************
 void GameObject3D::InitModel(const char * szPath)
 {
 	if (!pModel)
@@ -357,6 +393,12 @@ void GameObject3D::InitModel(const char * szPath)
 	pModel->InitModel(szPath, this);
 }
 
+//*****************************************************************************
+//InitModel関数
+//モデルの初期化
+//引数：int
+//戻：void
+//*****************************************************************************
 void GameObject3D::InitModel(int ModelPath)
 {
 	if (!pModel)
@@ -364,21 +406,45 @@ void GameObject3D::InitModel(int ModelPath)
 	pModel->InitModel(ModelPath, this);
 }
 
+//*****************************************************************************
+//GetHitBox関数
+//ヒットエフェクトを戻す
+//引数：void
+//戻：Hitbox3D
+//*****************************************************************************
 Hitbox3D GameObject3D::GetHitBox()
 {
 	return { hitbox.x + Position.x, hitbox.y + Position.y,hitbox.z + Position.z,hitbox.SizeX,hitbox.SizeY,hitbox.SizeZ };
 }
 
+//*****************************************************************************
+//SetHitbox関数
+//ヒットエフェクトを設定する
+//引数：Hitbox3D
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetHitbox(Hitbox3D hb)
 {
 	hitbox = hb;
 }
 
+//*****************************************************************************
+//GetType関数
+//種類を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int GameObject3D::GetType()
 {
 	return nType;
 }
 
+//*****************************************************************************
+//SetMovement関数
+//自動の動き方を設定する
+//引数：XMFLOAT3, XMFLOAT3
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetMovement(XMFLOAT3 Start, XMFLOAT3 End)
 {
 	x3MoveStartPos = Start;
@@ -387,31 +453,69 @@ void GameObject3D::SetMovement(XMFLOAT3 Start, XMFLOAT3 End)
 	bMoveable = true;
 }
 
+//*****************************************************************************
+//IsMoveableObject関数
+//自動に動けるオブジェクトを設定する
+//引数：void
+//戻：bool
+//*****************************************************************************
 bool GameObject3D::IsMoveableObject()
 {
 	return bMoveable;
 }
 
+//*****************************************************************************
+//GetMoveStartPosition関数
+//自動に動けるオブジェクトのスタート拠点を戻す
+//引数：void
+//戻：XMFLOAT3
+//*****************************************************************************
 XMFLOAT3 GameObject3D::GetMoveStartPosition()
 {
 	return x3MoveStartPos;
 }
 
+//*****************************************************************************
+//GetMoveEndPosition関数
+//自動に動けるオブジェクトの最後の拠点を戻す
+//引数：void
+//戻：XMFLOAT3
+//*****************************************************************************
 XMFLOAT3 GameObject3D::GetMoveEndPosition()
 {
 	return x3MoveEndPos;
 }
 
+//*****************************************************************************
+//PauseObject関数
+//オブジェクトをポースする
+//引数：int
+//戻：void
+//*****************************************************************************
 void GameObject3D::PauseObject(int pauseFrames)
 {
 	nPauseFrames = pauseFrames;
 }
 
+//*****************************************************************************
+//SetIgnoreRenderingZone関数
+//カメラのレンダリング場所にいなくても更新関数と
+//レンダリング関数を使うことを設定する
+//引数：int
+//戻：void
+//*****************************************************************************
 void GameObject3D::SetIgnoreRenderingZone(bool ign)
 {
 	bIgnoreRenderingZone = ign;
 }
 
+							///////////////
+							//リスト管理//
+							/////////////
+
+//*****************************************************************************
+// コンストラクタ関数
+//*****************************************************************************
 Go_List::Go_List()
 {
 	HeadNode = nullptr;
@@ -423,16 +527,34 @@ Go_List::~Go_List()
 	End();
 }
 
+//*****************************************************************************
+//GetNumberOfObjects関数
+//リストのオブジェクトの数を戻す
+//引数：void
+//戻：int
+//*****************************************************************************
 int Go_List::GetNumberOfObjects()
 {
 	return nObjectCount;
 }
 
+//*****************************************************************************
+//AddField関数
+//リストに床のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3, const char*
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char * TexturePath)
 {
 	return AddField(newPosition, newScale, TexturePath, false, { 0,0,0 }, { 0,0,0 });
 }
 
+//*****************************************************************************
+//AddField関数
+//リストに床のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3, const char*, bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const char * TexturePath, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -466,11 +588,22 @@ GameObject3D * Go_List::AddField(XMFLOAT3 newPosition, XMFLOAT3 newScale, const 
 	}
 }
 
+//*****************************************************************************
+//AddWall関数
+//リストに壁のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale)
 {
 	return AddWall(newPosition, newScale, false, { 0,0,0 }, { 0,0,0 });
 }
-
+//*****************************************************************************
+//AddWall関数
+//リストに壁のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3,bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -504,11 +637,23 @@ GameObject3D * Go_List::AddWall(XMFLOAT3 newPosition, XMFLOAT3 newScale, bool Mo
 	}
 }
 
+//*****************************************************************************
+//AddWall関数
+//リストに回復アイテムのオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3, int
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType)
 {
 	return AddItem(newPosition, nType, false, { 0,0,0 }, { 0,0,0 });
 }
 
+//*****************************************************************************
+//AddItem関数
+//リストに回復アイテムのオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3, int, bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -540,12 +685,24 @@ GameObject3D * Go_List::AddItem(XMFLOAT3 newPosition, int nType, bool Moveable, 
 	}
 }
 
+//*****************************************************************************
+//AddSpike関数
+//リストにスパイクのオブジェクトを入れる
+//引数：XMFLOAT3, int, int, bool, bool
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible)
 {
 	
 	return AddSpike(newPosition, SpikesX, SpikesY, binvisible, false, { 0,0,0 }, { 0,0,0 });
 }
 
+//*****************************************************************************
+//AddSpike関数
+//リストにスパイクのオブジェクトを入れる
+//引数：XMFLOAT3, int, int, bool, bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY, bool binvisible, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -580,11 +737,23 @@ GameObject3D * Go_List::AddSpike(XMFLOAT3 newPosition, int SpikesX, int SpikesY,
 	}
 }
 
+//*****************************************************************************
+//AddMisc関数
+//リストに一般的なオブジェクトを入れる
+//引数：XMFLOAT3, int
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType)
 {
 	return AddMisc(newPosition, nType, false, {0,0,0}, {0,0,0});
 }
 
+//*****************************************************************************
+//AddMisc関数
+//リストに一般的なオブジェクトを入れる
+//引数：XMFLOAT3, int, bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -626,11 +795,23 @@ GameObject3D * Go_List::AddMisc(XMFLOAT3 newPosition, int nType, bool Moveable, 
 	}
 }
 
+//*****************************************************************************
+//AddMirror関数
+//リストに鏡のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination)
 {
 	return AddMirror(newPosition, Destination, false, { 0,0,0 }, { 0,0,0 });
 }
 
+//*****************************************************************************
+//AddMirror関数
+//リストに鏡のオブジェクトを入れる
+//引数：XMFLOAT3, XMFLOAT3, bool, XMFLOAT3, XMFLOAT3 
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -665,11 +846,23 @@ GameObject3D * Go_List::AddMirror(XMFLOAT3 newPosition, XMFLOAT3 Destination, bo
 	}
 }
 
+//*****************************************************************************
+//AddEnemy関数
+//リストに敵のオブジェクトを入れる
+//引数：XMFLOAT3,int
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType)
 {
 	return AddEnemy(newPosition, EnemyType, false, { 0,0,0 }, {0,0,0});
 }
 
+//*****************************************************************************
+//AddEnemy関数
+//リストに敵のオブジェクトを入れる
+//引数：XMFLOAT3,int, bool, XMFLOAT3, XMFLOAT3s
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -703,6 +896,13 @@ GameObject3D * Go_List::AddEnemy(XMFLOAT3 newPosition, int EnemyType, bool Movea
 		return HeadNode->Object;
 	}
 }
+
+//*****************************************************************************
+//SaveBgObject関数
+//バックグラウンドオブジェクトのリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveBgObject(const char * szFilename)
 {
 	FILE *pFile;
@@ -742,6 +942,12 @@ void Go_List::SaveBgObject(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//AddEvent関数
+//リストにイベントのオブジェクトを入れる
+//引数：XMFLOAT3, Hitbox3D, int
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int EventType)
 {
 	go_node* pPositionList = HeadNode;
@@ -774,11 +980,23 @@ GameObject3D * Go_List::AddEvent(XMFLOAT3 newPosition, Hitbox3D hitbox, int Even
 	}
 }
 
+//*****************************************************************************
+//AddBgObject関数
+//リストにバックグラウンドオブジェクトを入れる
+//引数：XMFLOAT3, int
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddBgObject(XMFLOAT3 newPosition, int nType)
 {
 	return AddBgObject(newPosition, nType, false, { 0,0,0 }, { 0,0,0 });
 }
 
+//*****************************************************************************
+//AddBgObject関数
+//リストにバックグラウンドオブジェクトを入れる
+//引数：XMFLOAT3, int, bool, XMFLOAT3, XMFLOAT3
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::AddBgObject(XMFLOAT3 newPosition, int nType, bool Moveable, XMFLOAT3 Start, XMFLOAT3 End)
 {
 	go_node* pPositionList = HeadNode;
@@ -810,6 +1028,12 @@ GameObject3D * Go_List::AddBgObject(XMFLOAT3 newPosition, int nType, bool Moveab
 	}
 }
 
+//*****************************************************************************
+//CheckCollision関数
+//当たり判定を確認して、オブジェクトのアドレスを戻す
+//引数：Hitbox3D
+//戻：GameObject3D*
+//*****************************************************************************
 GameObject3D * Go_List::CheckCollision(Hitbox3D hb)
 {
 	if (HeadNode == nullptr)
@@ -828,8 +1052,12 @@ GameObject3D * Go_List::CheckCollision(Hitbox3D hb)
 	return nullptr;
 }
 
-
-
+//*****************************************************************************
+//DeleteLastPosObject関数
+//最後のオブジェクトを消す
+//引数：void
+//戻：void
+//*****************************************************************************
 void Go_List::DeleteLastPosObject()
 {
 	if (HeadNode == nullptr)
@@ -862,6 +1090,12 @@ void Go_List::DeleteLastPosObject()
 	return;
 }
 
+//*****************************************************************************
+//DeleteObject関数
+//オブジェクトを消す
+//引数：GameObject3D*
+//戻：void
+//*****************************************************************************
 void Go_List::DeleteObject(GameObject3D * pSearch)
 {
 	if (HeadNode == nullptr)
@@ -908,6 +1142,12 @@ void Go_List::DeleteObject(GameObject3D * pSearch)
 	return;
 }
 
+//*****************************************************************************
+//Update関数
+//変更関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Go_List::Update()
 {
 	if (HeadNode == nullptr)
@@ -922,6 +1162,12 @@ void Go_List::Update()
 	}
 }
 
+//*****************************************************************************
+//Draw関数
+//レンダリング関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Go_List::Draw()
 {
 	if (HeadNode == nullptr)
@@ -938,6 +1184,12 @@ void Go_List::Draw()
 	}
 }
 
+//*****************************************************************************
+//End関数
+//終了関数
+//引数：void
+//戻：void
+//*****************************************************************************
 void Go_List::End()
 {
 	if (HeadNode == nullptr)
@@ -965,6 +1217,12 @@ void Go_List::End()
 	HeadNode = nullptr;
 }
 
+//*****************************************************************************
+//SaveFields関数
+//床のリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveFields(const char* szFilename)
 {
 	FILE *pFile;
@@ -1005,6 +1263,12 @@ void Go_List::SaveFields(const char* szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveWalls関数
+//壁のリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveWalls(const char * szFilename)
 {
 	FILE *pFile;
@@ -1044,6 +1308,12 @@ void Go_List::SaveWalls(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveItems関数
+//回復アイテムのリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveItems(const char * szFilename)
 {
 	FILE *pFile;
@@ -1083,6 +1353,12 @@ void Go_List::SaveItems(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveItems関数
+//スパイクのリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveSpikes(const char * szFilename)
 {
 	FILE *pFile;
@@ -1123,6 +1399,12 @@ void Go_List::SaveSpikes(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveMisc関数
+//一般的なオブジェクトのリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveMisc(const char * szFilename)
 {
 	FILE *pFile;
@@ -1158,6 +1440,12 @@ void Go_List::SaveMisc(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveMirrors関数
+//鏡のリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveMirrors(const char * szFilename)
 {
 	FILE *pFile;
@@ -1196,6 +1484,12 @@ void Go_List::SaveMirrors(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveEnemies関数
+//敵のリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveEnemies(const char * szFilename)
 {
 	FILE *pFile;
@@ -1234,6 +1528,12 @@ void Go_List::SaveEnemies(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//SaveEvents関数
+//イベントのリストを保存する
+//引数：const char *
+//戻：void
+//*****************************************************************************
 void Go_List::SaveEvents(const char * szFilename)
 {
 	FILE *pFile;
@@ -1274,6 +1574,12 @@ void Go_List::SaveEvents(const char * szFilename)
 	fclose(pFile);
 }
 
+//*****************************************************************************
+//Load関数
+//ファイルからオブジェクトを読み込んで、リストに入れる
+//引数：const char*, int
+//戻：void
+//*****************************************************************************
 void Go_List::Load(const char * szFilename, int nType)
 {
 	FILE *pFile;
